@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { useScrollSpy } from '@/hooks/useScrollSpy'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 const navLinks = [
   { label: 'Home', href: 'hero' },
@@ -14,6 +15,7 @@ const navLinks = [
 ]
 
 export default function Navbar() {
+  const { personalInfo } = usePortfolio()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const activeId = useScrollSpy(navLinks.map(l => l.href), 120)
@@ -51,7 +53,7 @@ export default function Navbar() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            <span className="gradient-text">Hari</span>
+            <span className="gradient-text">{personalInfo.name}</span>
           </motion.button>
 
           {/* Desktop Nav */}

@@ -43,11 +43,11 @@ export default function Footer() {
         <div className="text-center">
           <p className="text-slate-500 text-sm flex items-center gap-1.5 justify-center">
             Designed &amp; Built by
-            <span className="gradient-text font-semibold">Hari</span>
+            <span className="gradient-text font-semibold">{personalInfo.name}</span>
             with <Heart size={12} className="text-rose-400 fill-current" />
           </p>
           <p className="text-slate-600 text-xs mt-1">
-            &copy; {year} Hari. All rights reserved.
+            &copy; {year} {personalInfo.fullName || personalInfo.name}. All rights reserved.
           </p>
         </div>
 

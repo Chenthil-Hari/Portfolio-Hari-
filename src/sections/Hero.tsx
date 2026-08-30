@@ -92,7 +92,7 @@ export default function Hero() {
                   Hi, I'm
                 </span>
                 <span className="block text-5xl md:text-7xl text-white">
-                  Hari
+                  {personalInfo.name}
                 </span>
               </h1>
             </motion.div>
@@ -190,7 +190,7 @@ export default function Hero() {
                         {i + 1}
                       </span>
                       <span style={{ paddingLeft: `${line.indent * 16}px` }}>
-                        {line.content}
+                        {line.content.includes('"Hari"') ? `name: "${personalInfo.name}",` : line.content}
                       </span>
                     </div>
                   ))}
