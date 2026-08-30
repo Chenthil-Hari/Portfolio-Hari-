@@ -15,7 +15,7 @@ const codeLines = [
   { indent: 0, content: '}', color: 'text-slate-300' },
 ]
 
-export default function Hero() {
+export default function Hero({ onOpenResume }: { onOpenResume: () => void }) {
   const { personalInfo } = usePortfolio()
   const glowRef = useRef<HTMLDivElement>(null)
   const prefersReduced = usePrefersReducedMotion()
@@ -126,16 +126,15 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-violet-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.button>
 
-              <motion.a
-                href={personalInfo.resumeUrl}
-                download
+              <motion.button
+                onClick={onOpenResume}
                 className="group flex items-center gap-2 px-7 py-3.5 rounded-xl glass-card border border-white/[0.12] text-white font-semibold text-sm hover:bg-white/[0.08] hover:border-blue-500/30 transition-all duration-300"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
               >
                 <Download size={16} className="group-hover:-translate-y-0.5 transition-transform" />
-                Download Resume
-              </motion.a>
+                View Resume
+              </motion.button>
             </motion.div>
 
             {/* Secondary link */}

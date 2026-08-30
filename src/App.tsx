@@ -12,6 +12,7 @@ import GitHubSection from '@/sections/GitHub'
 import Contact from '@/sections/Contact'
 import Footer from '@/sections/Footer'
 import Admin from '@/sections/Admin'
+import ResumeModal from '@/components/ResumeModal'
 
 import { PortfolioProvider } from '@/context/PortfolioContext'
 
@@ -19,6 +20,7 @@ export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(false)
   const [portfolioData, setPortfolioData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [isResumeOpen, setIsResumeOpen] = useState(false)
 
   // Detect route on load and on popstate
   useEffect(() => {
@@ -97,7 +99,7 @@ export default function App() {
 
         {/* Main content */}
         <main>
-          <Hero />
+          <Hero onOpenResume={() => setIsResumeOpen(true)} />
           <About />
           <Skills />
           <Projects />
@@ -109,6 +111,13 @@ export default function App() {
         </main>
 
         <Footer />
+
+        {/* Resume Modal overlay */}
+        <ResumeModal 
+          isOpen={isResumeOpen} 
+          onClose={() => setIsResumeOpen(false)} 
+          resumeUrl={portfolioData?.personalInfo?.resumeUrl || '/resume.pdf'} 
+        />
       </div>
     </PortfolioProvider>
   )
