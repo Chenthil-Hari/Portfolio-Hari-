@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Github, ExternalLink, Code2, Lightbulb, Wrench, Zap, AlertCircle } from 'lucide-react'
 import type { Project } from '@/data/portfolio'
+import TrafficSimulator from '@/components/TrafficSimulator'
 
 interface ProjectModalProps {
   project: Project | null
@@ -131,6 +132,18 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                   </div>
                 </div>
               </div>
+
+              {/* ─── Live Traffic Simulator (only for smart-traffic project) ─── */}
+              {project.id === 'smart-traffic' && (
+                <div className="mt-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-xs font-mono text-blue-400 tracking-widest uppercase">Live Demo</span>
+                    <span className="h-px flex-1 bg-white/[0.06]" />
+                    <span className="text-[10px] font-mono text-slate-600 bg-white/[0.04] px-2 py-0.5 rounded-full">Interactive Sandbox</span>
+                  </div>
+                  <TrafficSimulator />
+                </div>
+              )}
 
               {/* Action buttons */}
               <div className="flex flex-wrap gap-4 mt-8 pt-8 border-t border-white/[0.08]">
