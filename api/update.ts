@@ -1,4 +1,4 @@
-import { connectToDatabase } from './_db'
+import { connectToDatabase } from './_db.js'
 
 export default async function handler(req: any, res: any) {
   // CORS Headers

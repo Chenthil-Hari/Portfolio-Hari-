@@ -1,5 +1,5 @@
-import { connectToDatabase } from './_db'
-import { personalInfo, skills, projects, experiences, education, achievements } from '../src/data/portfolio'
+import { connectToDatabase } from './_db.js'
+import { personalInfo, skills, projects, experiences, education, achievements } from '../src/data/portfolio.js'
 
 // Default fallback data matching the schema
 const defaultData = {
