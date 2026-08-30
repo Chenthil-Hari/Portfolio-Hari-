@@ -1,0 +1,363 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   Custom Properties
+───────────────────────────────────────────── */
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-violet: #8b5cf6;
+  --cursor-x: 0px;
+  --cursor-y: 0px;
+}
+
+/* ─────────────────────────────────────────────
+   Base
+───────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide default scrollbar on custom cursor setups */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #12121a;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* ─────────────────────────────────────────────
+   Typography
+───────────────────────────────────────────── */
+.font-display {
+  font-family: 'Syne', sans-serif;
+}
+
+/* ─────────────────────────────────────────────
+   Gradient Text
+───────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─────────────────────────────────────────────
+   Glass Card
+───────────────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-card-hover {
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.glass-card-hover:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.12);
+}
+
+/* ─────────────────────────────────────────────
+   Section Styles
+───────────────────────────────────────────── */
+.section-padding {
+  padding: 5rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 7rem 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 8rem 4rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Noise Texture Overlay
+───────────────────────────────────────────── */
+.noise-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ─────────────────────────────────────────────
+   Glow Background Blob
+───────────────────────────────────────────── */
+.mouse-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+}
+
+/* ─────────────────────────────────────────────
+   Animated Gradient Border
+───────────────────────────────────────────── */
+.gradient-border {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(139, 92, 246, 0.5));
+  z-index: -1;
+}
+
+/* ─────────────────────────────────────────────
+   Custom Cursor
+───────────────────────────────────────────── */
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(59, 130, 246, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s;
+}
+
+/* ─────────────────────────────────────────────
+   Skill Cards
+───────────────────────────────────────────── */
+.skill-icon {
+  transition: transform 0.3s ease;
+}
+
+.skill-card:hover .skill-icon {
+  transform: scale(1.25) rotate(-5deg);
+}
+
+/* ─────────────────────────────────────────────
+   Timeline
+───────────────────────────────────────────── */
+.timeline-line {
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6, transparent);
+}
+
+/* ─────────────────────────────────────────────
+   Hero Code Block
+───────────────────────────────────────────── */
+.code-line {
+  animation: typeIn 0.4s ease forwards;
+  opacity: 0;
+}
+
+@keyframes typeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Background Grid
+───────────────────────────────────────────── */
+.bg-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ─────────────────────────────────────────────
+   Floating Animation
+───────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Gradient Animation
+───────────────────────────────────────────── */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientMove 6s ease infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Pulse Glow
+───────────────────────────────────────────── */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Reduced Motion
+───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Mobile tap highlight
+───────────────────────────────────────────── */
+@media (hover: none) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Project Modal
+───────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+}
+
+/* ─────────────────────────────────────────────
+   Badge
+───────────────────────────────────────────── */
+.tech-badge {
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────
+   Contact form
+───────────────────────────────────────────── */
+.form-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #f8fafc;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.form-input:focus {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
