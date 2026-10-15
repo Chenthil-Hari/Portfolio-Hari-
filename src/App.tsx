@@ -60,19 +60,7 @@ export default function App() {
     return () => window.removeEventListener('mousemove', onMouseMove)
   }, [])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center text-slate-400">
-        <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
-        <div className="relative flex flex-col items-center">
-          <div className="w-12 h-12 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin mb-4" />
-          <p className="text-sm font-mono tracking-widest text-slate-500 uppercase">Loading Environment...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Render Admin page view
+  // Render Admin page view immediately — don't wait for DB loading
   if (isAdminRoute) {
     return (
       <PortfolioProvider value={portfolioData}>
@@ -84,6 +72,18 @@ export default function App() {
           }} 
         />
       </PortfolioProvider>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center text-slate-400">
+        <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+        <div className="relative flex flex-col items-center">
+          <div className="w-12 h-12 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin mb-4" />
+          <p className="text-sm font-mono tracking-widest text-slate-500 uppercase">Loading Environment...</p>
+        </div>
+      </div>
     )
   }
 
