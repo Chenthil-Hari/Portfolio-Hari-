@@ -10,6 +10,7 @@ import Education from '@/sections/Education'
 import Achievements from '@/sections/Achievements'
 import GitHubSection from '@/sections/GitHub'
 import Contact from '@/sections/Contact'
+import Guestbook from '@/sections/Guestbook'
 import Footer from '@/sections/Footer'
 import Admin from '@/sections/Admin'
 import ResumeModal from '@/components/ResumeModal'
@@ -107,6 +108,7 @@ export default function App() {
           <Education />
           <Achievements />
           <GitHubSection />
+          <Guestbook />
           <Contact />
         </main>
 
