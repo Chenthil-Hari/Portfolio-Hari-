@@ -4,6 +4,23 @@ import {
   Lock, Save, LogOut, User, FolderGit, Briefcase, GraduationCap, 
   Award, Trash2, Plus, ArrowLeft, Loader2, CheckCircle, AlertCircle
 } from 'lucide-react'
+import { 
+  personalInfo as defaultPersonalInfo,
+  skills as defaultSkills,
+  projects as defaultProjects,
+  experiences as defaultExperiences,
+  education as defaultEducation,
+  achievements as defaultAchievements
+} from '@/data/portfolio'
+
+const DEFAULT_DATA = {
+  personalInfo: defaultPersonalInfo,
+  skills: defaultSkills,
+  projects: defaultProjects,
+  experiences: defaultExperiences,
+  education: defaultEducation,
+  achievements: defaultAchievements,
+}
 
 interface AdminProps {
   initialData: any
@@ -14,7 +31,8 @@ export default function Admin({ initialData, onClose }: AdminProps) {
   const [password, setPassword] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [activeTab, setActiveTab] = useState<'profile' | 'projects' | 'experience' | 'education' | 'achievements'>('profile')
-  const [data, setData] = useState(initialData)
+  // Use initialData from DB if available, otherwise fall back to local static data
+  const [data, setData] = useState(initialData ?? DEFAULT_DATA)
   
   // Status states
   const [saving, setSaving] = useState(false)
