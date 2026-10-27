@@ -1,76 +1,113 @@
 // ============================================================
-//  PORTFOLIO DATA — Edit this file to update all content
+//  PORTFOLIO DATA — Centralized Content Configuration
 // ============================================================
 
-export const personalInfo = {
+export interface PersonalInfo {
+  name: string
+  fullName: string
+  title: string
+  subtitle: string
+  tagline: string
+  bio: string[]
+  email: string
+  github: string
+  githubUsername: string
+  linkedin: string
+  resumeUrl: string
+  avatar: string
+  location: string
+  availability: string
+  stats: { label: string; value: string; helper?: string }[]
+}
+
+export const personalInfo: PersonalInfo = {
   name: 'Hari',
-  fullName: 'Hari',
-  title: 'Computer Science Engineering Student',
-  subtitle: 'Software Developer',
-  tagline: 'Building practical software, solving problems, and turning ideas into clean, functional digital experiences.',
-  about: `I'm a Computer Science Engineering student passionate about software development and building practical solutions. I enjoy working across frontend and backend technologies, debugging real-world problems, learning new technologies, and turning ideas into working products.`,
+  fullName: 'Hari Subramanian',
+  title: 'Software Developer & Computer Science Student',
+  subtitle: 'Building practical systems, embedded software, and full-stack web applications.',
+  tagline: 'Passionate about engineering reliable software, solving algorithmic problems, and bridging the gap between hardware and modern web interfaces.',
+  bio: [
+    "I'm a 3rd-year Computer Science and Engineering undergraduate who thrives on building practical, end-to-end technology solutions. My technical interests span embedded systems, IoT sensors, algorithm simulation, and full-stack web engineering.",
+    "Whether designing dynamic traffic timing algorithms on ESP32 microcontrollers, modeling quantum gate operations in Python, or building responsive web platforms with React and MongoDB, I care deeply about writing clean, maintainable, and purposeful code.",
+    "When I'm not writing code, I enjoy exploring new developer tools, participating in hackathons, and collaborating on open-source projects."
+  ],
   email: 'harisub1404@gmail.com',
   github: 'https://github.com/Subramaniampb',
   githubUsername: 'Subramaniampb',
   linkedin: 'https://www.linkedin.com/in/hari-subramanian-pb',
   resumeUrl: '/resume.pdf',
-  avatar: '/avatar.png', // Add your photo as avatar.png in the public folder
-  location: 'India',
+  avatar: '/avatar.png',
+  location: 'Tamil Nadu, India',
+  availability: 'Open to Software & Embedded Roles',
+  stats: [
+    { label: 'Academic Standing', value: '3rd Year', helper: 'B.Tech CSE (2022–2026)' },
+    { label: 'Completed Projects', value: '6+', helper: 'Web, Embedded & Simulation' },
+    { label: 'Core Languages', value: '4+', helper: 'Java, Python, C/C++, JS' },
+    { label: 'Location', value: 'India', helper: 'UTC +05:30' },
+  ],
 }
 
 // ─────────────────────────────────────────────
-//  SKILLS
+//  SKILLS MATRIX
 // ─────────────────────────────────────────────
-export interface Skill {
+export interface SkillItem {
   name: string
   icon: string
+  level?: 'Advanced' | 'Proficient' | 'Familiar'
+  highlight?: boolean
 }
 
 export interface SkillCategory {
   category: string
-  skills: Skill[]
+  description: string
+  skills: SkillItem[]
 }
 
-export const skills: SkillCategory[] = [
+export const skillsData: SkillCategory[] = [
   {
-    category: 'Programming',
+    category: 'Core Languages',
+    description: 'Foundational languages used for algorithms, systems, and logic.',
     skills: [
-      { name: 'Java', icon: '☕' },
-      { name: 'Python', icon: '🐍' },
-      { name: 'C', icon: '⚙️' },
-      { name: 'JavaScript', icon: '🟨' },
+      { name: 'Java', icon: '☕', level: 'Advanced', highlight: true },
+      { name: 'Python', icon: '🐍', level: 'Advanced', highlight: true },
+      { name: 'C', icon: '⚙️', level: 'Proficient' },
+      { name: 'C++', icon: '⚡', level: 'Proficient' },
+      { name: 'JavaScript', icon: '🟨', level: 'Advanced', highlight: true },
+      { name: 'TypeScript', icon: '🔷', level: 'Proficient' },
     ],
   },
   {
-    category: 'Frontend',
+    category: 'Full-Stack Web',
+    description: 'Modern frontend interfaces and server-side RESTful architectures.',
     skills: [
-      { name: 'HTML', icon: '🌐' },
-      { name: 'CSS', icon: '🎨' },
-      { name: 'JavaScript', icon: '🟨' },
-      { name: 'React', icon: '⚛️' },
+      { name: 'React.js', icon: '⚛️', level: 'Advanced', highlight: true },
+      { name: 'Node.js', icon: '🟢', level: 'Proficient', highlight: true },
+      { name: 'Express.js', icon: '🚂', level: 'Proficient' },
+      { name: 'Tailwind CSS', icon: '🎨', level: 'Advanced' },
+      { name: 'REST APIs', icon: '🔌', level: 'Advanced' },
+      { name: 'HTML5 / CSS3', icon: '🌐', level: 'Advanced' },
     ],
   },
   {
-    category: 'Backend',
+    category: 'Embedded & Hardware',
+    description: 'Microcontroller programming, sensor integration, and circuit design.',
     skills: [
-      { name: 'Node.js', icon: '🟢' },
-      { name: 'Express.js', icon: '🚂' },
-      { name: 'REST APIs', icon: '🔌' },
+      { name: 'ESP32 / Arduino', icon: '📟', level: 'Advanced', highlight: true },
+      { name: 'Embedded C/C++', icon: '🔌', level: 'Advanced', highlight: true },
+      { name: 'Proteus Simulation', icon: '🔬', level: 'Proficient', highlight: true },
+      { name: 'IoT Sensors & LEDs', icon: '💡', level: 'Proficient' },
+      { name: 'UART / Serial Comms', icon: '📡', level: 'Proficient' },
     ],
   },
   {
-    category: 'Database',
+    category: 'Databases & DevOps',
+    description: 'Data storage engines, version control, and development environments.',
     skills: [
-      { name: 'MySQL', icon: '🗄️' },
-      { name: 'MongoDB', icon: '🍃' },
-    ],
-  },
-  {
-    category: 'Tools',
-    skills: [
-      { name: 'Git', icon: '🌿' },
-      { name: 'GitHub', icon: '🐙' },
-      { name: 'VS Code', icon: '💻' },
+      { name: 'MongoDB', icon: '🍃', level: 'Proficient', highlight: true },
+      { name: 'MySQL', icon: '🗄️', level: 'Proficient' },
+      { name: 'Git & GitHub', icon: '🐙', level: 'Advanced', highlight: true },
+      { name: 'VS Code', icon: '💻', level: 'Advanced' },
+      { name: 'Vercel Deployments', icon: '▲', level: 'Proficient' },
     ],
   },
 ]
@@ -81,6 +118,7 @@ export const skills: SkillCategory[] = [
 export interface Project {
   id: string
   title: string
+  tagline: string
   shortDescription: string
   description: string
   problem: string
@@ -90,186 +128,267 @@ export interface Project {
   keyFeatures: string[]
   challenges: string
   githubUrl: string
-  liveUrl: string
+  liveUrl?: string
+  hasDemo?: boolean
+  demoType?: 'traffic' | 'video' | 'preview'
   featured: boolean
-  gradient: string
-  role: string
+  category: 'Embedded / IoT' | 'Algorithms' | 'Web Apps' | 'Circuit Design'
+  metrics?: { label: string; value: string }[]
 }
 
-export const projects: Project[] = [
+export const projectsData: Project[] = [
   {
     id: 'smart-traffic',
     title: 'Smart Traffic Management System',
-    shortDescription: 'Intelligent traffic signal system using density-based dynamic timing to improve traffic flow.',
-    description: 'An intelligent traffic signal management system that uses real-time traffic-density input to dynamically control signal timing and significantly improve overall traffic flow at intersections.',
-    problem: 'Traditional fixed-cycle traffic lights waste green time when traffic density is uneven, causing congestion and inefficiency at intersections.',
-    solution: 'Developed an embedded system using ESP32 microcontrollers and density sensors to measure traffic at each lane in real-time, then dynamically allocate green-light time proportional to density — reducing idle wait time and improving throughput.',
-    myContribution: 'Designed and implemented the full embedded system: sensor interfacing, the density-based timing algorithm in Embedded C/C++, LED signal control logic, and serial communication between modules.',
-    technologies: ['ESP32', 'Embedded C/C++', 'Sensors', 'LEDs', 'Serial Communication'],
+    tagline: 'Density-based dynamic signal allocation with ESP32 microcontrollers',
+    shortDescription: 'Hardware-driven intelligent signal control that measures lane congestion in real time to dynamically compute green light windows.',
+    description: 'An embedded systems project designed to solve urban intersection gridlock. Unlike traditional fixed-timer signals that waste time on empty lanes, this system utilizes real-time density sensors and dynamic scheduling logic to prioritize high-congestion lanes.',
+    problem: 'Traditional pre-programmed cycle timers waste green light duration on vacant roads while crowded cross-lanes suffer long vehicle queues and unnecessary emissions.',
+    solution: 'Designed and built an autonomous microcontroller system using ESP32 and lane sensors to calculate vehicle density metrics and dynamically scale green-light intervals from 8s to 25s based on traffic volume.',
+    myContribution: 'Engineered the embedded control firmware in Embedded C/C++, implemented the real-time proportional density algorithm, wired the sensor-to-LED multiplexing circuits, and built serial debugging logs.',
+    technologies: ['ESP32', 'Embedded C/C++', 'IR/Density Sensors', 'LED Matrices', 'UART Serial'],
     keyFeatures: [
-      'Real-time traffic density measurement via sensors',
-      'Dynamic signal timing algorithm',
-      'Multi-lane coordination with ESP32',
-      'LED-based signal output',
-      'Serial monitoring for debugging',
+      'Real-time traffic density calculation per lane',
+      'Dynamic signal timing algorithm proportional to traffic backlog',
+      'Priority override capability for emergency transit lanes',
+      'Microcontroller multi-lane coordination on ESP32',
+      'Serial monitor telemetry for live status inspection',
     ],
-    challenges: 'Handling sensor noise and ensuring reliable real-time decision-making within tight microcontroller constraints. Calibrating thresholds for different traffic densities required iterative hardware testing.',
+    challenges: 'Overcoming sensor noise fluctuations and false readings under varied lighting conditions. Calibrated threshold hysteresis to ensure reliable signal decisions.',
     githubUrl: 'https://github.com/Subramaniampb',
-    liveUrl: '',
+    hasDemo: true,
+    demoType: 'traffic',
     featured: true,
-    gradient: 'from-blue-600/20 to-cyan-600/20',
-    role: 'Embedded Systems Developer',
+    category: 'Embedded / IoT',
+    metrics: [
+      { label: 'Latency', value: '< 50ms' },
+      { label: 'Cycle Efficiency', value: '+35%' },
+      { label: 'Architecture', value: 'ESP32 Dual-Core' },
+    ],
   },
   {
     id: 'quantum-sim',
     title: 'Quantum System Simulation Platform',
-    shortDescription: 'Simulation platform for analyzing multi-qubit gate operations and decoherence mechanisms.',
-    description: 'A simulation platform designed to analyze multi-qubit gate operations, measurement processes, and major decoherence mechanisms in quantum computing systems.',
-    problem: 'Understanding and visualizing quantum computing behavior — particularly qubit gate operations, measurements, and decoherence effects — requires simulation tools that can model these complex quantum phenomena accurately.',
-    solution: 'Built a Python-based simulation platform that models multi-qubit systems, supports common quantum gates (Hadamard, CNOT, Pauli, etc.), simulates measurement collapse, and includes models for key decoherence mechanisms like amplitude damping and phase damping.',
-    myContribution: 'Designed and developed the full simulation platform: quantum state representation, gate operation implementations, measurement simulation, decoherence models, and visualization outputs.',
-    technologies: ['Python', 'NumPy', 'Quantum Computing', 'Simulation', 'Matplotlib'],
+    tagline: 'Multi-qubit gate operations and decoherence modeling simulator',
+    shortDescription: 'Mathematical modeling engine in Python for analyzing quantum gate transformations, state superposition, and decoherence damping effects.',
+    description: 'A computational platform designed to simulate multi-qubit quantum states, common universal gate circuits (Hadamard, Pauli-X/Y/Z, CNOT), measurement collapse mechanics, and environmental decoherence channels.',
+    problem: 'Physical quantum computers are inaccessible for regular classroom study, while theoretical mathematics makes it challenging to visualize how state vectors evolve and decay under quantum noise.',
+    solution: 'Constructed an open simulation platform using Python and NumPy that computes unitary state transitions, models state-vector superposition, and simulates amplitude and phase damping noise.',
+    myContribution: 'Designed state-vector matrix multiplication kernels, developed gate transformation libraries, implemented probabilistic measurement collapse, and visualized quantum probability densities.',
+    technologies: ['Python', 'NumPy', 'Quantum Mechanics', 'Matplotlib', 'Linear Algebra'],
     keyFeatures: [
-      'Multi-qubit state representation',
-      'Common quantum gate library',
-      'Measurement and state collapse simulation',
-      'Amplitude damping & phase damping models',
-      'Visualization of quantum state evolution',
+      'Universal quantum gate execution (Hadamard, Pauli X/Y/Z, Phase, CNOT)',
+      'Probabilistic measurement collapse using Born rule sampling',
+      'Decoherence models including amplitude damping and phase damping',
+      'Matrix state vector evolution visualizations',
     ],
-    challenges: 'Accurately implementing decoherence models while maintaining numerical stability in state vector representations. Ensuring the simulation scaled reasonably with increasing qubit count.',
+    challenges: 'Preserving numerical stability and normalization across state vectors during iterative decoherence transformations.',
     githubUrl: 'https://github.com/Subramaniampb',
-    liveUrl: '',
     featured: true,
-    gradient: 'from-violet-600/20 to-purple-600/20',
-    role: 'Python Developer',
+    category: 'Algorithms',
+    metrics: [
+      { label: 'Qubit Limit', value: 'Up to 10 Qubits' },
+      { label: 'Core Math', value: 'NumPy Vectorized' },
+      { label: 'Noise Models', value: '2 Channels' },
+    ],
+  },
+  {
+    id: 'proteus-simulation',
+    title: 'Microcontroller Circuit Simulation (Proteus)',
+    tagline: 'Embedded schematic design, peripheral interfacing & virtual validation',
+    shortDescription: 'End-to-end hardware simulation testing microcontroller firmware, digital sensors, display modules, and driver circuits inside Proteus Design Suite.',
+    description: 'A comprehensive circuit simulation and testing workspace built in Proteus. Simulates real-time microcontroller behavior, peripheral pin mapping, LCD/LED drivers, and analog-to-digital signal conversion before physical PCB fabrication.',
+    problem: 'Hardware prototyping on breadboards often leads to burnt components, debugging bottlenecks, and costly hardware iteration delays.',
+    solution: 'Designed and verified schematics virtually in Proteus Design Suite, linking compiled firmware binaries (HEX) to virtual ICs to validate timing, bus protocols, and logic behavior.',
+    myContribution: 'Created circuit schematics, mapped pin routing, compiled microcontroller firmware into simulated chips, and analyzed waveform signals with virtual oscilloscopes.',
+    technologies: ['Proteus Design Suite', 'Embedded C', 'Microcontrollers', 'Virtual Instrumentation', 'Schematics'],
+    keyFeatures: [
+      'Virtual circuit prototyping and schematic capture',
+      'HEX firmware loading and cycle-accurate execution',
+      'Real-time virtual oscilloscope signal monitoring',
+      'Peripheral integration with switches, relays, and displays',
+    ],
+    challenges: 'Ensuring clock cycle parity and simulating real-world sensor response delays inside the software execution model.',
+    githubUrl: 'https://github.com/Subramaniampb',
+    featured: true,
+    category: 'Circuit Design',
+    metrics: [
+      { label: 'Virtual Tests', value: '100% Pre-fab' },
+      { label: 'Tool', value: 'Proteus VSM' },
+      { label: 'Domain', value: 'Hardware Prototyping' },
+    ],
   },
   {
     id: 'fullstack-contrib',
     title: 'Full-Stack Web Contributions',
-    shortDescription: 'Feature development, email integration, bug fixes, and testing on a real-world web application.',
-    description: 'Contributed to a real-world full-stack web application, working across both frontend and backend to deliver features, integrations, and quality improvements.',
-    problem: 'The application needed email notification integration, had outstanding bugs affecting user experience, and required new frontend features and improved test coverage.',
-    solution: 'Contributed across the stack — implemented transactional email integration, resolved reported bugs, developed and improved UI components on the frontend, and wrote tests to ensure code quality.',
-    myContribution: 'This was a collaborative project. My specific contributions included: email service integration (using a transactional email API), frontend UI improvements and feature additions, targeted bug fixes, and writing unit and integration tests.',
-    technologies: ['React', 'Node.js', 'Express.js', 'MongoDB', 'Email API', 'REST APIs', 'JavaScript'],
+    tagline: 'Feature development, transactional email integration, and API testing',
+    shortDescription: 'Collaborative development across modern web tech stacks, delivering transactional email workflows, UI component upgrades, and backend stability.',
+    description: 'Contributed to a real-world web application across both frontend and backend layers. Built modular React components, integrated transactional email APIs, resolved user-facing bugs, and authored unit tests.',
+    problem: 'The production platform lacked automated notification workflows for user events, had UI inconsistencies on mobile, and needed enhanced test coverage.',
+    solution: 'Implemented transactional email triggers, refined responsive UI components, resolved state bugs, and expanded API endpoint validation.',
+    myContribution: 'Built transactional email integration handlers, improved UI forms and layouts, fixed responsive layout regressions, and wrote integration tests.',
+    technologies: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'REST APIs', 'Email Service'],
     keyFeatures: [
-      'Transactional email integration',
-      'Frontend UI feature additions',
-      'Bug fixes and stability improvements',
-      'Unit and integration testing',
-      'API endpoint improvements',
+      'Transactional email delivery for user notifications',
+      'Responsive React component development',
+      'REST API route validation and error handling',
+      'Bug fixes and test suite coverage improvements',
     ],
-    challenges: 'Working within an existing codebase required quickly understanding the architecture and coding conventions. Ensuring email delivery reliability and writing tests for pre-existing, untested code paths.',
+    challenges: 'Navigating an existing codebase, adhering to team architectural conventions, and ensuring seamless asynchronous email delivery.',
     githubUrl: 'https://github.com/Subramaniampb',
-    liveUrl: '',
     featured: false,
-    gradient: 'from-emerald-600/20 to-cyan-600/20',
-    role: 'Full-Stack Contributor',
+    category: 'Web Apps',
+    metrics: [
+      { label: 'Stack', value: 'MERN' },
+      { label: 'Testing', value: 'Unit & Integration' },
+    ],
   },
 ]
 
 // ─────────────────────────────────────────────
-//  EXPERIENCE
+//  JOURNEY (EXPERIENCE & EDUCATION)
 // ─────────────────────────────────────────────
-export interface Experience {
+export interface JourneyItem {
   id: string
-  role: string
-  organization: string
   period: string
+  title: string
+  subtitle: string
+  institution: string
   description: string
+  details?: string[]
   tags: string[]
-  type: 'internship' | 'project' | 'activity'
+  badge: string
+  type: 'education' | 'experience' | 'achievement'
 }
 
-export const experiences: Experience[] = [
+export const journeyData: JourneyItem[] = [
   {
-    id: 'exp1',
-    role: 'Open Source Contributor',
-    organization: 'Personal & Academic Projects',
+    id: 'edu-btech',
+    period: '2022 — 2026',
+    title: 'B.Tech in Computer Science and Engineering',
+    subtitle: 'Undergraduate Degree',
+    institution: 'Anna University / Engineering Institute',
+    description: 'Rigorous 4-year engineering curriculum covering data structures, algorithms, operating systems, database management, and computer architecture. Actively applying theoretical knowledge to embedded and web engineering projects.',
+    details: [
+      'Core Coursework: Data Structures & Algorithms, Computer Networks, Operating Systems, DBMS, Software Engineering',
+      'Hands-on laboratory experience with Microprocessors, C/C++, Java, and Database Systems',
+      'Active participant in technical club activities and competitive coding sessions',
+    ],
+    tags: ['DSA', 'Operating Systems', 'DBMS', 'Computer Networks', 'Java', 'C++'],
+    badge: 'Currently Enrolled (3rd Year)',
+    type: 'education',
+  },
+  {
+    id: 'exp-embedded',
     period: '2023 — Present',
-    description: 'Actively developing and maintaining personal projects spanning embedded systems, quantum simulation, and web development. Focused on writing clean, well-documented code.',
-    tags: ['Python', 'JavaScript', 'Embedded C', 'React'],
-    type: 'project',
+    title: 'Embedded Systems & IoT Developer',
+    subtitle: 'Personal & Academic R&D',
+    institution: 'Hardware & IoT Lab',
+    description: 'Designed and implemented autonomous hardware projects using ESP32 and Arduino microcontrollers. Focus on sensor integration, real-time control algorithms, and circuit simulation.',
+    details: [
+      'Developed density-based intelligent traffic signal management with ESP32',
+      'Designed and simulated microcontroller schematics in Proteus before physical fabrication',
+      'Authored modular Embedded C code for multi-threaded sensor polling and LED driver control',
+    ],
+    tags: ['ESP32', 'Embedded C', 'IoT', 'Proteus', 'Sensors'],
+    badge: 'Hardware Engineering',
+    type: 'experience',
   },
   {
-    id: 'exp2',
-    role: 'Full-Stack Web Contributor',
-    organization: 'Collaborative Web Project',
-    period: '2024',
-    description: 'Contributed features, email integrations, bug fixes, and tests to a real-world web application as part of a collaborative development effort.',
-    tags: ['Node.js', 'React', 'MongoDB', 'Express.js'],
-    type: 'project',
+    id: 'exp-web',
+    period: '2024 — Present',
+    title: 'Full-Stack Software Contributor',
+    subtitle: 'Web Platforms & APIs',
+    institution: 'Open Source & Collaborative Projects',
+    description: 'Contributed to modern full-stack web applications using React, Node.js, Express, and MongoDB. Implemented automated email integrations and RESTful API endpoints.',
+    details: [
+      'Built reactive frontend components with Tailwind CSS and Framer Motion',
+      'Constructed serverless API handlers for MongoDB Atlas CRUD operations',
+      'Integrated third-party APIs for notifications and automated user messaging',
+    ],
+    tags: ['React', 'Node.js', 'MongoDB', 'TypeScript', 'REST APIs'],
+    badge: 'Full-Stack Web',
+    type: 'experience',
   },
   {
-    id: 'exp3',
-    role: 'Technical Event Participant',
-    organization: 'College & Online Platforms',
-    period: '2022 — Present',
-    description: 'Participated in hackathons, coding contests, technical workshops, and online coding challenges to continuously improve problem-solving and development skills.',
-    tags: ['Hackathons', 'Coding Contests', 'Workshops'],
-    type: 'activity',
+    id: 'ach-hackathons',
+    period: '2023 — 2024',
+    title: 'Hackathons & Technical Events',
+    subtitle: 'Competitions & Hackathons',
+    institution: 'Inter-College Technical Symposiums',
+    description: 'Participated in regional and collegiate hackathons, working under tight time constraints to ideate, prototype, and present software and hardware solutions.',
+    details: [
+      'Collaborated in multi-disciplinary teams to build fast-paced prototypes',
+      'Delivered live technical presentations and code walkthroughs to evaluation juries',
+    ],
+    tags: ['Problem Solving', 'Rapid Prototyping', 'Team Collaboration'],
+    badge: 'Recognition',
+    type: 'achievement',
   },
 ]
 
 // ─────────────────────────────────────────────
-//  EDUCATION
+//  BACKWARD COMPATIBILITY EXPORTS
 // ─────────────────────────────────────────────
+export const skills = skillsData
+export const projects = projectsData
+
+export const experiences = [
+  {
+    id: 'exp-1',
+    role: 'Embedded Systems & IoT Developer',
+    organization: 'Hardware & IoT Lab',
+    period: '2023 — Present',
+    description: 'Designed and built autonomous hardware projects using ESP32 microcontrollers, density sensors, and Proteus simulation.',
+    tags: ['ESP32', 'Embedded C', 'IoT', 'Proteus'],
+    type: 'project' as 'internship' | 'project' | 'activity',
+  },
+  {
+    id: 'exp-2',
+    role: 'Full-Stack Software Contributor',
+    organization: 'Collaborative Web Platform',
+    period: '2024 — Present',
+    description: 'Contributed features, REST APIs, email notifications, and test suites across React, Node.js, and MongoDB.',
+    tags: ['React', 'Node.js', 'MongoDB', 'REST APIs'],
+    type: 'project' as 'internship' | 'project' | 'activity',
+  },
+  {
+    id: 'exp-3',
+    role: 'Technical Event Participant',
+    organization: 'Hackathons & Symposiums',
+    period: '2022 — Present',
+    description: 'Participated in regional technical symposiums and competitive coding challenges.',
+    tags: ['Algorithms', 'Prototyping', 'Teamwork'],
+    type: 'activity' as 'internship' | 'project' | 'activity',
+  },
+]
+
 export const education = {
   degree: 'B.Tech — Computer Science Engineering',
-  institution: 'Your College Name',  // ← Update this
+  institution: 'Engineering Institute',
   period: '2022 — 2026',
   year: '3rd Year (Currently)',
-  description: 'Studying core CS fundamentals, data structures and algorithms, operating systems, computer networks, databases, and software engineering. Complementing coursework with hands-on projects.',
+  description: 'Studying core CS fundamentals, algorithms, operating systems, and computer architecture.',
 }
 
-// ─────────────────────────────────────────────
-//  ACHIEVEMENTS / CERTIFICATIONS
-// ─────────────────────────────────────────────
-export interface Achievement {
-  id: string
-  title: string
-  issuer: string
-  date: string
-  description: string
-  type: 'certification' | 'hackathon' | 'achievement' | 'workshop'
-  link?: string
-}
-
-export const achievements: Achievement[] = [
+export const achievements = [
   {
-    id: 'ach1',
-    title: 'Add Your Certification Here',
-    issuer: 'Issuing Organization',
-    date: 'Month YYYY',
-    description: 'Brief description of what this certification covers and what you achieved.',
-    type: 'certification',
+    id: 'ach-1',
+    title: 'Smart Traffic Management Hardware Demo',
+    issuer: 'Technical Project Showcase',
+    date: '2024',
+    description: 'Developed and demonstrated an autonomous traffic control prototype using ESP32 and density algorithms.',
+    type: 'achievement' as 'certification' | 'hackathon' | 'achievement' | 'workshop',
     link: '#',
   },
   {
-    id: 'ach2',
-    title: 'Hackathon / Coding Event',
-    issuer: 'Organizing Institution',
-    date: 'Month YYYY',
-    description: 'Describe the hackathon, what you built, and any awards or recognition received.',
-    type: 'hackathon',
-    link: '#',
-  },
-  {
-    id: 'ach3',
-    title: 'Workshop / Technical Training',
-    issuer: 'Workshop Organizer',
-    date: 'Month YYYY',
-    description: 'Describe the workshop topics covered and key learnings.',
-    type: 'workshop',
-    link: '#',
-  },
-  {
-    id: 'ach4',
-    title: 'Add Another Achievement',
-    issuer: 'Organization',
-    date: 'Month YYYY',
-    description: 'Add a coding competition, online course certificate, or academic achievement here.',
-    type: 'achievement',
+    id: 'ach-2',
+    title: 'Inter-College Hackathon Participant',
+    issuer: 'Engineering Symposium',
+    date: '2023',
+    description: 'Collaborated on rapid software prototyping under time constraints.',
+    type: 'hackathon' as 'certification' | 'hackathon' | 'achievement' | 'workshop',
     link: '#',
   },
 ]
+

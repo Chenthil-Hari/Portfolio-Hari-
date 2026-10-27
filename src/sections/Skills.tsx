@@ -1,73 +1,118 @@
-﻿import { motion } from 'framer-motion'
-import { useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { skills } from '@/data/portfolio'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Terminal, Code2, Cpu, Database, Wrench } from 'lucide-react'
+import { skillsData } from '@/data/portfolio'
 
-const categoryColors: Record<string, { border: string; glow: string; label: string }> = {
-  Programming: { border: 'hover:border-blue-500/40', glow: 'hover:shadow-glow-blue', label: 'text-blue-400' },
-  Frontend: { border: 'hover:border-cyan-500/40', glow: 'hover:shadow-glow-cyan', label: 'text-cyan-400' },
-  Backend: { border: 'hover:border-violet-500/40', glow: 'hover:shadow-glow-violet', label: 'text-violet-400' },
-  Database: { border: 'hover:border-emerald-500/40', glow: '', label: 'text-emerald-400' },
-  Tools: { border: 'hover:border-amber-500/40', glow: '', label: 'text-amber-400' },
+const categoryIcons: Record<string, any> = {
+  'Core Languages': Code2,
+  'Full-Stack Web': Terminal,
+  'Embedded & Hardware': Cpu,
+  'Databases & DevOps': Database,
 }
 
 export default function Skills() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const [activeCategory, setActiveCategory] = useState<string>('All')
+
+  const categories = ['All', ...skillsData.map(c => c.category)]
+
+  const filteredCategories =
+    activeCategory === 'All'
+      ? skillsData
+      : skillsData.filter(c => c.category === activeCategory)
 
   return (
-    <section id="skills" className="section-padding relative bg-bg-secondary/30" ref={ref} aria-label="Skills">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+    <section id="skills" className="section-spacing relative bg-[#08090d] border-t border-white/[0.04]" aria-label="Skills & Technologies">
+      <div className="section-wrapper">
+        {/* Header & Category Filter Tabs */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <span className="text-xs font-mono uppercase tracking-widest text-indigo-400">
+              02 / Technical Arsenal
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mt-2">
+              Technologies &amp; Competencies
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-xl">
+              Languages, frameworks, and hardware environments applied across academic and production projects.
+            </p>
+          </div>
 
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <span className="text-xs font-mono text-blue-400 tracking-widest uppercase">02 — Skills</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-white mt-2">
-            Technologies I Work With
-          </h2>
-          <p className="text-slate-400 mt-4 max-w-xl">
-            Tools and technologies I've used across projects and coursework.
-          </p>
-        </motion.div>
+          {/* Filter Pills */}
+          <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] self-start md:self-auto">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  activeCategory === cat
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <div className="space-y-12">
-          {skills.map((category, ci) => {
-            const colors = categoryColors[category.category] || { border: 'hover:border-blue-500/40', glow: 'hover:shadow-glow-blue', label: 'text-blue-400' }
+        {/* Skills Category Grid */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {filteredCategories.map(cat => {
+            const Icon = categoryIcons[cat.category] || Wrench
 
             return (
               <motion.div
-                key={category.category}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: ci * 0.1 }}
+                key={cat.category}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="surface-card p-6 border border-white/[0.06] flex flex-col justify-between"
               >
-                <h3 className={`text-xs font-mono uppercase tracking-widest mb-5 ${colors.label}`}>
-                  {category.category}
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {category.skills.map((skill, si) => (
-                    <motion.div
-                      key={skill.name}
-                      initial={{ opacity: 0, scale: 0.85 }}
-                      animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ duration: 0.4, delay: ci * 0.1 + si * 0.06 }}
-                      whileHover={{ y: -4, scale: 1.04 }}
-                      className={`skill-card group glass-card glass-card-hover rounded-2xl px-5 py-4 border border-white/[0.08] ${colors.border} ${colors.glow} cursor-default transition-all duration-300`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="skill-icon text-2xl" aria-hidden="true">
-                          {skill.icon}
-                        </span>
-                        <span className="text-slate-200 font-medium text-sm">{skill.name}</span>
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                      <Icon size={18} />
+                    </div>
+                    <div>
+                      <h3 className="font-display font-semibold text-white text-base">
+                        {cat.category}
+                      </h3>
+                      <p className="text-xs text-slate-400">{cat.description}</p>
+                    </div>
+                  </div>
+
+                  {/* Skills badges */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-5">
+                    {cat.skills.map(skill => (
+                      <div
+                        key={skill.name}
+                        className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                          skill.highlight
+                            ? 'bg-white/[0.04] border-white/[0.1] hover:border-indigo-500/40'
+                            : 'bg-white/[0.02] border-white/[0.04] hover:border-white/[0.1]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          <span className="text-base" aria-hidden="true">
+                            {skill.icon}
+                          </span>
+                          <span className="text-xs font-medium text-slate-200 truncate">
+                            {skill.name}
+                          </span>
+                        </div>
+                        {skill.level && (
+                          <span className="text-[10px] font-mono text-slate-500 pl-1">
+                            {skill.level === 'Advanced' ? 'Adv' : 'Pro'}
+                          </span>
+                        )}
                       </div>
-                    </motion.div>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-3 border-t border-white/[0.04] flex items-center justify-between text-[11px] font-mono text-slate-500">
+                  <span>{cat.skills.length} tools verified</span>
+                  <span>Active in projects</span>
                 </div>
               </motion.div>
             )

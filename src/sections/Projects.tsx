@@ -1,158 +1,152 @@
-import { useState, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { Github, ExternalLink, ArrowRight, Star } from 'lucide-react'
-import { usePortfolio } from '@/context/PortfolioContext'
-import type { Project } from '@/data/portfolio'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { ArrowUpRight, Github, Play, Sparkles, Layers } from 'lucide-react'
+import { projectsData, type Project } from '@/data/portfolio'
 import ProjectModal from '@/components/ProjectModal'
 
-function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: (p: Project) => void }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-50px' })
-  const isFeatured = project.featured && index < 2
-
-  return (
-    <motion.article
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      whileHover={{ y: -6 }}
-      onClick={() => onOpen(project)}
-      className={`project-card group relative glass-card rounded-2xl border border-white/[0.08] overflow-hidden cursor-pointer transition-all duration-300 hover:border-blue-500/30 hover:shadow-glow-blue ${
-        isFeatured ? 'md:col-span-2' : ''
-      }`}
-      aria-label={`${project.title} — Click for details`}
-    >
-      {/* Gradient background */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-
-      {/* Featured badge */}
-      {isFeatured && (
-        <div className="absolute top-4 right-4 z-10">
-          <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-medium">
-            <Star size={10} fill="currentColor" /> Featured
-          </span>
-        </div>
-      )}
-
-      <div className="relative z-10 p-6 md:p-8">
-        {/* Project visual area */}
-        <div className={`mb-6 rounded-xl overflow-hidden bg-gradient-to-br ${project.gradient} border border-white/[0.06] relative ${
-          isFeatured ? 'h-48 md:h-56' : 'h-36'
-        }`}>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-5xl mb-2" aria-hidden="true">
-                {project.id === 'smart-traffic' ? '🚦' : project.id === 'quantum-sim' ? '⚛️' : '🌐'}
-              </div>
-              <span className="text-xs font-mono text-slate-400">{project.role}</span>
-            </div>
-          </div>
-          {/* Animated grid overlay */}
-          <div className="absolute inset-0 bg-grid opacity-30" />
-        </div>
-
-        {/* Title */}
-        <h3 className="font-display text-xl md:text-2xl font-bold text-white mb-3 group-hover:gradient-text transition-colors">
-          {project.title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-slate-400 text-sm leading-relaxed mb-5 line-clamp-2">
-          {project.shortDescription}
-        </p>
-
-        {/* Tech badges */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.technologies.slice(0, isFeatured ? 5 : 3).map(tech => (
-            <motion.span
-              key={tech}
-              className="tech-badge"
-              whileHover={{ scale: 1.06 }}
-            >
-              {tech}
-            </motion.span>
-          ))}
-          {project.technologies.length > (isFeatured ? 5 : 3) && (
-            <span className="tech-badge opacity-60">+{project.technologies.length - (isFeatured ? 5 : 3)}</span>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={e => { e.stopPropagation(); onOpen(project) }}
-            className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors group/btn"
-          >
-            View Details
-            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-          </button>
-
-          {project.githubUrl && project.githubUrl !== '#' && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={e => e.stopPropagation()}
-              className="ml-auto p-2 rounded-lg glass-card glass-card-hover text-slate-400 hover:text-white transition-colors"
-              aria-label={`${project.title} GitHub repository`}
-            >
-              <Github size={16} />
-            </a>
-          )}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={e => e.stopPropagation()}
-              className="p-2 rounded-lg glass-card glass-card-hover text-slate-400 hover:text-white transition-colors"
-              aria-label={`${project.title} live demo`}
-            >
-              <ExternalLink size={16} />
-            </a>
-          )}
-        </div>
-      </div>
-    </motion.article>
-  )
-}
-
 export default function Projects() {
-  const { projects } = usePortfolio()
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const [filter, setFilter] = useState<string>('All')
+
+  const categories = ['All', 'Embedded / IoT', 'Algorithms', 'Circuit Design', 'Web Apps']
+
+  const filteredProjects =
+    filter === 'All'
+      ? projectsData
+      : projectsData.filter(p => p.category === filter)
 
   return (
-    <section id="projects" className="section-padding relative" ref={ref} aria-label="Projects">
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-blue-600/5 blur-3xl pointer-events-none" aria-hidden="true" />
+    <section id="projects" className="section-spacing relative bg-[#090a0f] border-t border-white/[0.04]" aria-label="Featured Projects">
+      <div className="section-wrapper">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <span className="text-xs font-mono uppercase tracking-widest text-indigo-400">
+              03 / Selected Inventions
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mt-2">
+              Featured Engineering Projects
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-xl">
+              From hardware microcontrollers and physics simulations to full-stack web applications.
+            </p>
+          </div>
 
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <span className="text-xs font-mono text-blue-400 tracking-widest uppercase">03 — Projects</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-white mt-2">
-            Things I've Built
-          </h2>
-          <p className="text-slate-400 mt-4 max-w-xl">
-            A selection of projects that reflect my interests and technical range. Click any card for full details.
-          </p>
-        </motion.div>
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] self-start md:self-auto">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  filter === cat
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* Bento grid */}
-        <div className="grid md:grid-cols-2 gap-5">
-          {projects.map((project, i) => (
-            <ProjectCard
+        {/* Projects Bento Grid */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {filteredProjects.map((project, idx) => (
+            <motion.article
               key={project.id}
-              project={project}
-              index={i}
-              onOpen={setSelectedProject}
-            />
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: idx * 0.08 }}
+              className="surface-card surface-card-hover p-6 sm:p-7 border border-white/[0.08] flex flex-col justify-between group cursor-pointer"
+              onClick={() => setSelectedProject(project)}
+            >
+              <div>
+                {/* Card Top Meta */}
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-white/[0.04] text-indigo-300 border border-white/[0.08]">
+                    {project.category}
+                  </span>
+
+                  {project.hasDemo && (
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                      <Play size={10} className="fill-current" />
+                      Interactive Demo
+                    </span>
+                  )}
+                </div>
+
+                {/* Project Title */}
+                <h3 className="font-display font-bold text-xl sm:text-2xl text-white group-hover:text-indigo-300 transition-colors flex items-center justify-between">
+                  <span>{project.title}</span>
+                  <ArrowUpRight size={18} className="text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all flex-shrink-0 ml-2" />
+                </h3>
+
+                {/* Tagline / Subtitle */}
+                <p className="text-xs font-mono text-slate-400 mt-1 mb-3">
+                  {project.tagline}
+                </p>
+
+                {/* Summary */}
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                  {project.shortDescription}
+                </p>
+
+                {/* Metrics Pill Grid */}
+                {project.metrics && (
+                  <div className="grid grid-cols-3 gap-2 py-3 mb-6 border-y border-white/[0.04]">
+                    {project.metrics.map(m => (
+                      <div key={m.label} className="text-center">
+                        <span className="block text-xs font-semibold text-white">{m.value}</span>
+                        <span className="block text-[10px] font-mono text-slate-500">{m.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                {/* Tech Badges */}
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  {project.technologies.slice(0, 4).map(t => (
+                    <span key={t} className="tech-tag">
+                      {t}
+                    </span>
+                  ))}
+                  {project.technologies.length > 4 && (
+                    <span className="text-[11px] font-mono text-slate-500 self-center pl-1">
+                      +{project.technologies.length - 4} more
+                    </span>
+                  )}
+                </div>
+
+                {/* Card Action Buttons */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+                  <button
+                    onClick={e => {
+                      e.stopPropagation()
+                      setSelectedProject(project)
+                    }}
+                    className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
+                  >
+                    View Details &amp; Architecture →
+                  </button>
+
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white transition-colors"
+                      aria-label={`${project.title} on GitHub`}
+                    >
+                      <Github size={15} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.article>
           ))}
         </div>
       </div>

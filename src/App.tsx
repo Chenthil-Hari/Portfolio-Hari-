@@ -1,26 +1,20 @@
 import { useEffect, useState } from 'react'
 import Navbar from '@/components/Navbar'
-import Cursor from '@/components/Cursor'
 import Hero from '@/sections/Hero'
 import About from '@/sections/About'
 import Skills from '@/sections/Skills'
 import Projects from '@/sections/Projects'
-import Experience from '@/sections/Experience'
-import Education from '@/sections/Education'
-import Achievements from '@/sections/Achievements'
-import GitHubSection from '@/sections/GitHub'
-import Contact from '@/sections/Contact'
+import Journey from '@/sections/Journey'
 import Guestbook from '@/sections/Guestbook'
+import Contact from '@/sections/Contact'
 import Footer from '@/sections/Footer'
 import Admin from '@/sections/Admin'
 import ResumeModal from '@/components/ResumeModal'
-
 import { PortfolioProvider } from '@/context/PortfolioContext'
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(false)
   const [portfolioData, setPortfolioData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
   const [isResumeOpen, setIsResumeOpen] = useState(false)
 
   // Detect route on load and on popstate
@@ -33,7 +27,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', checkRoute)
   }, [])
 
-  // Fetch portfolio data from database (with fallback to local static data in context helper)
+  // Background fetch of database data if available
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,82 +37,52 @@ export default function App() {
           setPortfolioData(data)
         }
       } catch (err) {
-        console.error('Failed to load portfolio data from DB, using fallback local data:', err)
-      } finally {
-        setLoading(false)
+        // Fallback silently to local static data
       }
-    };
+    }
     fetchData()
   }, [])
 
-  // Update mouse glow CSS var
-  useEffect(() => {
-    const onMouseMove = (e: MouseEvent) => {
-      document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`)
-      document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`)
-    }
-    window.addEventListener('mousemove', onMouseMove, { passive: true })
-    return () => window.removeEventListener('mousemove', onMouseMove)
-  }, [])
-
-  // Render Admin page view immediately — don't wait for DB loading
+  // Admin route handler
   if (isAdminRoute) {
     return (
       <PortfolioProvider value={portfolioData}>
-        <Admin 
-          initialData={portfolioData} 
+        <Admin
+          initialData={portfolioData}
           onClose={() => {
             window.history.pushState({}, '', '/')
             setIsAdminRoute(false)
-          }} 
+          }}
         />
       </PortfolioProvider>
     )
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center text-slate-400">
-        <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
-        <div className="relative flex flex-col items-center">
-          <div className="w-12 h-12 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin mb-4" />
-          <p className="text-sm font-mono tracking-widest text-slate-500 uppercase">Loading Environment...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Render Public portfolio site view
   return (
     <PortfolioProvider value={portfolioData}>
-      <div className="noise-overlay min-h-screen bg-bg-primary text-slate-100">
-        {/* Custom cursor (disabled or default null in Cursor.tsx) */}
-        <Cursor />
-
+      <div className="min-h-screen bg-[#08090d] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-white">
         {/* Navigation */}
-        <Navbar />
+        <Navbar onOpenResume={() => setIsResumeOpen(true)} />
 
-        {/* Main content */}
-        <main>
+        {/* Main Content Sections */}
+        <main className="flex-1">
           <Hero onOpenResume={() => setIsResumeOpen(true)} />
           <About />
           <Skills />
           <Projects />
-          <Experience />
-          <Education />
-          <Achievements />
-          <GitHubSection />
+          <Journey />
           <Guestbook />
           <Contact />
         </main>
 
-        <Footer />
+        {/* Footer */}
+        <Footer onOpenResume={() => setIsResumeOpen(true)} />
 
-        {/* Resume Modal overlay */}
-        <ResumeModal 
-          isOpen={isResumeOpen} 
-          onClose={() => setIsResumeOpen(false)} 
-          resumeUrl={portfolioData?.personalInfo?.resumeUrl || '/resume.pdf'} 
+        {/* Fullscreen PDF Resume Modal */}
+        <ResumeModal
+          isOpen={isResumeOpen}
+          onClose={() => setIsResumeOpen(false)}
+          resumeUrl="/resume.pdf"
         />
       </div>
     </PortfolioProvider>

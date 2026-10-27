@@ -1,152 +1,231 @@
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { Mail, Github, Linkedin, ExternalLink } from 'lucide-react'
-import { usePortfolio } from '@/context/PortfolioContext'
-
-const GOOGLE_FORM_EMBED_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSc3HKz-GCVAd8fWE30HTHAdQ7vwUw-tUVkQP3kT8a5GIqRM5A/viewform?embedded=true'
-
-const GOOGLE_FORM_OPEN_URL =
-  'https://forms.gle/7cZ117eGJ6HcUY8m6'
+import { useState, type FormEvent } from 'react'
+import { motion } from 'framer-motion'
+import { Mail, Github, Linkedin, Copy, Check, Send, ExternalLink, Clock, Sparkles } from 'lucide-react'
+import { personalInfo } from '@/data/portfolio'
 
 export default function Contact() {
-  const { personalInfo } = usePortfolio()
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const [copied, setCopied] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
 
-  const socials = [
-    {
-      icon: Mail,
-      label: 'Email',
-      value: personalInfo.email,
-      href: `mailto:${personalInfo.email}`,
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/10',
-      border: 'border-blue-500/20',
-    },
-    {
-      icon: Github,
-      label: 'GitHub',
-      value: `github.com/${personalInfo.githubUsername}`,
-      href: personalInfo.github,
-      color: 'text-slate-300',
-      bg: 'bg-white/[0.05]',
-      border: 'border-white/[0.1]',
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      value: 'Connect on LinkedIn',
-      href: personalInfo.linkedin,
-      color: 'text-blue-400',
-      bg: 'bg-blue-600/10',
-      border: 'border-blue-600/20',
-    },
-  ]
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(personalInfo.email)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  const handleDirectSend = (e: FormEvent) => {
+    e.preventDefault()
+    if (!message.trim()) return
+
+    const mailtoSubject = encodeURIComponent(subject || `Inquiry from ${name || 'Portfolio Visitor'}`)
+    const mailtoBody = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n---\nSent from ${personalInfo.name}'s Portfolio`
+    )
+
+    window.location.href = `mailto:${personalInfo.email}?subject=${mailtoSubject}&body=${mailtoBody}`
+  }
 
   return (
-    <section id="contact" className="section-padding relative" ref={ref} aria-label="Contact">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-violet-600/5 blur-3xl pointer-events-none" aria-hidden="true" />
-
-      <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
-        >
-          <span className="text-xs font-mono text-blue-400 tracking-widest uppercase">08 — Contact</span>
-          <h2 className="font-display text-4xl md:text-6xl font-bold text-white mt-4 mb-4">
-            Let's Build Something
-            <span className="gradient-text block">Together.</span>
+    <section id="contact" className="section-spacing relative bg-[#08090d] border-t border-white/[0.04]" aria-label="Contact Hari">
+      <div className="section-wrapper">
+        {/* Section Header */}
+        <div className="max-w-2xl mb-12">
+          <span className="text-xs font-mono uppercase tracking-widest text-indigo-400">
+            06 / Get In Touch
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mt-2">
+            Let's build something remarkable together.
           </h2>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
-            Have an idea, opportunity, or project in mind? I'd love to hear about it.
+          <p className="text-slate-400 text-sm sm:text-base mt-3">
+            Open for software developer internships, full-time opportunities, open-source collaboration, and technical discussions.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Left — Social links */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="space-y-4"
-          >
-            <h3 className="text-slate-300 font-semibold mb-6">Reach out directly</h3>
-            {socials.map(({ icon: Icon, label, value, href, color, bg, border }, i) => (
-              <motion.a
-                key={label}
-                href={href}
-                target={href.startsWith('mailto') ? undefined : '_blank'}
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, x: -20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 0.3 + i * 0.1 }}
-                whileHover={{ x: 4 }}
-                className={`flex items-center gap-4 p-4 rounded-2xl glass-card glass-card-hover border ${border} block`}
-              >
-                <div className={`p-3 rounded-xl ${bg} border ${border}`}>
-                  <Icon size={18} className={color} />
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
+          {/* Direct Communication Details (5 cols) */}
+          <div className="lg:col-span-5 space-y-4">
+            {/* Quick 1-Click Copy Email Card */}
+            <div className="surface-card p-6 border border-white/[0.08] relative overflow-hidden">
+              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block mb-2">
+                Direct Email
+              </span>
+              <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                <div className="flex items-center gap-2.5 truncate">
+                  <Mail size={16} className="text-indigo-400 flex-shrink-0" />
+                  <span className="text-sm font-mono text-white truncate">
+                    {personalInfo.email}
+                  </span>
                 </div>
-                <div>
-                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">{label}</div>
-                  <div className="text-white text-sm font-medium">{value}</div>
-                </div>
-              </motion.a>
-            ))}
-
-            {/* Open form in new tab fallback */}
-            <motion.a
-              href={GOOGLE_FORM_OPEN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.6 }}
-              className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors mt-2 pl-1"
-            >
-              <ExternalLink size={11} />
-              Open contact form in new tab
-            </motion.a>
-          </motion.div>
-
-          {/* Right — Embedded Google Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="relative"
-          >
-            {/* Glassmorphic wrapper */}
-            <div className="glass-card rounded-2xl border border-white/[0.08] overflow-hidden relative">
-              {/* Top bar label */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-                <span className="text-xs font-mono text-slate-400">// contact_form.google</span>
-                <span className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Live · Responses go to Gmail
-                </span>
+                <button
+                  onClick={handleCopyEmail}
+                  className="px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs font-mono flex items-center gap-1.5 transition-colors flex-shrink-0 border border-indigo-500/20"
+                  aria-label="Copy Email Address"
+                >
+                  {copied ? (
+                    <>
+                      <Check size={12} className="text-emerald-400" />
+                      <span className="text-emerald-400">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={12} />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
               </div>
 
-              {/* Google Form iframe */}
-              <iframe
-                src={GOOGLE_FORM_EMBED_URL}
-                title="Contact Form"
-                width="100%"
-                height="560"
-                frameBorder="0"
-                marginHeight={0}
-                marginWidth={0}
-                className="block bg-transparent"
-                style={{ colorScheme: 'normal' }}
-              >
-                Loading…
-              </iframe>
+              <div className="flex items-center gap-2 mt-4 text-xs font-mono text-slate-400">
+                <Clock size={13} className="text-indigo-400" />
+                <span>Typical response time: within 24 hours</span>
+              </div>
             </div>
-          </motion.div>
+
+            {/* Social Accounts Card */}
+            <div className="surface-card p-6 border border-white/[0.08] space-y-3">
+              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
+                Social &amp; Developer Profiles
+              </span>
+
+              <a
+                href={personalInfo.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] text-slate-300 hover:text-white transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-white/[0.04] text-white">
+                    <Github size={16} />
+                  </div>
+                  <div>
+                    <span className="block text-sm font-medium text-white">GitHub</span>
+                    <span className="block text-xs font-mono text-slate-400">@{personalInfo.githubUsername}</span>
+                  </div>
+                </div>
+                <ExternalLink size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
+              </a>
+
+              <a
+                href={personalInfo.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] text-slate-300 hover:text-white transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                    <Linkedin size={16} />
+                  </div>
+                  <div>
+                    <span className="block text-sm font-medium text-white">LinkedIn</span>
+                    <span className="block text-xs font-mono text-slate-400">hari-subramanian-pb</span>
+                  </div>
+                </div>
+                <ExternalLink size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
+              </a>
+            </div>
+
+            {/* Google Form Alternate Card */}
+            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-400 font-mono">
+                <Sparkles size={14} className="text-indigo-400" />
+                <span>Prefer a structured form?</span>
+              </div>
+              <a
+                href="https://forms.gle/7cZ117eGJ6HcUY8m6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1"
+              >
+                Google Form <ExternalLink size={11} />
+              </a>
+            </div>
+          </div>
+
+          {/* Interactive Direct Message Form (7 cols) */}
+          <div className="lg:col-span-7">
+            <div className="surface-card p-6 sm:p-8 border border-white/[0.08]">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/[0.06]">
+                <div>
+                  <h3 className="font-display font-semibold text-white text-base">Send a Direct Message</h3>
+                  <p className="text-xs text-slate-400 font-mono mt-0.5">Launches your default email client with your message</p>
+                </div>
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              </div>
+
+              <form onSubmit={handleDirectSend} className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="contact-name" className="block text-xs font-mono text-slate-400 mb-1.5">
+                      Your Name
+                    </label>
+                    <input
+                      id="contact-name"
+                      type="text"
+                      required
+                      placeholder="e.g. Maya Patel"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      className="input-field"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="block text-xs font-mono text-slate-400 mb-1.5">
+                      Your Email Address
+                    </label>
+                    <input
+                      id="contact-email"
+                      type="email"
+                      required
+                      placeholder="e.g. maya@example.com"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="input-field"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="contact-subject" className="block text-xs font-mono text-slate-400 mb-1.5">
+                    Subject
+                  </label>
+                  <input
+                    id="contact-subject"
+                    type="text"
+                    placeholder="e.g. Software Developer Opportunity / Project Collaboration"
+                    value={subject}
+                    onChange={e => setSubject(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="contact-message" className="block text-xs font-mono text-slate-400 mb-1.5">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    required
+                    rows={4}
+                    placeholder="Hello Hari, I came across your portfolio and wanted to discuss..."
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    className="input-field resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/35"
+                >
+                  <Send size={15} />
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </section>
