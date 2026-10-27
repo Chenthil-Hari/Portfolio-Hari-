@@ -22,7 +22,7 @@ export interface PersonalInfo {
 
 export const personalInfo: PersonalInfo = {
   name: 'Hari',
-  fullName: 'Hari Subramanian',
+  fullName: 'Chenthil Hari',
   title: 'Software Developer & Computer Science Student',
   subtitle: 'Building practical systems, embedded software, and full-stack web applications.',
   tagline: 'Passionate about engineering reliable software, solving algorithmic problems, and bridging the gap between hardware and modern web interfaces.',
@@ -31,12 +31,12 @@ export const personalInfo: PersonalInfo = {
     "Whether designing dynamic traffic timing algorithms on ESP32 microcontrollers, modeling quantum gate operations in Python, or building responsive web platforms with React and MongoDB, I care deeply about writing clean, maintainable, and purposeful code.",
     "When I'm not writing code, I enjoy exploring new developer tools, participating in hackathons, and collaborating on open-source projects."
   ],
-  email: 'harisub1404@gmail.com',
-  github: 'https://github.com/Subramaniampb',
-  githubUsername: 'Subramaniampb',
-  linkedin: 'https://www.linkedin.com/in/hari-subramanian-pb',
+  email: 'chenthilhari@gmail.com',
+  github: 'https://github.com/Chenthil-Hari',
+  githubUsername: 'Chenthil-Hari',
+  linkedin: 'https://linkedin.com/in/chenthil-hari',
   resumeUrl: '/resume.pdf',
-  avatar: '/avatar.png',
+  avatar: 'https://i.ibb.co/dwNCfvsX/Hari-Photo-jpg.jpg',
   location: 'Tamil Nadu, India',
   availability: 'Open to Software & Embedded Roles',
   stats: [
@@ -155,7 +155,7 @@ export const projectsData: Project[] = [
       'Serial monitor telemetry for live status inspection',
     ],
     challenges: 'Overcoming sensor noise fluctuations and false readings under varied lighting conditions. Calibrated threshold hysteresis to ensure reliable signal decisions.',
-    githubUrl: 'https://github.com/Subramaniampb',
+    githubUrl: 'https://github.com/Chenthil-Hari',
     hasDemo: true,
     demoType: 'traffic',
     featured: true,
@@ -183,7 +183,7 @@ export const projectsData: Project[] = [
       'Matrix state vector evolution visualizations',
     ],
     challenges: 'Preserving numerical stability and normalization across state vectors during iterative decoherence transformations.',
-    githubUrl: 'https://github.com/Subramaniampb',
+    githubUrl: 'https://github.com/Chenthil-Hari',
     featured: true,
     category: 'Algorithms',
     metrics: [
@@ -209,7 +209,7 @@ export const projectsData: Project[] = [
       'Peripheral integration with switches, relays, and displays',
     ],
     challenges: 'Ensuring clock cycle parity and simulating real-world sensor response delays inside the software execution model.',
-    githubUrl: 'https://github.com/Subramaniampb',
+    githubUrl: 'https://github.com/Chenthil-Hari',
     featured: true,
     category: 'Circuit Design',
     metrics: [
@@ -235,7 +235,7 @@ export const projectsData: Project[] = [
       'Bug fixes and test suite coverage improvements',
     ],
     challenges: 'Navigating an existing codebase, adhering to team architectural conventions, and ensuring seamless asynchronous email delivery.',
-    githubUrl: 'https://github.com/Subramaniampb',
+    githubUrl: 'https://github.com/Chenthil-Hari',
     featured: false,
     category: 'Web Apps',
     metrics: [

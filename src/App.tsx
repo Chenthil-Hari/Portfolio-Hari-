@@ -27,28 +27,30 @@ export default function App() {
     return () => window.removeEventListener('popstate', checkRoute)
   }, [])
 
+  const fetchData = async () => {
+    try {
+      const res = await fetch('/api/get')
+      if (res.ok) {
+        const data = await res.json()
+        setPortfolioData(data)
+      }
+    } catch (err) {
+      // Fallback silently to local static data
+    }
+  }
+
   // Background fetch of database data if available
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch('/api/get')
-        if (res.ok) {
-          const data = await res.json()
-          setPortfolioData(data)
-        }
-      } catch (err) {
-        // Fallback silently to local static data
-      }
-    }
     fetchData()
   }, [])
 
   // Admin route handler
   if (isAdminRoute) {
     return (
-      <PortfolioProvider value={portfolioData}>
+      <PortfolioProvider value={portfolioData} onUpdate={setPortfolioData} onRefresh={fetchData}>
         <Admin
           initialData={portfolioData}
+          onUpdateData={(newData: any) => setPortfolioData(newData)}
           onClose={() => {
             window.history.pushState({}, '', '/')
             setIsAdminRoute(false)
@@ -59,7 +61,7 @@ export default function App() {
   }
 
   return (
-    <PortfolioProvider value={portfolioData}>
+    <PortfolioProvider value={portfolioData} onUpdate={setPortfolioData} onRefresh={fetchData}>
       <div className="min-h-screen bg-[#08090d] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-white">
         {/* Navigation */}
         <Navbar onOpenResume={() => setIsResumeOpen(true)} />

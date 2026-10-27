@@ -1,14 +1,39 @@
 import { connectToDatabase } from './_db.js'
-import { personalInfo, skills, projects, experiences, education, achievements } from '../src/data/portfolio.js'
-
-// Default fallback data matching the schema
-const defaultData = {
+import {
   personalInfo,
+  skillsData,
+  projectsData,
+  journeyData,
   skills,
   projects,
   experiences,
   education,
   achievements
+} from '../src/data/portfolio.js'
+
+// Default fallback data matching both modern and legacy schemas
+const defaultData = {
+  personalInfo,
+  skillsData,
+  projectsData,
+  journeyData,
+  skills,
+  projects,
+  experiences,
+  education,
+  achievements,
+  seo: {
+    metaTitle: 'Hari | Software Developer & CSE Student',
+    metaDescription: 'Building practical systems, embedded software, and modern full-stack web applications.',
+    keywords: 'Hari, Software Developer, Embedded Systems, ESP32, React, MongoDB, Python',
+    ogImage: '/avatar.png',
+    allowIndexing: true,
+  },
+  theme: {
+    accentColor: 'indigo',
+    showGuestbook: true,
+    showTrafficDemo: true,
+  }
 }
 
 export default async function handler(req: any, res: any) {
@@ -40,7 +65,18 @@ export default async function handler(req: any, res: any) {
 
     // Return the stored data (excluding mongodb fields)
     const { _id, type, ...cleanData } = portfolioData as any
-    return res.status(200).json(cleanData)
+
+    // Ensure compatibility aliases exist on the returned cleanData
+    const normalizedData = {
+      ...defaultData,
+      ...cleanData,
+      skillsData: cleanData.skillsData || cleanData.skills || defaultData.skillsData,
+      projectsData: cleanData.projectsData || cleanData.projects || defaultData.projectsData,
+      journeyData: cleanData.journeyData || defaultData.journeyData,
+      personalInfo: cleanData.personalInfo || defaultData.personalInfo,
+    }
+
+    return res.status(200).json(normalizedData)
   } catch (error: any) {
     console.error('Error fetching portfolio data from DB:', error)
     // Fail gracefully: return default data so the website is never broken

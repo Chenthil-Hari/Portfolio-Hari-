@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { GraduationCap, Briefcase, Trophy, Calendar, CheckCircle, Award } from 'lucide-react'
-import { journeyData, type JourneyItem } from '@/data/portfolio'
+import type { JourneyItem } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 export default function Journey() {
+  const { journeyData } = usePortfolio()
   const [activeTab, setActiveTab] = useState<'all' | 'education' | 'experience' | 'achievement'>('all')
 
   const filteredItems =
     activeTab === 'all'
-      ? journeyData
-      : journeyData.filter(item => item.type === activeTab)
+      ? journeyData || []
+      : (journeyData || []).filter(item => item.type === activeTab)
 
   return (
     <section id="journey" className="section-spacing relative bg-[#08090d] border-t border-white/[0.04]" aria-label="Experience and Education Journey">

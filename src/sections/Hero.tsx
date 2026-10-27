@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion'
 import { ArrowDown, Github, Linkedin, Mail, FileText, Sparkles, MapPin, Cpu, Globe, Terminal } from 'lucide-react'
-import { personalInfo } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 interface HeroProps {
   onOpenResume: () => void
 }
 
 export default function Hero({ onOpenResume }: HeroProps) {
+  const { personalInfo } = usePortfolio()
   return (
     <section
       id="hero"

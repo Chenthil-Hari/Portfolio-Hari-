@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Cpu, Layers, Code, Compass, CheckCircle2 } from 'lucide-react'
-import { personalInfo } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 const pillars = [
   {
@@ -27,6 +27,7 @@ const pillars = [
 ]
 
 export default function About() {
+  const { personalInfo } = usePortfolio()
   return (
     <section id="about" className="section-spacing relative bg-[#090a0f] border-t border-white/[0.04]" aria-label="About Hari">
       <div className="section-wrapper">

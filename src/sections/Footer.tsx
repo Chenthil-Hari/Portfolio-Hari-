@@ -1,11 +1,12 @@
 import { ArrowUp, Github, Linkedin, Mail, Heart } from 'lucide-react'
-import { personalInfo } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 interface FooterProps {
   onOpenResume: () => void
 }
 
 export default function Footer({ onOpenResume }: FooterProps) {
+  const { personalInfo } = usePortfolio()
   const currentYear = new Date().getFullYear()
 
   const scrollToTop = () => {

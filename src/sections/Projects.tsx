@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Github, Play, Sparkles, Layers } from 'lucide-react'
-import { projectsData, type Project } from '@/data/portfolio'
+import type { Project } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 import ProjectModal from '@/components/ProjectModal'
 
 export default function Projects() {
+  const { projectsData } = usePortfolio()
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [filter, setFilter] = useState<string>('All')
 
@@ -12,8 +14,8 @@ export default function Projects() {
 
   const filteredProjects =
     filter === 'All'
-      ? projectsData
-      : projectsData.filter(p => p.category === filter)
+      ? projectsData || []
+      : (projectsData || []).filter(p => p.category === filter)
 
   return (
     <section id="projects" className="section-spacing relative bg-[#090a0f] border-t border-white/[0.04]" aria-label="Featured Projects">

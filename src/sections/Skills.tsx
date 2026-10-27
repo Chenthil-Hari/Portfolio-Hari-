@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Terminal, Code2, Cpu, Database, Wrench } from 'lucide-react'
-import { skillsData } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 const categoryIcons: Record<string, any> = {
   'Core Languages': Code2,
@@ -11,9 +11,10 @@ const categoryIcons: Record<string, any> = {
 }
 
 export default function Skills() {
+  const { skillsData } = usePortfolio()
   const [activeCategory, setActiveCategory] = useState<string>('All')
 
-  const categories = ['All', ...skillsData.map(c => c.category)]
+  const categories = ['All', ...(skillsData || []).map(c => c.category)]
 
   const filteredCategories =
     activeCategory === 'All'

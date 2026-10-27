@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, FileText, ArrowUpRight } from 'lucide-react'
-import { personalInfo } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 interface NavbarProps {
   onOpenResume: () => void
@@ -17,6 +17,7 @@ const navItems = [
 ]
 
 export default function Navbar({ onOpenResume }: NavbarProps) {
+  const { personalInfo } = usePortfolio()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 

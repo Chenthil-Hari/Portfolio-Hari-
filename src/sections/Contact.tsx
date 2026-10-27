@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Github, Linkedin, Copy, Check, Send, ExternalLink, Clock, Sparkles } from 'lucide-react'
-import { personalInfo } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 export default function Contact() {
+  const { personalInfo } = usePortfolio()
   const [copied, setCopied] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -120,7 +121,9 @@ export default function Contact() {
                   </div>
                   <div>
                     <span className="block text-sm font-medium text-white">LinkedIn</span>
-                    <span className="block text-xs font-mono text-slate-400">hari-subramanian-pb</span>
+                    <span className="block text-xs font-mono text-slate-400">
+                      {personalInfo.linkedin?.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\/?/, '').replace(/\/$/, '') || 'Connect'}
+                    </span>
                   </div>
                 </div>
                 <ExternalLink size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />

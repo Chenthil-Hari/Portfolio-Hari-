@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Github, Star, GitFork, ExternalLink, AlertCircle } from 'lucide-react'
 import { fetchGitHubRepos, fetchGitHubUser, type GitHubRepo } from '@/lib/github'
-import { personalInfo } from '@/data/portfolio'
+import { usePortfolio } from '@/context/PortfolioContext'
 
 function LanguageColor(lang: string | null) {
   const map: Record<string, string> = {
@@ -19,6 +19,7 @@ function LanguageColor(lang: string | null) {
 }
 
 export default function GitHubSection() {
+  const { personalInfo } = usePortfolio()
   const [repos, setRepos] = useState<GitHubRepo[]>([])
   const [user, setUser] = useState<{ public_repos: number; followers: number; following: number } | null>(null)
   const [loading, setLoading] = useState(true)

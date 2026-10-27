@@ -17,6 +17,7 @@ import {
 interface AdminProps {
   initialData: any
   onClose: () => void
+  onUpdateData?: (data: any) => void
 }
 
 type TabType =
@@ -32,7 +33,7 @@ type TabType =
   | 'media'
   | 'security'
 
-export default function Admin({ initialData, onClose }: AdminProps) {
+export default function Admin({ initialData, onClose, onUpdateData }: AdminProps) {
   const [password, setPassword] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [activeTab, setActiveTab] = useState<TabType>('overview')
@@ -68,6 +69,30 @@ export default function Admin({ initialData, onClose }: AdminProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Sync content with initialData as soon as database fetch resolves
+  useEffect(() => {
+    if (initialData && !hasUnsavedChanges) {
+      setContent({
+        personalInfo: initialData.personalInfo || defaultPersonalInfo,
+        skillsData: initialData.skillsData || initialData.skills || defaultSkills,
+        projectsData: initialData.projectsData || initialData.projects || defaultProjects,
+        journeyData: initialData.journeyData || defaultJourney,
+        seo: initialData.seo || {
+          metaTitle: 'Hari | Software Developer & CSE Student',
+          metaDescription: 'Building practical systems, embedded software, and modern full-stack web applications.',
+          keywords: 'Hari, Software Developer, Embedded Systems, ESP32, React, MongoDB, Python',
+          ogImage: '/avatar.png',
+          allowIndexing: true,
+        },
+        theme: initialData.theme || {
+          accentColor: 'indigo',
+          showGuestbook: true,
+          showTrafficDemo: true,
+        },
+      })
+    }
+  }, [initialData])
 
   // Guestbook live list
   const [guestbookEntries, setGuestbookEntries] = useState<any[]>([])
@@ -106,19 +131,23 @@ export default function Admin({ initialData, onClose }: AdminProps) {
   const handleSave = async () => {
     setSaving(true)
     try {
+      const payloadData = {
+        personalInfo: content.personalInfo,
+        skillsData: content.skillsData,
+        projectsData: content.projectsData,
+        journeyData: content.journeyData,
+        skills: content.skillsData,
+        projects: content.projectsData,
+        seo: content.seo,
+        theme: content.theme,
+      }
+
       const res = await fetch('/api/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           password,
-          data: {
-            personalInfo: content.personalInfo,
-            skillsData: content.skillsData,
-            projectsData: content.projectsData,
-            journeyData: content.journeyData,
-            seo: content.seo,
-            theme: content.theme,
-          },
+          data: payloadData,
         }),
       })
 
@@ -129,7 +158,8 @@ export default function Admin({ initialData, onClose }: AdminProps) {
       }
 
       setHasUnsavedChanges(false)
-      showToast('success', 'Changes published live to MongoDB Atlas! Refresh your public site to view updates.')
+      onUpdateData?.(payloadData)
+      showToast('success', 'Changes published live to MongoDB Atlas and applied to your portfolio!')
     } catch (err: any) {
       console.error(err)
       showToast('error', err.message || 'Error saving changes to database.')
@@ -191,7 +221,7 @@ export default function Admin({ initialData, onClose }: AdminProps) {
       technologies: ['C++', 'Python', 'React'],
       keyFeatures: ['Feature 1', 'Feature 2'],
       challenges: 'Hardware constraints, timing issues, or scaling hurdles.',
-      githubUrl: 'https://github.com/Subramaniampb',
+      githubUrl: 'https://github.com/Chenthil-Hari',
       featured: false,
       category: 'Embedded / IoT' as const,
       hasDemo: false,
