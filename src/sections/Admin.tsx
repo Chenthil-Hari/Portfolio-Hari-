@@ -6,8 +6,7 @@ import {
   Search, Palette, Shield, FileText, Plus, Trash2, Edit3, Eye,
   ExternalLink, Download, Upload, Copy, Check, Sparkles, RefreshCw,
   HelpCircle, Menu, X, ArrowUpRight, Cpu, Layers,
-  Mail, Send, Clock, Inbox, Reply, Database, BarChart3,
-  Bot, CheckCircle, XCircle, AlertTriangle, Filter, ChevronDown, ChevronUp, History, Radio
+  Mail, Send, Clock, Inbox, Reply, Database, BarChart3
 } from 'lucide-react'
 import {
   personalInfo as defaultPersonalInfo,
@@ -18,30 +17,28 @@ import {
 
 interface AdminProps {
   initialData: any
-  initialTab?: TabType
   onClose: () => void
   onUpdateData?: (data: any) => void
 }
 
 type TabType =
   | 'overview'
-  | 'mail-agent'
-  | 'inbox'
   | 'hero'
   | 'about'
   | 'skills'
   | 'projects'
   | 'journey'
   | 'guestbook'
+  | 'inbox'
   | 'seo'
   | 'theme'
   | 'media'
   | 'security'
 
-export default function Admin({ initialData, initialTab = 'overview', onClose, onUpdateData }: AdminProps) {
+export default function Admin({ initialData, onClose, onUpdateData }: AdminProps) {
   const [password, setPassword] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [activeTab, setActiveTab] = useState<TabType>(initialTab)
+  const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
@@ -112,29 +109,6 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
   const [backupEmailing, setBackupEmailing] = useState(false)
   const [sendingDigest, setSendingDigest] = useState(false)
 
-  // Haritech AI Email Agent state
-  const [mailThreads, setMailThreads] = useState<any[]>([])
-  const [mailMetrics, setMailMetrics] = useState<any>({
-    totalReceived: 0,
-    pendingApprovals: 0,
-    sentEmails: 0,
-    rejectedEmails: 0,
-    failedEmails: 0,
-    spamDetected: 0,
-    categoryBreakdown: {},
-  })
-  const [mailMonitoring, setMailMonitoring] = useState<any>(null)
-  const [loadingMailAgent, setLoadingMailAgent] = useState(false)
-  const [mailStatusFilter, setMailStatusFilter] = useState('all')
-  const [mailCategoryFilter, setMailCategoryFilter] = useState('all')
-  const [mailSearchQuery, setMailSearchQuery] = useState('')
-  const [expandedThreadId, setExpandedThreadId] = useState<string | null>(null)
-  const [editingThreadId, setEditingThreadId] = useState<string | null>(null)
-  const [draftEditText, setDraftEditText] = useState('')
-  const [performingMailAction, setPerformingMailAction] = useState<string | null>(null)
-  const [simulatingAgent, setSimulatingAgent] = useState(false)
-  const [syncingGmail, setSyncingGmail] = useState(false)
-
   const showToast = (type: 'success' | 'error' | 'info', message: string) => {
     setToast({ type, message })
     setTimeout(() => setToast(null), 4500)
@@ -170,59 +144,15 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
     }
   }, [activeTab, isAuthenticated])
 
-  // Load Haritech AI Email Agent threads & metrics
-  const fetchMailAgentData = async () => {
-    if (!isAuthenticated) return
-    setLoadingMailAgent(true)
-    try {
-      const queryParams = new URLSearchParams()
-      if (mailStatusFilter !== 'all') queryParams.set('status', mailStatusFilter)
-      if (mailCategoryFilter !== 'all') queryParams.set('category', mailCategoryFilter)
-      if (mailSearchQuery) queryParams.set('search', mailSearchQuery)
-
-      const res = await fetch(`/api/mail-agent?${queryParams.toString()}`, {
-        headers: { 'x-admin-password': password },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        setMailThreads(data.threads || [])
-        if (data.metrics) setMailMetrics(data.metrics)
-        if (data.monitoringStatus) setMailMonitoring(data.monitoringStatus)
-      }
-    } catch (err) {
-      console.error('Failed to fetch mail agent data:', err)
-    } finally {
-      setLoadingMailAgent(false)
-    }
-  }
-
-  useEffect(() => {
-    if ((activeTab === 'mail-agent' || activeTab === 'overview') && isAuthenticated) {
-      fetchMailAgentData()
-    }
-  }, [activeTab, isAuthenticated, mailStatusFilter, mailCategoryFilter])
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (!password.trim()) {
       setLoginError('Password is required')
-      // Fire-and-forget security alert for empty password attempt
-      fetch('/api/admin-alert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event: 'login', success: false, reason: 'Empty password' }),
-      }).catch(() => {})
       return
     }
     // Verify locally and unlock
     setIsAuthenticated(true)
     setLoginError('')
-    // Fire-and-forget security alert for successful login
-    fetch('/api/admin-alert', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ event: 'login', success: true }),
-    }).catch(() => {})
   }
 
   const handleSave = async () => {
@@ -362,135 +292,6 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
       showToast('error', err.message || 'Failed to send reply.')
     } finally {
       setSendingReply(false)
-    }
-  }
-
-  // ─────────────────────────────────────────────
-  //  Haritech AI Email Agent Actions
-  // ─────────────────────────────────────────────
-  const handleApproveMail = async (threadId: string, customDraft?: string) => {
-    setPerformingMailAction(threadId)
-    try {
-      const res = await fetch('/api/mail-agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-        body: JSON.stringify({
-          action: 'approve',
-          threadId,
-          draftReply: customDraft,
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Approval failed')
-      showToast('success', data.message || 'Approved & sent via Gmail API!')
-      setEditingThreadId(null)
-      fetchMailAgentData()
-    } catch (err: any) {
-      showToast('error', err.message || 'Error approving email.')
-    } finally {
-      setPerformingMailAction(null)
-    }
-  }
-
-  const handleRejectMail = async (threadId: string) => {
-    setPerformingMailAction(threadId)
-    try {
-      const res = await fetch('/api/mail-agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-        body: JSON.stringify({ action: 'reject', threadId }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Rejection failed')
-      showToast('info', 'Inquiry marked as rejected. No email will be sent.')
-      fetchMailAgentData()
-    } catch (err: any) {
-      showToast('error', err.message || 'Error rejecting inquiry.')
-    } finally {
-      setPerformingMailAction(null)
-    }
-  }
-
-  const handleSaveDraft = async (threadId: string) => {
-    if (!draftEditText.trim()) return
-    setPerformingMailAction(threadId)
-    try {
-      const res = await fetch('/api/mail-agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-        body: JSON.stringify({ action: 'edit', threadId, draftReply: draftEditText.trim() }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Edit failed')
-      showToast('success', 'Draft saved! You can now approve or edit again.')
-      setEditingThreadId(null)
-      fetchMailAgentData()
-    } catch (err: any) {
-      showToast('error', err.message || 'Error saving draft.')
-    } finally {
-      setPerformingMailAction(null)
-    }
-  }
-
-  const handleDeleteMailThread = async (threadId: string) => {
-    setPerformingMailAction(threadId)
-    try {
-      const res = await fetch('/api/mail-agent', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-        body: JSON.stringify({ threadId }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Delete failed')
-      showToast('info', 'Email thread deleted.')
-      fetchMailAgentData()
-    } catch (err: any) {
-      showToast('error', err.message || 'Error deleting thread.')
-    } finally {
-      setPerformingMailAction(null)
-    }
-  }
-
-  const handleRunSimulation = async () => {
-    setSimulatingAgent(true)
-    try {
-      const res = await fetch('/api/mail-agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-        body: JSON.stringify({ action: 'test-agent' }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Simulation failed')
-      showToast(
-        'success',
-        data.telegramNotificationDispatched
-          ? 'Simulation complete! Check your Telegram for the approval card.'
-          : 'Simulation complete! Created pending draft in your dashboard.'
-      )
-      fetchMailAgentData()
-    } catch (err: any) {
-      showToast('error', err.message || 'Simulation test failed.')
-    } finally {
-      setSimulatingAgent(false)
-    }
-  }
-
-  const handleSyncGmail = async () => {
-    setSyncingGmail(true)
-    try {
-      const res = await fetch('/api/mail-agent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-        body: JSON.stringify({ action: 'sync-gmail' }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Sync failed')
-      showToast('info', `Gmail sync complete: ${data.scanned} scanned, ${data.newSynced} new inquiries detected.`)
-      fetchMailAgentData()
-    } catch (err: any) {
-      showToast('error', err.message || 'Gmail sync failed.')
-    } finally {
-      setSyncingGmail(false)
     }
   }
 
@@ -787,29 +588,6 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
                 <LayoutDashboard size={15} />
                 <span>Dashboard Overview</span>
               </button>
-
-              <button
-                onClick={() => { setActiveTab('mail-agent'); setMobileNavOpen(false) }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
-                  activeTab === 'mail-agent'
-                    ? 'bg-indigo-600 text-white border-indigo-500/50 shadow-md shadow-indigo-600/20'
-                    : 'border-purple-500/20 bg-purple-500/[0.05] text-purple-200 hover:text-white hover:bg-purple-500/[0.12]'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Bot size={15} className={activeTab === 'mail-agent' ? 'text-white' : 'text-purple-400'} />
-                  <span className="font-semibold">AI Email Agent</span>
-                </div>
-                {mailMetrics.pendingApprovals > 0 ? (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-bold animate-pulse">
-                    {mailMetrics.pendingApprovals}
-                  </span>
-                ) : (
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-300">
-                    ACTIVE
-                  </span>
-                )}
-              </button>
             </div>
           </div>
 
@@ -1062,23 +840,7 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
               {/* Quick Actions Deck */}
               <div className="surface-card p-6 border border-white/[0.08]">
                 <h3 className="font-display font-semibold text-white text-base mb-4">Quick Navigation</h3>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <button
-                    onClick={() => setActiveTab('mail-agent')}
-                    className="p-4 rounded-xl bg-purple-500/[0.04] hover:bg-purple-500/[0.08] border border-purple-500/20 text-left transition-colors relative overflow-hidden group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <Bot size={18} className="text-purple-400" />
-                      {mailMetrics.pendingApprovals > 0 && (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-400 text-black font-bold">
-                          {mailMetrics.pendingApprovals} Pending
-                        </span>
-                      )}
-                    </div>
-                    <span className="block text-sm font-semibold text-white group-hover:text-purple-200">AI Email Agent</span>
-                    <span className="block text-xs text-slate-400 mt-0.5">Triage, Telegram &amp; Gmail</span>
-                  </button>
-
+                <div className="grid sm:grid-cols-3 gap-3">
                   <button
                     onClick={() => setActiveTab('projects')}
                     className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] text-left transition-colors"
@@ -1107,502 +869,6 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
                   </button>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* ═════════════════════════════════════════
-              TAB: HARITECH AI EMAIL AGENT
-          ══════════════════════════════════════════ */}
-          {activeTab === 'mail-agent' && (
-            <div className="space-y-6">
-              {/* Header and Controls */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                      <Bot size={18} />
-                    </span>
-                    <h2 className="font-display font-bold text-2xl text-white">Haritech AI Email Agent</h2>
-                  </div>
-                  <p className="text-slate-400 text-sm mt-1">
-                    Monitors inquiries, analyzes with OpenAI, generates replies, and dispatches via Gmail on your Telegram approval.
-                  </p>
-                </div>
-
-                <div className="flex items-center flex-wrap gap-2">
-                  <button
-                    onClick={handleSyncGmail}
-                    disabled={syncingGmail}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white text-xs font-medium border border-white/[0.08] transition-colors disabled:opacity-50"
-                    title="Poll Gmail inbox for new unread inquiries"
-                  >
-                    {syncingGmail ? <Loader2 size={13} className="animate-spin text-indigo-400" /> : <RefreshCw size={13} />}
-                    <span>{syncingGmail ? 'Syncing Gmail...' : 'Sync Gmail'}</span>
-                  </button>
-
-                  <button
-                    onClick={handleRunSimulation}
-                    disabled={simulatingAgent}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 text-xs font-semibold border border-purple-500/30 transition-all disabled:opacity-50 shadow-sm"
-                    title="Simulate an incoming inquiry to test OpenAI analysis & Telegram card"
-                  >
-                    {simulatingAgent ? <Loader2 size={13} className="animate-spin text-purple-300" /> : <Sparkles size={13} />}
-                    <span>{simulatingAgent ? 'Simulating...' : 'Test Simulation'}</span>
-                  </button>
-
-                  <button
-                    onClick={fetchMailAgentData}
-                    disabled={loadingMailAgent}
-                    className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white border border-white/[0.08] transition-colors"
-                    title="Refresh data"
-                  >
-                    <RefreshCw size={14} className={loadingMailAgent ? 'animate-spin' : ''} />
-                  </button>
-                </div>
-              </div>
-
-              {/* KPI Metrics Matrix */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                <div className="surface-card p-4 border border-white/[0.06]">
-                  <span className="text-[11px] font-mono text-slate-400 uppercase">Total Received</span>
-                  <p className="text-2xl font-display font-bold text-white mt-1">
-                    {mailMetrics.totalReceived || 0}
-                  </p>
-                  <span className="text-[10px] font-mono text-slate-500">Contact &amp; Gmail</span>
-                </div>
-
-                <div className={`surface-card p-4 border ${mailMetrics.pendingApprovals > 0 ? 'border-amber-500/40 bg-amber-500/[0.03]' : 'border-white/[0.06]'}`}>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono text-amber-400 uppercase font-semibold">Pending Approval</span>
-                    {mailMetrics.pendingApprovals > 0 && <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />}
-                  </div>
-                  <p className="text-2xl font-display font-bold text-amber-300 mt-1">
-                    {mailMetrics.pendingApprovals || 0}
-                  </p>
-                  <span className="text-[10px] font-mono text-amber-400/80">Awaiting Telegram / Admin</span>
-                </div>
-
-                <div className="surface-card p-4 border border-white/[0.06]">
-                  <span className="text-[11px] font-mono text-emerald-400 uppercase">Sent Replies</span>
-                  <p className="text-2xl font-display font-bold text-emerald-400 mt-1">
-                    {mailMetrics.sentEmails || 0}
-                  </p>
-                  <span className="text-[10px] font-mono text-emerald-500/80">Dispatched live</span>
-                </div>
-
-                <div className="surface-card p-4 border border-white/[0.06]">
-                  <span className="text-[11px] font-mono text-rose-400 uppercase">Rejected</span>
-                  <p className="text-2xl font-display font-bold text-rose-400 mt-1">
-                    {mailMetrics.rejectedEmails || 0}
-                  </p>
-                  <span className="text-[10px] font-mono text-slate-500">No email sent</span>
-                </div>
-
-                <div className="surface-card p-4 border border-white/[0.06]">
-                  <span className="text-[11px] font-mono text-slate-400 uppercase">Spam Filtered</span>
-                  <p className="text-2xl font-display font-bold text-slate-300 mt-1">
-                    {mailMetrics.spamDetected || 0}
-                  </p>
-                  <span className="text-[10px] font-mono text-slate-500">AI auto-isolated</span>
-                </div>
-              </div>
-
-              {/* Integration Status Bar */}
-              <div className="surface-card p-4 border border-white/[0.08] bg-white/[0.01]">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <Radio size={13} className="text-emerald-400 animate-pulse" />
-                    Agent Subsystem Health
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500">Never sends without explicit approval</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <div className="text-[11px] text-slate-400">OpenAI Engine</div>
-                    <div className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
-                      {mailMonitoring?.openai?.isConfigured ? (
-                        <>
-                          <CheckCircle2 size={13} className="text-emerald-400" />
-                          <span>{mailMonitoring.openai.model} (Active)</span>
-                        </>
-                      ) : (
-                        <>
-                          <AlertTriangle size={13} className="text-amber-400" />
-                          <span>Heuristic Fallback Engine</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <div className="text-[11px] text-slate-400">Telegram Bot Approval</div>
-                    <div className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
-                      {mailMonitoring?.telegram?.isConfigured ? (
-                        <>
-                          <CheckCircle2 size={13} className="text-emerald-400" />
-                          <span>Authorized (ID: {mailMonitoring.telegram.allowedUserIdMasked})</span>
-                        </>
-                      ) : (
-                        <>
-                          <AlertTriangle size={13} className="text-amber-400" />
-                          <span>Needs Bot Token / User ID</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <div className="text-[11px] text-slate-400">Gmail API OAuth 2.0</div>
-                    <div className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
-                      {mailMonitoring?.gmail?.isConfigured ? (
-                        <>
-                          <CheckCircle2 size={13} className="text-emerald-400" />
-                          <span>OAuth Linked ({mailMonitoring.gmail.userEmail})</span>
-                        </>
-                      ) : (
-                        <>
-                          <Radio size={13} className="text-cyan-400" />
-                          <span>Resend Fallback / Safe Mode</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <div className="text-[11px] text-slate-400">Database Storage</div>
-                    <div className="text-xs font-semibold text-emerald-400 mt-1 flex items-center gap-1.5">
-                      <CheckCircle2 size={13} />
-                      <span>MongoDB Atlas Connected</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Search & Filters */}
-              <div className="surface-card p-4 border border-white/[0.08] space-y-3">
-                <div className="flex flex-col md:flex-row md:items-center gap-3">
-                  <div className="relative flex-1">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Search sender, email, subject, or reply content..."
-                      value={mailSearchQuery}
-                      onChange={e => setMailSearchQuery(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') fetchMailAgentData() }}
-                      className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/40"
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={mailCategoryFilter}
-                      onChange={e => setMailCategoryFilter(e.target.value)}
-                      className="bg-[#0f1118] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500/40"
-                    >
-                      <option value="all">All Categories</option>
-                      <option value="Project collaboration">Project collaboration</option>
-                      <option value="Business enquiries">Business enquiries</option>
-                      <option value="Internship and job opportunities">Internship &amp; job opportunities</option>
-                      <option value="Freelance opportunities">Freelance opportunities</option>
-                      <option value="Technical support">Technical support</option>
-                      <option value="General enquiries">General enquiries</option>
-                      <option value="Spam">Spam</option>
-                    </select>
-
-                    <button
-                      onClick={fetchMailAgentData}
-                      className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors"
-                    >
-                      Filter
-                    </button>
-                  </div>
-                </div>
-
-                {/* Status Tabs */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 text-xs">
-                  {[
-                    { id: 'all', label: 'All Inquiries' },
-                    { id: 'pending_approval', label: 'Pending Approval' },
-                    { id: 'sent', label: 'Sent via Gmail' },
-                    { id: 'rejected', label: 'Rejected' },
-                    { id: 'ignored_spam', label: 'Spam' },
-                  ].map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setMailStatusFilter(tab.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-                        mailStatusFilter === tab.id
-                          ? 'bg-indigo-600 text-white shadow-sm'
-                          : 'bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06]'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Thread List */}
-              {loadingMailAgent ? (
-                <div className="flex items-center justify-center py-20">
-                  <Loader2 className="animate-spin text-purple-400" size={28} />
-                </div>
-              ) : mailThreads.length === 0 ? (
-                <div className="surface-card p-12 border border-white/[0.06] text-center space-y-4">
-                  <Bot size={44} className="mx-auto text-purple-400/50" />
-                  <div>
-                    <h3 className="font-display font-semibold text-white text-base">No email threads found</h3>
-                    <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-                      Inquiries submitted through your contact form or received in your Gmail inbox will appear here with AI-generated drafts ready for your approval.
-                    </p>
-                  </div>
-                  <button
-                    onClick={handleRunSimulation}
-                    disabled={simulatingAgent}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md shadow-purple-600/20 transition-all"
-                  >
-                    <Sparkles size={14} />
-                    <span>Run Simulated Test Inquiry</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {mailThreads.map((thread: any) => {
-                    const isPending = thread.status === 'pending_approval'
-                    const isSent = thread.status === 'sent'
-                    const isRejected = thread.status === 'rejected'
-                    const isSpam = thread.status === 'ignored_spam'
-                    const isEditing = editingThreadId === thread.threadId
-                    const isExpanded = expandedThreadId === thread.threadId
-                    const isBusy = performingMailAction === thread.threadId
-
-                    const categoryBadgeColors: Record<string, string> = {
-                      'Project collaboration': 'border-purple-500/30 bg-purple-500/10 text-purple-300',
-                      'Business enquiries': 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
-                      'Internship and job opportunities': 'border-blue-500/30 bg-blue-500/10 text-blue-300',
-                      'Freelance opportunities': 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-                      'Technical support': 'border-rose-500/30 bg-rose-500/10 text-rose-300',
-                      'General enquiries': 'border-slate-500/30 bg-slate-500/10 text-slate-300',
-                      'Spam': 'border-red-500/40 bg-red-500/10 text-red-400',
-                    }
-
-                    const categoryClass = categoryBadgeColors[thread.category] || 'border-indigo-500/30 bg-indigo-500/10 text-indigo-300'
-
-                    return (
-                      <div
-                        key={thread._id || thread.threadId}
-                        className={`surface-card border rounded-2xl p-5 space-y-4 transition-all ${
-                          isPending
-                            ? 'border-amber-500/30 bg-amber-500/[0.02]'
-                            : isSent
-                            ? 'border-emerald-500/20 bg-emerald-500/[0.01]'
-                            : isRejected
-                            ? 'border-rose-500/20 opacity-75'
-                            : 'border-white/[0.06]'
-                        }`}
-                      >
-                        {/* Thread Top Bar */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                          <div className="flex items-center flex-wrap gap-2">
-                            {isPending && (
-                              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">
-                                <Clock size={11} />
-                                PENDING APPROVAL
-                              </span>
-                            )}
-                            {isSent && (
-                              <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                <CheckCircle size={11} />
-                                SENT VIA GMAIL
-                              </span>
-                            )}
-                            {isRejected && (
-                              <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                                <XCircle size={11} />
-                                REJECTED
-                              </span>
-                            )}
-                            {isSpam && (
-                              <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-red-500/20 text-red-400 border border-red-500/30">
-                                SPAM FILTERED
-                              </span>
-                            )}
-
-                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium border ${categoryClass}`}>
-                              {thread.category || 'General'}
-                            </span>
-
-                            {thread.confidence && (
-                              <span className="text-[10px] font-mono text-slate-500">
-                                {Math.round(thread.confidence * 100)}% match
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-3 text-[11px] font-mono text-slate-400">
-                            <span>
-                              {thread.createdAt
-                                ? new Date(thread.createdAt).toLocaleString('en-IN', {
-                                    timeZone: 'Asia/Kolkata',
-                                    dateStyle: 'medium',
-                                    timeStyle: 'short',
-                                  })
-                                : ''}
-                            </span>
-                            {thread.telegramMessageId && (
-                              <span className="text-purple-400 flex items-center gap-1" title="Notification sent to your Telegram">
-                                📱 Telegram Alerted
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Sender Info & Subject */}
-                        <div className="pt-2 border-t border-white/[0.04]">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-sm font-semibold text-white">{thread.fromName || 'Visitor'}</span>
-                            <span className="text-xs text-slate-400 font-mono">&lt;{thread.fromEmail}&gt;</span>
-                          </div>
-                          <h4 className="text-sm font-medium text-slate-200 mt-1 font-display">
-                            {thread.subject || '(No Subject)'}
-                          </h4>
-                        </div>
-
-                        {/* Original Message Box */}
-                        <div className="bg-white/[0.02] border border-white/[0.04] rounded-xl p-3.5">
-                          <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 uppercase mb-1.5">
-                            <span>Original Inquiry Content</span>
-                            <button
-                              onClick={() => setExpandedThreadId(isExpanded ? null : thread.threadId)}
-                              className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 normal-case font-sans"
-                            >
-                              {isExpanded ? 'Collapse' : 'Show full'}
-                            </button>
-                          </div>
-                          <p className={`text-xs text-slate-300 leading-relaxed whitespace-pre-wrap ${!isExpanded && 'line-clamp-3'}`}>
-                            {thread.originalBody}
-                          </p>
-                        </div>
-
-                        {/* AI Draft Section */}
-                        <div className="bg-purple-950/[0.15] border border-purple-500/20 rounded-xl p-4 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Sparkles size={14} className="text-purple-400" />
-                              <span className="text-xs font-semibold text-purple-200">
-                                AI-Generated Reply Draft (Represents Hari)
-                              </span>
-                            </div>
-                            {thread.aiReasoning && (
-                              <span className="text-[10px] font-mono text-slate-400 hidden sm:inline truncate max-w-xs">
-                                {thread.aiReasoning}
-                              </span>
-                            )}
-                          </div>
-
-                          {isEditing ? (
-                            <div className="space-y-2">
-                              <textarea
-                                value={draftEditText}
-                                onChange={e => setDraftEditText(e.target.value)}
-                                rows={5}
-                                className="w-full bg-[#08090d] border border-purple-500/40 rounded-xl p-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-400 resize-none font-sans leading-relaxed"
-                              />
-                              <div className="flex items-center gap-2 justify-end">
-                                <button
-                                  onClick={() => setEditingThreadId(null)}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={() => handleSaveDraft(thread.threadId)}
-                                  disabled={isBusy}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold disabled:opacity-50"
-                                >
-                                  {isBusy ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
-                                  <span>Save Draft</span>
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap bg-black/30 p-3 rounded-lg border border-white/[0.04]">
-                              {thread.draftReply}
-                            </div>
-                          )}
-
-                          {/* Action Buttons Bar */}
-                          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-purple-500/10">
-                            <div className="flex items-center gap-2">
-                              {isPending && !isEditing && (
-                                <>
-                                  <button
-                                    onClick={() => handleApproveMail(thread.threadId)}
-                                    disabled={isBusy}
-                                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition-all disabled:opacity-50"
-                                  >
-                                    {isBusy ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
-                                    <span>Approve &amp; Send via Gmail</span>
-                                  </button>
-
-                                  <button
-                                    onClick={() => {
-                                      setEditingThreadId(thread.threadId)
-                                      setDraftEditText(thread.draftReply)
-                                    }}
-                                    disabled={isBusy}
-                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white text-xs font-medium border border-white/[0.08] transition-colors"
-                                  >
-                                    <Edit3 size={13} />
-                                    <span>Edit Reply</span>
-                                  </button>
-
-                                  <button
-                                    onClick={() => handleRejectMail(thread.threadId)}
-                                    disabled={isBusy}
-                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 text-xs font-medium border border-rose-500/30 transition-colors"
-                                  >
-                                    <XCircle size={13} />
-                                    <span>Reject</span>
-                                  </button>
-                                </>
-                              )}
-
-                              {isSent && (
-                                <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-                                  <CheckCircle size={14} />
-                                  <span>
-                                    Dispatched {thread.sentAt ? new Date(thread.sentAt).toLocaleTimeString() : ''} via {thread.sendMethod || 'Gmail'}
-                                  </span>
-                                </span>
-                              )}
-
-                              {isRejected && (
-                                <button
-                                  onClick={() => handleApproveMail(thread.threadId)}
-                                  disabled={isBusy}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs font-medium border border-white/[0.08]"
-                                >
-                                  Re-open &amp; Send
-                                </button>
-                              )}
-                            </div>
-
-                            <button
-                              onClick={() => handleDeleteMailThread(thread.threadId)}
-                              disabled={isBusy}
-                              className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors ml-auto"
-                              title="Delete thread log"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
             </div>
           )}
 
@@ -2502,12 +1768,12 @@ export default function Admin({ initialData, initialTab = 'overview', onClose, o
                 </div>
 
                 <div className="pt-4 border-t border-white/[0.06]">
-                  <h4 className="font-display font-semibold text-white text-sm mb-2">Security Alerts</h4>
+                  <h4 className="font-display font-semibold text-white text-sm mb-2">Security &amp; Passcode</h4>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Login attempts (successful and failed) automatically send security alert emails to your inbox with IP, browser, and timestamp details.
+                    Admin access is protected by environment-level credentials. Login alerts via email are disabled per your preference.
                   </p>
-                  <span className="inline-flex items-center gap-1.5 mt-3 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                    <Shield size={12} /> Auto-enabled on all logins
+                  <span className="inline-flex items-center gap-1.5 mt-3 text-xs font-mono text-slate-400 bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.08]">
+                    <Shield size={12} className="text-indigo-400" /> Protected by ADMIN_PASSWORD
                   </span>
                 </div>
               </div>
