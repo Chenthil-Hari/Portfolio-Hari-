@@ -14,13 +14,22 @@ import { PortfolioProvider } from '@/context/PortfolioContext'
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(false)
+  const [adminInitialTab, setAdminInitialTab] = useState<'overview' | 'mail-agent'>('overview')
   const [portfolioData, setPortfolioData] = useState<any>(null)
   const [isResumeOpen, setIsResumeOpen] = useState(false)
 
   // Detect route on load and on popstate
   useEffect(() => {
     const checkRoute = () => {
-      setIsAdminRoute(window.location.pathname === '/admin')
+      const path = window.location.pathname
+      const hash = window.location.hash
+      const isAdmin = path.startsWith('/admin') || hash.startsWith('#admin')
+      setIsAdminRoute(isAdmin)
+      if (path.includes('mail-agent') || hash.includes('mail-agent')) {
+        setAdminInitialTab('mail-agent')
+      } else {
+        setAdminInitialTab('overview')
+      }
     }
     checkRoute()
     window.addEventListener('popstate', checkRoute)
@@ -50,6 +59,7 @@ export default function App() {
       <PortfolioProvider value={portfolioData} onUpdate={setPortfolioData} onRefresh={fetchData}>
         <Admin
           initialData={portfolioData}
+          initialTab={adminInitialTab}
           onUpdateData={(newData: any) => setPortfolioData(newData)}
           onClose={() => {
             window.history.pushState({}, '', '/')

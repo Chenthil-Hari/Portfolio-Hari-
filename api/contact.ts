@@ -1,4 +1,6 @@
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
+import { analyzeAndDraftReply } from './_openai.js'
+import { sendApprovalNotification } from './_telegram.js'
 
 export const config = {
   runtime: 'nodejs',
@@ -339,6 +341,72 @@ ${safeMessage}
           createdAt: new Date().toISOString(),
           ip: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || null,
         })
+
+        // ══════════════════════════════════════════════════════════════
+        //  TRIGGER HARITECH AI EMAIL AGENT WORKFLOW
+        // ══════════════════════════════════════════════════════════════
+        try {
+          const nowIso = new Date().toISOString()
+          const threadId = `contact-${Date.now()}`
+          const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
+
+          // 1. Analyze and draft reply with OpenAI (or heuristic fallback)
+          const aiAnalysis = await analyzeAndDraftReply({
+            senderName: cleanName,
+            senderEmail: cleanEmail,
+            subject: cleanSubject,
+            message: cleanMessage,
+            inquiryType,
+            preferredTime: cleanTime || undefined,
+          })
+
+          const threadDoc: any = {
+            threadId,
+            fromName: cleanName,
+            fromEmail: cleanEmail,
+            subject: cleanSubject,
+            originalBody: cleanMessage,
+            inquiryType,
+            preferredTime: cleanTime || null,
+            category: aiAnalysis.category,
+            confidence: aiAnalysis.confidence,
+            aiReasoning: aiAnalysis.aiReasoning,
+            draftReply: aiAnalysis.draftReply,
+            status: aiAnalysis.isSpam ? 'ignored_spam' : 'pending_approval',
+            source: 'contact_form',
+            approvalExpiresAt: expiresAt,
+            history: [
+              {
+                event: 'contact_form_analyzed',
+                timestamp: nowIso,
+                model: aiAnalysis.modelUsed,
+                category: aiAnalysis.category,
+              },
+            ],
+            createdAt: nowIso,
+            updatedAt: nowIso,
+          }
+
+          await db.collection('email_agent_threads').insertOne(threadDoc)
+
+          // 2. Dispatch Telegram approval notification to Hari if not spam
+          if (!aiAnalysis.isSpam) {
+            const tgResult = await sendApprovalNotification(threadDoc)
+            if (tgResult.success && tgResult.messageId) {
+              await db.collection('email_agent_threads').updateOne(
+                { threadId },
+                {
+                  $set: {
+                    telegramMessageId: tgResult.messageId,
+                    telegramChatId: tgResult.chatId,
+                  },
+                }
+              )
+            }
+          }
+        } catch (agentErr) {
+          console.warn('AI Email Agent background trigger warning:', agentErr)
+        }
       } catch (dbErr) {
         console.warn('Failed to store message in MongoDB:', dbErr)
       }
