@@ -14,8 +14,14 @@ import {
   AlertCircle,
   Loader2,
   RotateCcw,
+  Calendar,
+  Briefcase,
+  MessageSquare,
+  Users,
 } from 'lucide-react'
 import { usePortfolio } from '@/context/PortfolioContext'
+
+type InquiryType = 'general' | 'opportunity' | 'meeting' | 'collaboration'
 
 export default function Contact() {
   const { personalInfo } = usePortfolio()
@@ -26,12 +32,15 @@ export default function Contact() {
   const [email, setEmail] = useState('')
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
+  const [inquiryType, setInquiryType] = useState<InquiryType>('general')
+  const [preferredTime, setPreferredTime] = useState('')
   const [honeypot, setHoneypot] = useState('')
 
   // Submission status
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [statusMessage, setStatusMessage] = useState('')
+  const [hasCalendarInvite, setHasCalendarInvite] = useState(false)
   const [submittedDetails, setSubmittedDetails] = useState<{ name: string; email: string } | null>(null)
 
   const handleCopyEmail = () => {
@@ -59,6 +68,8 @@ export default function Contact() {
           email: email.trim(),
           subject: subject.trim(),
           message: message.trim(),
+          inquiryType,
+          preferredTime: preferredTime.trim(),
           honeypot,
         }),
       })
@@ -70,13 +81,16 @@ export default function Contact() {
       }
 
       setSubmittedDetails({ name: name.trim(), email: email.trim() })
+      setHasCalendarInvite(Boolean(data.hasCalendarInvite))
       setSubmitStatus('success')
       setStatusMessage(data.message || 'Message sent! A confirmation email has been dispatched to your inbox.')
+
       // Reset form fields
       setName('')
       setEmail('')
       setSubject('')
       setMessage('')
+      setPreferredTime('')
     } catch (err: any) {
       console.error('Contact form submission error:', err)
       setSubmitStatus('error')
@@ -90,15 +104,23 @@ export default function Contact() {
     setSubmitStatus('idle')
     setStatusMessage('')
     setSubmittedDetails(null)
+    setHasCalendarInvite(false)
   }
 
   const handleMailtoFallback = () => {
     const mailtoSubject = encodeURIComponent(subject || `Inquiry from ${name || 'Portfolio Visitor'}`)
     const mailtoBody = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n---\nSent from ${personalInfo.name}'s Portfolio`
+      `Name: ${name}\nEmail: ${email}\nInquiry Type: ${inquiryType}\n\nMessage:\n${message}\n\n---\nSent from ${personalInfo.name}'s Portfolio`
     )
     window.location.href = `mailto:${personalInfo.email}?subject=${mailtoSubject}&body=${mailtoBody}`
   }
+
+  const inquiryOptions: { type: InquiryType; label: string; icon: any }[] = [
+    { type: 'general', label: 'General', icon: MessageSquare },
+    { type: 'opportunity', label: 'Job / Internship', icon: Briefcase },
+    { type: 'meeting', label: '15-min Chat (.ics)', icon: Calendar },
+    { type: 'collaboration', label: 'Project Collab', icon: Users },
+  ]
 
   return (
     <section id="contact" className="section-spacing relative bg-[#08090d] border-t border-white/[0.04]" aria-label="Contact Hari">
@@ -225,7 +247,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-display font-semibold text-white text-base">Send a Direct Message</h3>
                   <p className="text-xs text-slate-400 font-mono mt-0.5">
-                    Delivered directly to Hari with an instant email receipt to your inbox
+                    Delivered directly to Hari with an instant receipt &amp; optional calendar invite
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -259,12 +281,18 @@ export default function Contact() {
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-xs text-slate-400 max-w-md mx-auto space-y-1">
+                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-xs text-slate-400 max-w-md mx-auto space-y-1.5">
                       <p className="flex items-center justify-center gap-1.5 text-indigo-300 font-mono">
                         <Mail size={13} />
                         Receipt dispatched to: <span className="text-white">{submittedDetails?.email}</span>
                       </p>
-                      <p className="text-slate-400">
+                      {hasCalendarInvite && (
+                        <p className="flex items-center justify-center gap-1.5 text-emerald-300 font-mono text-[11px]">
+                          <Calendar size={13} />
+                          Provisional .ics Calendar Invite attached to email!
+                        </p>
+                      )}
+                      <p className="text-slate-400 pt-1">
                         Check your inbox for a summary of your message and helpful links.
                       </p>
                     </div>
@@ -298,6 +326,34 @@ export default function Contact() {
                         value={honeypot}
                         onChange={e => setHoneypot(e.target.value)}
                       />
+                    </div>
+
+                    {/* Inquiry Type Pills */}
+                    <div>
+                      <label className="block text-xs font-mono text-slate-400 mb-1.5">
+                        Inquiry Type
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {inquiryOptions.map(opt => {
+                          const Icon = opt.icon
+                          const isSelected = inquiryType === opt.type
+                          return (
+                            <button
+                              key={opt.type}
+                              type="button"
+                              onClick={() => setInquiryType(opt.type)}
+                              className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
+                                isSelected
+                                  ? 'bg-indigo-600/25 border-indigo-500/50 text-white shadow-sm shadow-indigo-600/30'
+                                  : 'bg-white/[0.02] border-white/[0.06] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                              }`}
+                            >
+                              <Icon size={13} className={isSelected ? 'text-indigo-400' : 'text-slate-500'} />
+                              <span className="truncate">{opt.label}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
                     </div>
 
                     {/* Error Banner */}
@@ -355,19 +411,53 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    <div>
-                      <label htmlFor="contact-subject" className="block text-xs font-mono text-slate-400 mb-1.5">
-                        Subject
-                      </label>
-                      <input
-                        id="contact-subject"
-                        type="text"
-                        placeholder="e.g. Software Developer Opportunity / Project Collaboration"
-                        value={subject}
-                        onChange={e => setSubject(e.target.value)}
-                        className="input-field"
-                        disabled={isSubmitting}
-                      />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="contact-subject" className="block text-xs font-mono text-slate-400 mb-1.5">
+                          Subject
+                        </label>
+                        <input
+                          id="contact-subject"
+                          type="text"
+                          placeholder="e.g. Software Developer Opportunity"
+                          value={subject}
+                          onChange={e => setSubject(e.target.value)}
+                          className="input-field"
+                          disabled={isSubmitting}
+                        />
+                      </div>
+
+                      {inquiryType === 'meeting' ? (
+                        <div>
+                          <label htmlFor="contact-time" className="block text-xs font-mono text-indigo-300 mb-1.5">
+                            Preferred Timing (Optional)
+                          </label>
+                          <input
+                            id="contact-time"
+                            type="text"
+                            placeholder="e.g. Weekday evenings / Tomorrow 4 PM"
+                            value={preferredTime}
+                            onChange={e => setPreferredTime(e.target.value)}
+                            className="input-field border-indigo-500/30"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <label htmlFor="contact-notes" className="block text-xs font-mono text-slate-400 mb-1.5">
+                            Role / Organization (Optional)
+                          </label>
+                          <input
+                            id="contact-notes"
+                            type="text"
+                            placeholder="e.g. Acme Tech / Freelance"
+                            value={preferredTime}
+                            onChange={e => setPreferredTime(e.target.value)}
+                            className="input-field"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -383,7 +473,13 @@ export default function Contact() {
                         id="contact-message"
                         required
                         rows={4}
-                        placeholder="Hello Hari, I came across your portfolio and wanted to discuss..."
+                        placeholder={
+                          inquiryType === 'meeting'
+                            ? 'Hi Hari, I would love to connect for 15 minutes to discuss...'
+                            : inquiryType === 'opportunity'
+                            ? 'Hi Hari, we have an open role for a Software Developer and would like to talk...'
+                            : 'Hello Hari, I came across your portfolio and wanted to discuss...'
+                        }
                         value={message}
                         onChange={e => setMessage(e.target.value)}
                         className="input-field resize-none"
@@ -399,18 +495,20 @@ export default function Contact() {
                       {isSubmitting ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
-                          <span>Sending Message &amp; Dispatching Receipt...</span>
+                          <span>Sending &amp; Dispatching Calendar Invite...</span>
                         </>
                       ) : (
                         <>
                           <Send size={15} />
-                          <span>Send Message</span>
+                          <span>
+                            {inquiryType === 'meeting' ? 'Send & Request Calendar Invite' : 'Send Message'}
+                          </span>
                         </>
                       )}
                     </button>
 
                     <p className="text-[11px] text-center text-slate-400 font-mono mt-2">
-                      🔒 Powered by Resend &bull; Delivered to <span className="text-slate-300">noreply@haritech.me</span> &bull; Never shared with third parties
+                      🔒 Powered by Resend &bull; Delivered to <span className="text-slate-300">noreply@haritech.me</span> &bull; {inquiryType === 'meeting' ? 'Includes .ics calendar invitation' : 'Instant email confirmation'}
                     </p>
                   </motion.form>
                 )}

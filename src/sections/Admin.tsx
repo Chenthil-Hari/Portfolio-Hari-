@@ -5,7 +5,8 @@ import {
   LayoutDashboard, User, Code2, FolderGit, GraduationCap, MessageSquare,
   Search, Palette, Shield, FileText, Plus, Trash2, Edit3, Eye,
   ExternalLink, Download, Upload, Copy, Check, Sparkles, RefreshCw,
-  HelpCircle, Menu, X, ArrowUpRight, Cpu, Layers
+  HelpCircle, Menu, X, ArrowUpRight, Cpu, Layers,
+  Mail, Send, Clock, Inbox, Reply, Database, BarChart3
 } from 'lucide-react'
 import {
   personalInfo as defaultPersonalInfo,
@@ -28,6 +29,7 @@ type TabType =
   | 'projects'
   | 'journey'
   | 'guestbook'
+  | 'inbox'
   | 'seo'
   | 'theme'
   | 'media'
@@ -98,6 +100,15 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
   const [guestbookEntries, setGuestbookEntries] = useState<any[]>([])
   const [loadingGuestbook, setLoadingGuestbook] = useState(false)
 
+  // Inbox / Messages state
+  const [messages, setMessages] = useState<any[]>([])
+  const [loadingMessages, setLoadingMessages] = useState(false)
+  const [expandedMessage, setExpandedMessage] = useState<string | null>(null)
+  const [replyText, setReplyText] = useState('')
+  const [sendingReply, setSendingReply] = useState(false)
+  const [backupEmailing, setBackupEmailing] = useState(false)
+  const [sendingDigest, setSendingDigest] = useState(false)
+
   const showToast = (type: 'success' | 'error' | 'info', message: string) => {
     setToast({ type, message })
     setTimeout(() => setToast(null), 4500)
@@ -117,15 +128,43 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
     }
   }, [activeTab, isAuthenticated])
 
+  // Load messages when entering inbox tab
+  useEffect(() => {
+    if (activeTab === 'inbox' && isAuthenticated) {
+      setLoadingMessages(true)
+      fetch('/api/messages', {
+        headers: { 'x-admin-password': password },
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) setMessages(data)
+        })
+        .catch(err => console.error(err))
+        .finally(() => setLoadingMessages(false))
+    }
+  }, [activeTab, isAuthenticated])
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (!password.trim()) {
       setLoginError('Password is required')
+      // Fire-and-forget security alert for empty password attempt
+      fetch('/api/admin-alert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event: 'login', success: false, reason: 'Empty password' }),
+      }).catch(() => {})
       return
     }
     // Verify locally and unlock
     setIsAuthenticated(true)
     setLoginError('')
+    // Fire-and-forget security alert for successful login
+    fetch('/api/admin-alert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'login', success: true }),
+    }).catch(() => {})
   }
 
   const handleSave = async () => {
@@ -178,6 +217,94 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
     downloadAnchor.click()
     downloadAnchor.remove()
     showToast('info', 'JSON backup file downloaded to your device.')
+  }
+
+  // Email database backup to owner
+  const handleEmailBackup = async () => {
+    setBackupEmailing(true)
+    try {
+      const res = await fetch('/api/backup-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to email backup')
+      showToast('success', 'Full database backup emailed to your inbox!')
+    } catch (err: any) {
+      showToast('error', err.message || 'Backup email failed.')
+    } finally {
+      setBackupEmailing(false)
+    }
+  }
+
+  // Manually trigger weekly digest
+  const handleTriggerDigest = async () => {
+    setSendingDigest(true)
+    try {
+      const res = await fetch('/api/weekly-digest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send digest')
+      showToast('success', 'Weekly activity digest sent to your email!')
+    } catch (err: any) {
+      showToast('error', err.message || 'Digest email failed.')
+    } finally {
+      setSendingDigest(false)
+    }
+  }
+
+  // Inbox: mark message as read
+  const handleMarkRead = async (id: string) => {
+    try {
+      await fetch('/api/messages', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+        body: JSON.stringify({ id, read: true }),
+      })
+      setMessages(prev => prev.map(m => m._id === id ? { ...m, read: true } : m))
+    } catch {}
+  }
+
+  // Inbox: delete message
+  const handleDeleteMessage = async (id: string) => {
+    try {
+      await fetch('/api/messages', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+        body: JSON.stringify({ id }),
+      })
+      setMessages(prev => prev.filter(m => m._id !== id))
+      setExpandedMessage(null)
+      showToast('info', 'Message deleted.')
+    } catch {
+      showToast('error', 'Failed to delete message.')
+    }
+  }
+
+  // Inbox: send reply
+  const handleSendReply = async (msg: any) => {
+    if (!replyText.trim()) return
+    setSendingReply(true)
+    try {
+      const res = await fetch('/api/admin-reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, messageId: msg._id, to: msg.email, replyText: replyText.trim(), originalSubject: msg.subject || 'Your message to Hari' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Reply failed')
+      setMessages(prev => prev.map(m => m._id === msg._id ? { ...m, replied: true, read: true } : m))
+      setReplyText('')
+      showToast('success', `Reply sent to ${msg.email}`)
+    } catch (err: any) {
+      showToast('error', err.message || 'Failed to send reply.')
+    } finally {
+      setSendingReply(false)
+    }
   }
 
   // ─────────────────────────────────────────────
@@ -566,6 +693,25 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
                   Live
                 </span>
+              </button>
+
+              <button
+                onClick={() => { setActiveTab('inbox'); setMobileNavOpen(false) }}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                  activeTab === 'inbox'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.03]'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Inbox size={15} />
+                  <span>Inbox &amp; Replies</span>
+                </div>
+                {messages.filter(m => !m.read).length > 0 && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400">
+                    {messages.filter(m => !m.read).length}
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -1414,13 +1560,173 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
           )}
 
           {/* ═════════════════════════════════════════
+              TAB: INBOX & REPLIES
+          ══════════════════════════════════════════ */}
+          {activeTab === 'inbox' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-display font-bold text-2xl text-white">Inbox &amp; Quick Reply</h2>
+                  <p className="text-slate-400 text-sm mt-1">Messages from your contact form. Reply directly from here.</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setLoadingMessages(true)
+                    fetch('/api/messages', { headers: { 'x-admin-password': password } })
+                      .then(res => res.json())
+                      .then(data => { if (Array.isArray(data)) setMessages(data) })
+                      .catch(() => {})
+                      .finally(() => setLoadingMessages(false))
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white text-xs font-medium border border-white/[0.08] transition-colors"
+                >
+                  <RefreshCw size={13} className={loadingMessages ? 'animate-spin' : ''} />
+                  Refresh
+                </button>
+              </div>
+
+              {/* Stats bar */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="surface-card p-4 border border-white/[0.06]">
+                  <span className="text-xs font-mono text-slate-400 uppercase">Total</span>
+                  <p className="text-xl font-display font-bold text-white mt-1">{messages.length}</p>
+                </div>
+                <div className="surface-card p-4 border border-white/[0.06]">
+                  <span className="text-xs font-mono text-slate-400 uppercase">Unread</span>
+                  <p className="text-xl font-display font-bold text-rose-400 mt-1">{messages.filter(m => !m.read).length}</p>
+                </div>
+                <div className="surface-card p-4 border border-white/[0.06]">
+                  <span className="text-xs font-mono text-slate-400 uppercase">Replied</span>
+                  <p className="text-xl font-display font-bold text-emerald-400 mt-1">{messages.filter(m => m.replied).length}</p>
+                </div>
+              </div>
+
+              {loadingMessages ? (
+                <div className="flex items-center justify-center py-16">
+                  <Loader2 className="animate-spin text-indigo-400" size={24} />
+                </div>
+              ) : messages.length === 0 ? (
+                <div className="surface-card p-12 border border-white/[0.06] text-center">
+                  <Inbox size={40} className="mx-auto text-slate-600 mb-3" />
+                  <p className="text-sm text-slate-400">No messages yet. Messages from your contact form will appear here.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {messages.map((msg: any) => (
+                    <div
+                      key={msg._id}
+                      className={`surface-card border transition-all ${
+                        !msg.read ? 'border-indigo-500/30 bg-indigo-500/[0.03]' : 'border-white/[0.06]'
+                      }`}
+                    >
+                      {/* Message header row */}
+                      <button
+                        onClick={() => {
+                          setExpandedMessage(expandedMessage === msg._id ? null : msg._id)
+                          if (!msg.read) handleMarkRead(msg._id)
+                        }}
+                        className="w-full flex items-center justify-between p-4 text-left"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${!msg.read ? 'bg-indigo-400' : msg.replied ? 'bg-emerald-400' : 'bg-slate-600'}`} />
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-semibold text-white truncate">{msg.name || 'Anonymous'}</span>
+                              {msg.replied && (
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 flex-shrink-0">Replied</span>
+                              )}
+                              {!msg.read && (
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 flex-shrink-0">New</span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-400 truncate mt-0.5">{msg.email}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          {msg.inquiryType && (
+                            <span className="hidden sm:inline text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-300">{msg.inquiryType}</span>
+                          )}
+                          <span className="text-[10px] font-mono text-slate-500">
+                            {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
+                          </span>
+                        </div>
+                      </button>
+
+                      {/* Expanded message detail */}
+                      <AnimatePresence>
+                        {expandedMessage === msg._id && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-4 pb-4 space-y-4 border-t border-white/[0.06] pt-4">
+                              {msg.subject && (
+                                <div>
+                                  <span className="text-[10px] font-mono text-slate-500 uppercase">Subject</span>
+                                  <p className="text-sm text-white mt-0.5">{msg.subject}</p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-[10px] font-mono text-slate-500 uppercase">Message</span>
+                                <p className="text-sm text-slate-300 mt-1 leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+                              </div>
+                              <div className="flex flex-wrap gap-4 text-[10px] font-mono text-slate-500">
+                                <span>From: {msg.email}</span>
+                                {msg.createdAt && <span>Date: {new Date(msg.createdAt).toLocaleString()}</span>}
+                                {msg.inquiryType && <span>Type: {msg.inquiryType}</span>}
+                              </div>
+
+                              {/* Quick Reply */}
+                              {msg.email && (
+                                <div className="pt-3 border-t border-white/[0.06]">
+                                  <span className="text-[10px] font-mono text-slate-500 uppercase mb-2 block">Quick Reply</span>
+                                  <textarea
+                                    value={expandedMessage === msg._id ? replyText : ''}
+                                    onChange={e => setReplyText(e.target.value)}
+                                    placeholder={`Reply to ${msg.name || msg.email}...`}
+                                    rows={3}
+                                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/40 resize-none"
+                                  />
+                                  <div className="flex items-center justify-between mt-2">
+                                    <button
+                                      onClick={() => handleDeleteMessage(msg._id)}
+                                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                    >
+                                      <Trash2 size={12} />
+                                      Delete
+                                    </button>
+                                    <button
+                                      onClick={() => handleSendReply(msg)}
+                                      disabled={sendingReply || !replyText.trim()}
+                                      className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all disabled:opacity-50"
+                                    >
+                                      {sendingReply ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                                      {sendingReply ? 'Sending...' : 'Send Reply'}
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═════════════════════════════════════════
               TAB: SECURITY & DATABASE
           ══════════════════════════════════════════ */}
           {activeTab === 'security' && (
             <div className="space-y-6">
               <div>
                 <h2 className="font-display font-bold text-2xl text-white">Database &amp; Backup Operations</h2>
-                <p className="text-slate-400 text-sm mt-1">Snapshot database records or configure access passcodes.</p>
+                <p className="text-slate-400 text-sm mt-1">Snapshot database records, email backups, or trigger activity digest.</p>
               </div>
 
               <div className="surface-card p-6 border border-white/[0.08] space-y-5">
@@ -1439,13 +1745,48 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                   <p className="text-xs text-slate-400 mb-4 leading-relaxed">
                     Export a full JSON snapshot of all your portfolio content, projects, and skills for offline backup.
                   </p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      onClick={handleExportBackup}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-semibold text-white transition-colors"
+                    >
+                      <Download size={14} className="text-indigo-400" />
+                      Download JSON Backup
+                    </button>
+                    <button
+                      onClick={handleEmailBackup}
+                      disabled={backupEmailing}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-semibold text-indigo-300 transition-colors disabled:opacity-50"
+                    >
+                      {backupEmailing ? <Loader2 size={14} className="animate-spin" /> : <Mail size={14} />}
+                      {backupEmailing ? 'Sending...' : 'Email Backup to Me'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/[0.06]">
+                  <h4 className="font-display font-semibold text-white text-sm mb-2">Weekly Activity Digest</h4>
+                  <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                    The weekly digest email runs automatically every Sunday at 11:30 PM IST. You can also trigger it manually here.
+                  </p>
                   <button
-                    onClick={handleExportBackup}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-semibold text-white transition-colors"
+                    onClick={handleTriggerDigest}
+                    disabled={sendingDigest}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-semibold text-white transition-colors disabled:opacity-50"
                   >
-                    <Download size={14} className="text-indigo-400" />
-                    Download Complete JSON Backup
+                    {sendingDigest ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} className="text-cyan-400" />}
+                    {sendingDigest ? 'Generating...' : 'Send Digest Now'}
                   </button>
+                </div>
+
+                <div className="pt-4 border-t border-white/[0.06]">
+                  <h4 className="font-display font-semibold text-white text-sm mb-2">Security Alerts</h4>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Login attempts (successful and failed) automatically send security alert emails to your inbox with IP, browser, and timestamp details.
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 mt-3 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                    <Shield size={12} /> Auto-enabled on all logins
+                  </span>
                 </div>
               </div>
             </div>

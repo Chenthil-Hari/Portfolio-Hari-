@@ -42,6 +42,7 @@ export default function Guestbook() {
   const [submitting, setSubmitting] = useState(false)
   const [name, setName] = useState('')
   const [role, setRole] = useState('')
+  const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
@@ -77,6 +78,7 @@ export default function Guestbook() {
         body: JSON.stringify({
           name: name.trim(),
           role: role.trim() || 'Visitor',
+          email: email.trim(),
           message: message.trim(),
         }),
       })
@@ -87,8 +89,14 @@ export default function Guestbook() {
         setEntries(prev => [result.entry, ...prev])
         setName('')
         setRole('')
+        setEmail('')
         setMessage('')
-        setStatusMsg({ type: 'success', text: 'Thank you! Your note has been saved live.' })
+        setStatusMsg({
+          type: 'success',
+          text: email.trim()
+            ? 'Thank you! Your note is live and a confirmation receipt was sent to your email.'
+            : 'Thank you! Your note has been saved live.',
+        })
         setTimeout(() => setStatusMsg(null), 5000)
       } else {
         throw new Error(result.error || 'Failed to submit message.')
@@ -172,6 +180,20 @@ export default function Guestbook() {
                     placeholder="e.g. Recruiter @ TechCorp or Bangalore"
                     value={role}
                     onChange={e => setRole(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="gb-email" className="block text-xs font-mono text-slate-400 mb-1.5">
+                    Email Address <span className="text-slate-600">(Optional - for thank you receipt)</span>
+                  </label>
+                  <input
+                    id="gb-email"
+                    type="email"
+                    placeholder="e.g. priya@example.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                     className="input-field"
                   />
                 </div>

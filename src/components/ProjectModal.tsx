@@ -1,5 +1,20 @@
+import { useState, type FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Github, ExternalLink, Cpu, AlertCircle, Lightbulb, Wrench, CheckCircle2, Play } from 'lucide-react'
+import {
+  X,
+  Github,
+  ExternalLink,
+  Cpu,
+  AlertCircle,
+  Lightbulb,
+  Wrench,
+  CheckCircle2,
+  Play,
+  Mail,
+  Send,
+  Loader2,
+  Sparkles,
+} from 'lucide-react'
 import type { Project } from '@/data/portfolio'
 import TrafficSimulator from '@/components/TrafficSimulator'
 
@@ -9,7 +24,53 @@ interface ProjectModalProps {
 }
 
 export default function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const [showEmailDrawer, setShowEmailDrawer] = useState(false)
+  const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [isSending, setIsSending] = useState(false)
+  const [sendSuccess, setSendSuccess] = useState(false)
+  const [sendError, setSendError] = useState('')
+
   if (!project) return null
+
+  const handleSendCaseStudy = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!email.trim()) return
+
+    setIsSending(true)
+    setSendError('')
+    setSendSuccess(false)
+
+    try {
+      const res = await fetch('/api/send-case-study', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          name: name.trim(),
+          project,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to email case study.')
+      }
+
+      setSendSuccess(true)
+      setEmail('')
+      setName('')
+      setTimeout(() => {
+        setSendSuccess(false)
+        setShowEmailDrawer(false)
+      }, 4000)
+    } catch (err: any) {
+      console.error(err)
+      setSendError(err.message || 'Error emailing case study.')
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -48,6 +109,20 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Email Specs Toggle */}
+                <button
+                  onClick={() => setShowEmailDrawer(prev => !prev)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${
+                    showEmailDrawer
+                      ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/40'
+                      : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border-white/[0.08]'
+                  }`}
+                  aria-label="Email Specs & Architecture"
+                >
+                  <Mail size={13} className="text-indigo-400" />
+                  <span className="hidden sm:inline">Email Tech Specs</span>
+                </button>
+
                 {project.githubUrl && (
                   <a
                     href={project.githubUrl}
@@ -68,6 +143,69 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 </button>
               </div>
             </div>
+
+            {/* Email Case Study Drawer */}
+            <AnimatePresence>
+              {showEmailDrawer && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="bg-indigo-950/40 border-b border-indigo-500/25 px-6 py-3.5 overflow-hidden"
+                >
+                  {sendSuccess ? (
+                    <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono py-1">
+                      <CheckCircle2 size={16} />
+                      <span>Technical brief sent! Check your inbox for the complete breakdown.</span>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSendCaseStudy} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <div className="flex items-center gap-2 text-xs font-mono text-indigo-300 flex-shrink-0">
+                        <Sparkles size={14} className="text-indigo-400" />
+                        <span>Email Architecture Brief:</span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Your name"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.1] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 sm:w-40"
+                        disabled={isSending}
+                      />
+                      <input
+                        type="email"
+                        required
+                        placeholder="engineer@company.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.1] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 flex-1"
+                        disabled={isSending}
+                      />
+                      <button
+                        type="submit"
+                        disabled={isSending}
+                        className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-medium flex items-center justify-center gap-1.5 flex-shrink-0"
+                      >
+                        {isSending ? (
+                          <>
+                            <Loader2 size={12} className="animate-spin" />
+                            <span>Sending...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send size={12} />
+                            <span>Send Specs</span>
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  )}
+                  {sendError && (
+                    <p className="text-[11px] font-mono text-rose-400 mt-1">{sendError}</p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Scrollable Content Body */}
             <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 scrollbar-thin">
@@ -104,49 +242,59 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
 
               {/* Problem & Solution Grid */}
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-                  <div className="flex items-center gap-2 text-rose-400 text-xs font-mono uppercase tracking-wider">
-                    <AlertCircle size={14} /> The Problem
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center gap-2 text-rose-400 font-mono text-xs uppercase tracking-wider">
+                    <AlertCircle size={15} />
+                    <span>The Engineering Problem</span>
                   </div>
                   <p className="text-slate-300 text-sm leading-relaxed">{project.problem}</p>
                 </div>
 
-                <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-                  <div className="flex items-center gap-2 text-indigo-400 text-xs font-mono uppercase tracking-wider">
-                    <Lightbulb size={14} /> The Engineering Solution
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                  <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase tracking-wider">
+                    <Lightbulb size={15} />
+                    <span>The Implemented Solution</span>
                   </div>
                   <p className="text-slate-300 text-sm leading-relaxed">{project.solution}</p>
                 </div>
               </div>
 
-              {/* My Contributions */}
-              <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-                <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono uppercase tracking-wider">
-                  <Cpu size={14} /> Key Architecture &amp; Contributions
+              {/* My Contribution */}
+              {project.myContribution && (
+                <div className="p-5 rounded-2xl bg-indigo-600/[0.04] border border-indigo-500/20 space-y-2">
+                  <div className="flex items-center gap-2 text-indigo-400 font-mono text-xs uppercase tracking-wider">
+                    <Cpu size={15} />
+                    <span>My Core Contribution</span>
+                  </div>
+                  <p className="text-slate-200 text-sm leading-relaxed">{project.myContribution}</p>
                 </div>
-                <p className="text-slate-300 text-sm leading-relaxed">{project.myContribution}</p>
-              </div>
+              )}
 
-              {/* Key Features List */}
-              <div className="space-y-3">
-                <h3 className="font-display font-semibold text-white text-base">Key Capabilities</h3>
-                <div className="grid sm:grid-cols-2 gap-2.5">
-                  {project.keyFeatures.map((f, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2.5 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-xs text-slate-300"
-                    >
-                      <CheckCircle2 size={14} className="text-indigo-400 mt-0.5 flex-shrink-0" />
-                      <span>{f}</span>
-                    </div>
-                  ))}
+              {/* Key Features */}
+              {project.keyFeatures && project.keyFeatures.length > 0 && (
+                <div>
+                  <h3 className="font-display font-semibold text-white text-base mb-3">
+                    System Architecture &amp; Key Features
+                  </h3>
+                  <div className="grid sm:grid-cols-2 gap-2.5">
+                    {project.keyFeatures.map((feat, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-2.5 p-3 rounded-xl bg-white/[0.015] border border-white/[0.04] text-slate-300 text-xs sm:text-sm"
+                      >
+                        <CheckCircle2 size={16} className="text-indigo-400 flex-shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Challenges & Key Learnings */}
-              <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-                <div className="flex items-center gap-2 text-amber-400 text-xs font-mono uppercase tracking-wider">
-                  <Wrench size={14} /> Technical Challenges &amp; Solved Constraints
+              {/* Challenges */}
+              <div className="p-5 rounded-2xl bg-amber-500/[0.03] border border-amber-500/20 space-y-2">
+                <div className="flex items-center gap-2 text-amber-400 font-mono text-xs uppercase tracking-wider">
+                  <Wrench size={15} />
+                  <span>Engineering Challenges &amp; Resolution</span>
                 </div>
                 <p className="text-slate-300 text-sm leading-relaxed">{project.challenges}</p>
               </div>
@@ -171,6 +319,14 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 Created &amp; Documented by Hari
               </span>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowEmailDrawer(prev => !prev)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition-all"
+                >
+                  <Mail size={13} />
+                  <span>Email Specs</span>
+                </button>
+
                 {project.githubUrl && (
                   <a
                     href={project.githubUrl}
@@ -179,7 +335,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-white text-xs font-semibold transition-all border border-white/[0.08]"
                   >
                     <Github size={14} />
-                    View Source Code
+                    View Code
                   </a>
                 )}
                 <button
