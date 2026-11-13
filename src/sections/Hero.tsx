@@ -30,16 +30,16 @@ export default function Hero({ onOpenResume }: HeroProps) {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.08]">
                 {personalInfo.fullName}.
                 <span className="block text-slate-400 text-2xl sm:text-3xl lg:text-4xl font-normal mt-2">
-                  Software developer &amp; systems builder.
+                  Computer Science Student &amp; Developer.
                 </span>
               </h1>
             </div>
 
             {/* Clear, honest introduction */}
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-sans">
-              3rd-year Computer Science and Engineering undergraduate at Anna University in Tamil Nadu.
-              I build low-level microcontroller firmware in C/C++, computational physics simulations in Python,
-              and maintainable full-stack web software with React and MongoDB.
+              Computer Science and Engineering undergraduate at Amrita Vishwa Vidyapeetham (Class of 2024–2028).
+              I build and deploy practical applications spanning full-stack web engineering, AI/ML fraud detection models,
+              and interactive cybersecurity platforms using Python, React, and modern cloud platforms.
             </p>
 
             {/* Live human status note */}
@@ -48,7 +48,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
               <div className="text-slate-300 space-y-0.5">
                 <span className="text-slate-400 uppercase tracking-wider text-[11px] block">Current Focus</span>
                 <p>
-                  Prototyping an ESP32 CAN-bus telemetry interface &amp; studying distributed state machines.
+                  Strengthening core DSA &amp; system fundamentals while engineering Generative &amp; Agentic AI workflows.
                 </p>
               </div>
             </div>
@@ -137,39 +137,39 @@ export default function Hero({ onOpenResume }: HeroProps) {
 
                 <div className="pt-3 flex justify-between items-start gap-4">
                   <dt className="text-slate-400 uppercase tracking-wider">Academic Program</dt>
-                  <dd className="text-slate-200 text-right">B.Tech Computer Science (3rd Year)</dd>
+                  <dd className="text-slate-200 text-right">B.Tech Computer Science (2024–2028)</dd>
                 </div>
 
                 <div className="pt-3 flex justify-between items-start gap-4">
                   <dt className="text-slate-400 uppercase tracking-wider">Institution</dt>
-                  <dd className="text-slate-200 text-right">Anna University / Tamil Nadu</dd>
+                  <dd className="text-slate-200 text-right">Amrita Vishwa Vidyapeetham</dd>
                 </div>
 
                 <div className="pt-3 flex justify-between items-start gap-4">
-                  <dt className="text-slate-400 uppercase tracking-wider">Hardware Systems</dt>
-                  <dd className="text-slate-200 text-right">ESP32, Embedded C/C++, Proteus VSM</dd>
+                  <dt className="text-slate-400 uppercase tracking-wider">AI / ML Tooling</dt>
+                  <dd className="text-slate-200 text-right">Python, Scikit-learn, Pandas, Streamlit</dd>
                 </div>
 
                 <div className="pt-3 flex justify-between items-start gap-4">
-                  <dt className="text-slate-400 uppercase tracking-wider">Web &amp; Services</dt>
-                  <dd className="text-slate-200 text-right">React, TypeScript, Node.js, MongoDB</dd>
+                  <dt className="text-slate-400 uppercase tracking-wider">Web Architecture</dt>
+                  <dd className="text-slate-200 text-right">React.js, Next.js, Vite, MySQL, REST</dd>
                 </div>
 
                 <div className="pt-3 flex justify-between items-start gap-4">
-                  <dt className="text-slate-400 uppercase tracking-wider">Mathematical Tooling</dt>
-                  <dd className="text-slate-200 text-right">Python, NumPy, Linear Algebra</dd>
+                  <dt className="text-slate-400 uppercase tracking-wider">Core Foundations</dt>
+                  <dd className="text-slate-200 text-right">C, C++, Java, DSA, DBMS, OS, Networks</dd>
                 </div>
 
                 <div className="pt-3 flex justify-between items-start gap-4">
                   <dt className="text-slate-400 uppercase tracking-wider">Availability</dt>
-                  <dd className="text-emerald-400 text-right">Internships / Engineering Roles</dd>
+                  <dd className="text-emerald-400 text-right">Software &amp; AI Engineering Roles</dd>
                 </div>
               </dl>
 
               {/* Bottom Architectural Note */}
               <div className="mt-6 pt-4 border-t border-white/10 text-[11px] font-mono text-slate-400 flex items-center justify-between">
                 <span>Location: Tamil Nadu, India</span>
-                <span>Timezone: UTC+05:30</span>
+                <span>Graduating: 2028</span>
               </div>
             </div>
           </div>

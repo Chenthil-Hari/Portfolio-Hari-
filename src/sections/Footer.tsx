@@ -29,8 +29,8 @@ export default function Footer({ onOpenResume, onOpenEasterEgg }: FooterProps) {
               </span>
             </div>
             <p className="text-slate-400 text-xs font-sans leading-relaxed max-w-sm">
-              Undergraduate Computer Science engineer at Anna University, Tamil Nadu.
-              Designing microcontroller firmware, quantum physics simulations, and resilient web software.
+              Computer Science &amp; Engineering undergraduate at Amrita Vishwa Vidyapeetham, Tamil Nadu.
+              Building practical full-stack web platforms, machine learning models, and cybersecurity tools.
             </p>
             <div className="pt-2">
               <button

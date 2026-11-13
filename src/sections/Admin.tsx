@@ -51,8 +51,8 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
       journeyData: initialData?.journeyData || defaultJourney,
       seo: initialData?.seo || {
         metaTitle: 'Hari | Software Developer & CSE Student',
-        metaDescription: 'Building practical systems, embedded software, and modern full-stack web applications.',
-        keywords: 'Hari, Software Developer, Embedded Systems, ESP32, React, MongoDB, Python',
+        metaDescription: 'Building practical full-stack web applications, AI/ML models, and cybersecurity tools.',
+        keywords: 'Hari, Software Developer, Full-Stack, AI/ML, Python, React, Next.js, MySQL, Cybersecurity',
         ogImage: '/avatar.png',
         allowIndexing: true,
       },
@@ -82,8 +82,8 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
         journeyData: initialData.journeyData || defaultJourney,
         seo: initialData.seo || {
           metaTitle: 'Hari | Software Developer & CSE Student',
-          metaDescription: 'Building practical systems, embedded software, and modern full-stack web applications.',
-          keywords: 'Hari, Software Developer, Embedded Systems, ESP32, React, MongoDB, Python',
+          metaDescription: 'Building practical full-stack web applications, AI/ML models, and cybersecurity tools.',
+          keywords: 'Hari, Software Developer, Full-Stack, AI/ML, Python, React, Next.js, MySQL, Cybersecurity',
           ogImage: '/avatar.png',
           allowIndexing: true,
         },
@@ -338,7 +338,7 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
       challenges: 'Hardware constraints, timing issues, or scaling hurdles.',
       githubUrl: 'https://github.com/Chenthil-Hari',
       featured: false,
-      category: 'Embedded / IoT' as const,
+      category: 'Cybersecurity' as const,
       hasDemo: false,
     }
     setContent((prev: any) => ({
@@ -1191,10 +1191,10 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                           onChange={e => handleUpdateProject(idx, 'category', e.target.value)}
                           className="input-field text-xs bg-[#12141c]"
                         >
-                          <option value="Embedded / IoT">Embedded / IoT</option>
-                          <option value="Algorithms">Algorithms</option>
-                          <option value="Circuit Design">Circuit Design</option>
-                          <option value="Web Apps">Web Apps</option>
+                          <option value="Cybersecurity">Cybersecurity</option>
+                          <option value="AI / Machine Learning">AI / Machine Learning</option>
+                          <option value="Web Platforms">Web Platforms</option>
+                          <option value="Full-Stack">Full-Stack</option>
                         </select>
                       </div>
 

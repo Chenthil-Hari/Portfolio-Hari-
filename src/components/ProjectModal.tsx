@@ -14,7 +14,6 @@ import {
   BookOpen,
 } from 'lucide-react'
 import type { Project } from '@/data/portfolio'
-import TrafficSimulator from '@/components/TrafficSimulator'
 
 interface ProjectModalProps {
   project: Project | null
@@ -276,16 +275,20 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 </div>
               )}
 
-              {/* Interactive Sandbox for Smart Traffic */}
-              {project.id === 'smart-traffic' && (
+              {/* Metric Highlights if present */}
+              {project.metrics && project.metrics.length > 0 && (
                 <div className="pt-4 border-t border-white/10">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
-                      <Play size={13} /> Simulation Sandbox
-                    </span>
-                    <span className="text-[11px] font-mono text-slate-400">Live ESP32 Logic Demonstration</span>
+                  <span className="text-xs font-mono text-slate-400 uppercase tracking-widest block mb-3">
+                    Project Telemetry &amp; Metrics
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono text-xs">
+                    {project.metrics.map(m => (
+                      <div key={m.label} className="p-3 rounded bg-[#090a0f] border border-white/[0.06]">
+                        <span className="text-[10px] text-slate-500 uppercase block">{m.label}</span>
+                        <span className="text-white font-semibold mt-0.5 block">{m.value}</span>
+                      </div>
+                    ))}
                   </div>
-                  <TrafficSimulator />
                 </div>
               )}
             </div>

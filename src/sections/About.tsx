@@ -1,4 +1,4 @@
-import { Compass, BookOpen, Cpu, ShieldCheck } from 'lucide-react'
+import { Compass, BookOpen, ShieldCheck, BrainCircuit } from 'lucide-react'
 import { usePortfolio } from '@/context/PortfolioContext'
 
 export default function About() {
@@ -15,7 +15,7 @@ export default function About() {
             <span>Background &amp; Methodology</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Engineering from hardware logic to the browser viewport.
+            Building software at the intersection of web, AI &amp; security.
           </h2>
         </div>
 
@@ -24,57 +24,59 @@ export default function About() {
           {/* Narrative Column (7 cols) */}
           <div className="lg:col-span-7 space-y-6 text-slate-300 text-base leading-relaxed font-sans">
             <p>
-              I am an undergraduate Computer Science and Engineering student at Anna University / Engineering Institute in Tamil Nadu.
-              I prefer understanding systems from the hardware level up — whether that means configuring timer interrupts on an ESP32,
-              analyzing signal delays on a virtual oscilloscope in Proteus, or structuring reliable serverless endpoints for modern web apps.
+              I am a Computer Science and Engineering undergraduate at Amrita Vishwa Vidyapeetham (Class of 2024–2028).
+              My engineering focus centers on building deployed, tangible applications across full-stack web engineering,
+              applied AI/ML, and cybersecurity awareness.
             </p>
 
             <p>
-              In university coursework and independent lab work, I frequently bridge the gap between low-level embedded software and web architectures.
-              I write cycle-conscious C/C++ for sensor-driven embedded devices, model quantum gate operations and state damping in Python using NumPy,
-              and build responsive full-stack applications with React, TypeScript, and MongoDB.
+              Rather than staying purely theoretical, I enjoy developing tools that solve practical problems:
+              engineering machine-learning models to predict fraud and scam risks in Python and Streamlit,
+              building interactive cybersecurity simulation environments with React (SecuritySim),
+              and designing multi-role project marketplaces with Next.js and relational databases (IdeaMatch).
             </p>
 
             <p>
-              My goal is to build dependable systems that solve real, tangible bottlenecks — like eliminating urban intersection wait times with
-              proportional density algorithms, or ensuring transactional email delivery remains resilient against third-party network jitter.
+              In my academic coursework, I am continuously strengthening my core computer science foundations —
+              from Data Structures, Algorithms, and Database Management Systems to Operating Systems,
+              Computer Networks, and Theory of Computation.
             </p>
 
-            {/* Three Real Engineering Principles (Replacing generic badges) */}
+            {/* Three Real Engineering Principles */}
             <div className="pt-6 grid sm:grid-cols-3 gap-4 border-t border-white/[0.08]">
               <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-1.5">
                 <div className="text-blue-400 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                  <Cpu size={14} />
-                  <span>Deterministic</span>
+                  <BrainCircuit size={14} />
+                  <span>Applied AI/ML</span>
                 </div>
                 <p className="text-xs text-slate-400 leading-normal">
-                  Understanding clock cycles, memory limits, and hardware registers before abstracting.
+                  Building classification pipelines in Python, Scikit-learn, and interactive Streamlit UIs.
                 </p>
               </div>
 
               <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-1.5">
                 <div className="text-blue-400 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck size={14} />
-                  <span>Resilient APIs</span>
+                  <span>Security Literacy</span>
                 </div>
                 <p className="text-xs text-slate-400 leading-normal">
-                  Strict input sanitization, error boundaries, and defensive serverless handlers.
+                  Creating interactive simulations to teach users how modern cyber threats operate.
                 </p>
               </div>
 
               <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-1.5">
                 <div className="text-blue-400 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                   <Compass size={14} />
-                  <span>Simulation First</span>
+                  <span>Full-Stack Web</span>
                 </div>
                 <p className="text-xs text-slate-400 leading-normal">
-                  Validating circuits in Proteus and algorithms in Python before committing hardware.
+                  Architecting multi-role web platforms using React, Next.js, and structured relational schemas.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Academic Profile & Image Card (5 cols) */}
+          {/* Academic Profile Card (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
             <div className="editorial-card p-6 relative">
               {/* Profile Image with Swiss Hairline Border */}
@@ -89,35 +91,44 @@ export default function About() {
                 />
                 <div>
                   <h3 className="font-semibold text-white text-base">{personalInfo.fullName}</h3>
-                  <p className="text-xs font-mono text-slate-400 mt-0.5">Undergraduate Engineer</p>
-                  <p className="text-xs font-mono text-emerald-400 mt-0.5">Anna University · 2022–2026</p>
+                  <p className="text-xs font-mono text-slate-400 mt-0.5">B.Tech Computer Science</p>
+                  <p className="text-xs font-mono text-emerald-400 mt-0.5">Amrita Vishwa Vidyapeetham</p>
                 </div>
               </div>
 
-              {/* Coursework & Lab Focus */}
+              {/* Coursework & Verified Academic Record */}
               <div className="pt-4 space-y-4 text-xs font-mono">
                 <div>
                   <span className="text-slate-400 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
                     <BookOpen size={13} className="text-blue-400" />
-                    Core Coursework
+                    Core Coursework &amp; Fundamentals
                   </span>
                   <p className="text-slate-300 leading-relaxed font-sans text-xs">
-                    Data Structures &amp; Algorithms, Computer Architecture, Operating Systems, Database Management Systems, Computer Networks.
+                    Data Structures &amp; Algorithms, Operating Systems, Database Management Systems, Computer Networks, Theory of Computation, Computer Organization, Digital Logic.
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-white/[0.04]">
-                  <span className="text-slate-400 uppercase tracking-wider block mb-1.5">
-                    Laboratory Experience
+                <div className="pt-3 border-t border-white/[0.04] space-y-2">
+                  <span className="text-slate-400 uppercase tracking-wider block">
+                    Academic Standing &amp; Schooling
                   </span>
-                  <p className="text-slate-300 leading-relaxed font-sans text-xs">
-                    Embedded C/C++ firmware development, ESP32 microcontroller GPIO control, Proteus schematic simulation, and full-stack MERN engineering.
-                  </p>
+                  <div className="flex justify-between items-center text-slate-300">
+                    <span>B.Tech CSE (Amrita):</span>
+                    <span className="text-white font-medium">CGPA: 6.58 / 10 · Class of 2028</span>
+                  </div>
+                  <div className="flex justify-between items-center text-slate-300">
+                    <span>Class XII (CBSE):</span>
+                    <span className="text-white font-medium">77% (2024)</span>
+                  </div>
+                  <div className="flex justify-between items-center text-slate-300">
+                    <span>Class X (CBSE):</span>
+                    <span className="text-white font-medium">87.4% (2022)</span>
+                  </div>
                 </div>
 
                 <div className="pt-3 border-t border-white/[0.04] flex justify-between items-center text-slate-400">
-                  <span>Current Academic Year</span>
-                  <span className="text-white font-medium">3rd Year (Semester 5/6)</span>
+                  <span>Location</span>
+                  <span className="text-white font-medium">Tamil Nadu, India</span>
                 </div>
               </div>
             </div>

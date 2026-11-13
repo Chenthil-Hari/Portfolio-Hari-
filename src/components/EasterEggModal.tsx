@@ -59,12 +59,12 @@ export default function EasterEggModal({ isOpen, onClose }: EasterEggModalProps)
 
             <div className="space-y-2 text-slate-300">
               <div className="flex justify-between py-1 border-b border-white/[0.04]">
-                <span className="text-slate-400">Firmware Architecture:</span>
-                <span className="text-white">ESP32 Dual-Core Xtensa LX6 (240MHz)</span>
+                <span className="text-slate-400">Academic Standing:</span>
+                <span className="text-white">Amrita Vishwa Vidyapeetham (Class of 2028)</span>
               </div>
               <div className="flex justify-between py-1 border-b border-white/[0.04]">
-                <span className="text-slate-400">Simulation Kernel:</span>
-                <span className="text-white">NumPy Multi-Qubit Matrix Engine</span>
+                <span className="text-slate-400">Primary Core Stack:</span>
+                <span className="text-white">Python, Scikit-learn, React.js, Next.js, MySQL</span>
               </div>
               <div className="flex justify-between py-1 border-b border-white/[0.04]">
                 <span className="text-slate-400">API Health / Latency:</span>

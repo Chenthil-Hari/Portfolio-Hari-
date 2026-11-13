@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowUpRight, Github, Play, ExternalLink } from 'lucide-react'
+import { ArrowUpRight, Github, ExternalLink } from 'lucide-react'
 import type { Project } from '@/data/portfolio'
 import { usePortfolio } from '@/context/PortfolioContext'
 import ProjectModal from '@/components/ProjectModal'
@@ -9,7 +9,7 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [filter, setFilter] = useState<string>('All')
 
-  const categories = ['All', 'Embedded / IoT', 'Algorithms', 'Circuit Design', 'Web Apps']
+  const categories = ['All', 'Cybersecurity', 'AI / Machine Learning', 'Web Platforms']
 
   const filteredProjects =
     filter === 'All'
@@ -28,7 +28,7 @@ export default function Projects() {
               <span>Selected Engineering Work</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-              Case studies &amp; technical projects.
+              Featured projects &amp; applications.
             </h2>
             <p className="text-slate-400 text-sm sm:text-base mt-2">
               Each project is structured as: the problem, the technical approach, the friction encountered, and the engineering lesson learned.
@@ -71,15 +71,6 @@ export default function Projects() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {project.hasDemo && (
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
-                    >
-                      <Play size={10} className="fill-current" />
-                      <span>Live Simulation Demo</span>
-                    </button>
-                  )}
                   {project.githubUrl && (
                     <a
                       href={project.githubUrl}
@@ -95,7 +86,7 @@ export default function Projects() {
                 </div>
               </div>
 
-              {/* Title & One-Line Summary */}
+              {/* Title & Summary */}
               <div className="mb-6">
                 <h3
                   onClick={() => setSelectedProject(project)}
@@ -147,7 +138,7 @@ export default function Projects() {
                     What I Learned
                   </span>
                   <p className="text-slate-300 leading-relaxed">
-                    {project.learned || 'Engineering trade-offs and hardware/software boundaries.'}
+                    {project.learned}
                   </p>
                 </div>
               </div>
@@ -174,7 +165,7 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* Modal for In-depth Case Study & Simulation */}
+        {/* Modal for In-depth Case Study */}
         <ProjectModal
           project={selectedProject}
           onClose={() => setSelectedProject(null)}
