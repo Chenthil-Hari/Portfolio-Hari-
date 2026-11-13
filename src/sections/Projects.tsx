@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowUpRight, Github, Play, Sparkles, Layers } from 'lucide-react'
+import { ArrowUpRight, Github, Play, ExternalLink } from 'lucide-react'
 import type { Project } from '@/data/portfolio'
 import { usePortfolio } from '@/context/PortfolioContext'
 import ProjectModal from '@/components/ProjectModal'
@@ -18,31 +17,33 @@ export default function Projects() {
       : (projectsData || []).filter(p => p.category === filter)
 
   return (
-    <section id="projects" className="section-spacing relative bg-[#090a0f] border-t border-white/[0.04]" aria-label="Featured Projects">
+    <section id="projects" className="section-spacing relative bg-[#090a0f] hairline-bottom" aria-label="Selected Projects">
       <div className="section-wrapper">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-indigo-400">
-              03 / Selected Inventions
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mt-2">
-              Featured Engineering Projects
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-slate-400 mb-2">
+              <span className="text-blue-500 font-bold">03</span>
+              <span className="text-white/20">/</span>
+              <span>Selected Engineering Work</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+              Case studies &amp; technical projects.
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-xl">
-              From hardware microcontrollers and physics simulations to full-stack web applications.
+            <p className="text-slate-400 text-sm sm:text-base mt-2">
+              Each project is structured as: the problem, the technical approach, the friction encountered, and the engineering lesson learned.
             </p>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] self-start md:self-auto">
+          {/* Filter Bar */}
+          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[#10121a] border border-white/10 self-start md:self-auto font-mono text-xs">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`px-3 py-1.5 rounded transition-colors uppercase tracking-wider ${
                   filter === cat
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-blue-600 text-white font-medium'
                     : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
@@ -52,112 +53,133 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* Projects Bento Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* Project Case Studies List */}
+        <div className="space-y-10">
           {filteredProjects.map((project, idx) => (
-            <motion.article
+            <article
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: idx * 0.08 }}
-              className="surface-card surface-card-hover p-6 sm:p-7 border border-white/[0.08] flex flex-col justify-between group cursor-pointer"
-              onClick={() => setSelectedProject(project)}
+              className="editorial-card p-6 sm:p-8 relative group transition-all"
             >
-              <div>
-                {/* Card Top Meta */}
-                <div className="flex items-center justify-between gap-2 mb-4">
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-white/[0.04] text-indigo-300 border border-white/[0.08]">
-                    {project.category}
+              {/* Top Meta Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-white/10 mb-6 font-mono text-xs">
+                <div className="flex items-center gap-3">
+                  <span className="text-blue-400 font-semibold uppercase tracking-wider">
+                    {`[0${idx + 1}]`} {project.category}
                   </span>
+                  <span className="text-slate-500">·</span>
+                  <span className="text-slate-400">{project.tagline}</span>
+                </div>
 
+                <div className="flex items-center gap-3">
                   {project.hasDemo && (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                    <button
+                      onClick={() => setSelectedProject(project)}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                    >
                       <Play size={10} className="fill-current" />
-                      Interactive Demo
-                    </span>
+                      <span>Live Simulation Demo</span>
+                    </button>
                   )}
-                </div>
-
-                {/* Project Title */}
-                <h3 className="font-display font-bold text-xl sm:text-2xl text-white group-hover:text-indigo-300 transition-colors flex items-center justify-between">
-                  <span>{project.title}</span>
-                  <ArrowUpRight size={18} className="text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all flex-shrink-0 ml-2" />
-                </h3>
-
-                {/* Tagline / Subtitle */}
-                <p className="text-xs font-mono text-slate-400 mt-1 mb-3">
-                  {project.tagline}
-                </p>
-
-                {/* Summary */}
-                <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                  {project.shortDescription}
-                </p>
-
-                {/* Metrics Pill Grid */}
-                {project.metrics && (
-                  <div className="grid grid-cols-3 gap-2 py-3 mb-6 border-y border-white/[0.04]">
-                    {project.metrics.map(m => (
-                      <div key={m.label} className="text-center">
-                        <span className="block text-xs font-semibold text-white">{m.value}</span>
-                        <span className="block text-[10px] font-mono text-slate-500">{m.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                {/* Tech Badges */}
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                  {project.technologies.slice(0, 4).map(t => (
-                    <span key={t} className="tech-tag">
-                      {t}
-                    </span>
-                  ))}
-                  {project.technologies.length > 4 && (
-                    <span className="text-[11px] font-mono text-slate-500 self-center pl-1">
-                      +{project.technologies.length - 4} more
-                    </span>
-                  )}
-                </div>
-
-                {/* Card Action Buttons */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
-                  <button
-                    onClick={e => {
-                      e.stopPropagation()
-                      setSelectedProject(project)
-                    }}
-                    className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
-                  >
-                    View Details &amp; Architecture →
-                  </button>
-
                   {project.githubUrl && (
                     <a
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      className="p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white transition-colors"
+                      className="inline-flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
                       aria-label={`${project.title} on GitHub`}
                     >
-                      <Github size={15} />
+                      <Github size={13} />
+                      <span>Repository</span>
                     </a>
                   )}
                 </div>
               </div>
-            </motion.article>
+
+              {/* Title & One-Line Summary */}
+              <div className="mb-6">
+                <h3
+                  onClick={() => setSelectedProject(project)}
+                  className="text-2xl sm:text-3xl font-bold text-white hover:text-blue-400 cursor-pointer transition-colors inline-flex items-center gap-2"
+                >
+                  <span>{project.title}</span>
+                  <ArrowUpRight size={20} className="text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </h3>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed mt-2 max-w-4xl font-sans">
+                  {project.description}
+                </p>
+              </div>
+
+              {/* 4-Part Engineering Breakdown: Problem / Approach / Friction / Learned */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded bg-[#090a0f] border border-white/[0.06] mb-6 font-sans text-xs">
+                {/* The Problem */}
+                <div className="space-y-1.5 border-b md:border-b-0 md:border-r border-white/[0.06] pb-3 md:pb-0 md:pr-4">
+                  <span className="font-mono uppercase tracking-wider text-[11px] text-red-400 font-semibold block">
+                    The Problem
+                  </span>
+                  <p className="text-slate-300 leading-relaxed">
+                    {project.problem}
+                  </p>
+                </div>
+
+                {/* My Approach */}
+                <div className="space-y-1.5 border-b md:border-b-0 md:border-r border-white/[0.06] pb-3 md:pb-0 md:pr-4">
+                  <span className="font-mono uppercase tracking-wider text-[11px] text-blue-400 font-semibold block">
+                    My Approach
+                  </span>
+                  <p className="text-slate-300 leading-relaxed">
+                    {project.approach || project.solution}
+                  </p>
+                </div>
+
+                {/* What Went Wrong / Friction */}
+                <div className="space-y-1.5 border-b md:border-b-0 md:border-r border-white/[0.06] pb-3 md:pb-0 md:pr-4">
+                  <span className="font-mono uppercase tracking-wider text-[11px] text-amber-400 font-semibold block">
+                    What Went Wrong
+                  </span>
+                  <p className="text-slate-300 leading-relaxed">
+                    {project.friction || project.challenges}
+                  </p>
+                </div>
+
+                {/* What I Learned */}
+                <div className="space-y-1.5">
+                  <span className="font-mono uppercase tracking-wider text-[11px] text-emerald-400 font-semibold block">
+                    What I Learned
+                  </span>
+                  <p className="text-slate-300 leading-relaxed">
+                    {project.learned || 'Engineering trade-offs and hardware/software boundaries.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Technologies & Trigger Details Button */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map(tech => (
+                    <span key={tech} className="spec-tag">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setSelectedProject(project)}
+                  className="text-xs font-mono text-blue-400 hover:text-blue-300 uppercase tracking-wider transition-colors inline-flex items-center gap-1"
+                >
+                  <span>Detailed Case Study</span>
+                  <ArrowUpRight size={13} />
+                </button>
+              </div>
+            </article>
           ))}
         </div>
-      </div>
 
-      {/* Project Modal */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+        {/* Modal for In-depth Case Study & Simulation */}
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </div>
     </section>
   )
 }

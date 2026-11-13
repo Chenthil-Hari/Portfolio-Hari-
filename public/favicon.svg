@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#0a0a0f"/>
-  <text x="16" y="22" font-family="Syne, sans-serif" font-size="18" font-weight="800" fill="url(#grad)" text-anchor="middle">H</text>
-  <defs>
-    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#3b82f6"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
-    </linearGradient>
-  </defs>
+  <rect width="32" height="32" rx="6" fill="#090a0f"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#ffffff" stroke-opacity="0.12"/>
+  <!-- Swiss architectural monogram 'H' with precision crossbar -->
+  <path d="M9 7V25M23 7V25M9 16H23" stroke="#f4f4f5" stroke-width="2.75" stroke-linecap="square"/>
+  <!-- Precision technical registration dot -->
+  <circle cx="23" cy="7" r="1.5" fill="#3b82f6"/>
 </svg>

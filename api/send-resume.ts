@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
+import { checkRateLimit } from './_rateLimit.js'
 
 export const config = {
   runtime: 'nodejs',
@@ -25,6 +26,14 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').toString().split(',')[0].trim()
+    const rateCheck = checkRateLimit(`resume:${clientIp}`, 5, 15 * 60 * 1000)
+    if (!rateCheck.allowed) {
+      return res.status(429).json({
+        error: `Rate limit exceeded. Please wait ${rateCheck.retryAfterSec || 60} seconds before requesting another copy.`,
+      })
+    }
+
     const { email, name, role } = req.body || {}
     const cleanEmail = (email || '').trim().toLowerCase()
     const cleanName = (name || '').trim() || 'Hiring Team / Recruiter'

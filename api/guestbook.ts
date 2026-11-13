@@ -1,5 +1,6 @@
 import { connectToDatabase } from './_db.js'
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
+import { checkRateLimit } from './_rateLimit.js'
 
 const defaultGuestbookEntries = [
   {
@@ -58,6 +59,14 @@ export default async function handler(req: any, res: any) {
   // POST: Add new guestbook message
   if (req.method === 'POST') {
     try {
+      const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').toString().split(',')[0].trim()
+      const rateCheck = checkRateLimit(`guestbook:${clientIp}`, 5, 15 * 60 * 1000)
+      if (!rateCheck.allowed) {
+        return res.status(429).json({
+          error: `Rate limit exceeded. Please wait ${rateCheck.retryAfterSec || 60} seconds before posting again.`,
+        })
+      }
+
       const { name, message, role, email } = req.body || {}
 
       if (!name || !message || typeof name !== 'string' || typeof message !== 'string') {

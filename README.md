@@ -1,65 +1,62 @@
-# Portfolio — Hari
+# Chenthil Hari — Engineering Portfolio (`haritech.me`)
 
-A premium, highly animated personal portfolio website built with React, TypeScript, Tailwind CSS, and Framer Motion.
+> Modern, Swiss-inspired engineering portfolio showcasing embedded microcontroller firmware, algorithm simulations, and full-stack web software.
 
-## ✨ Features
+## Tech Stack
 
-- Dark premium glassmorphism design
-- Smooth Framer Motion animations throughout
-- Custom cursor with magnetic effects (desktop)
-- Canvas particle background
-- Scroll-triggered section reveals
-- GitHub API integration (real repo data)
-- Fully responsive (mobile → desktop)
-- Accessible (prefers-reduced-motion support)
-- All content editable from a single data file
+- **Frontend:** React 18, TypeScript, Tailwind CSS, Framer Motion, Lucide Icons.
+- **Backend / Serverless:** Vercel Serverless Functions (`/api`), Node.js runtime.
+- **Database:** MongoDB Atlas (Persistent contact submissions and visitor guestbook).
+- **Email:** Resend API with automated `.ics` calendar invitation generation and transactional dispatch.
+- **Design System:** Swiss Engineering / Minimalist Editorial (Restrained palette, high typographic hierarchy, zero generic purple blobs or AI card clichés).
 
-## 🚀 Quick Start
+---
 
+## Getting Started
+
+### 1. Prerequisites
+- Node.js 18+
+- npm or pnpm
+
+### 2. Environment Variables
+Copy the template configuration:
+```bash
+cp .env.example .env.local
+```
+Fill in your credentials:
+```env
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/portfolio
+RESEND_API_KEY=re_your_api_key_here
+OWNER_EMAIL=chenthilhari@gmail.com
+ADMIN_PASSWORD=your_secure_admin_password
+```
+
+### 3. Install & Run Dev Server
 ```bash
 npm install
 npm run dev
 ```
+Visit `http://localhost:5173` in your browser.
 
-Open [http://localhost:5173](http://localhost:5173)
+---
 
-## 📁 Updating Content
-
-All portfolio data lives in **`src/data/portfolio.ts`**. Edit that file to update:
-
-- Personal info, email, GitHub, LinkedIn
-- Projects (title, description, technologies, links)
-- Skills
-- Experience timeline
-- Education
-- Achievements / certifications
-
-## 📄 Resume
-
-Drop your `resume.pdf` into the `public/` folder. The Download Resume button will automatically work.
-
-## 🔗 Email Contact Form
-
-The contact form shows a success animation but does **not** send real emails by default.
-To enable real email delivery, integrate:
-- [Formspree](https://formspree.io/) — replace the form `onSubmit` handler
-- [EmailJS](https://www.emailjs.com/) — add the EmailJS SDK
-
-## 🏗️ Build for Production
+## Build & Production Verification
 
 ```bash
+# Typecheck and build static production bundle
 npm run build
+
+# Preview production build locally
 npm run preview
 ```
 
-## 📦 Tech Stack
+---
 
-| Tool | Purpose |
-|---|---|
-| React 18 | UI framework |
-| TypeScript | Type safety |
-| Vite | Build tool |
-| Tailwind CSS | Styling |
-| Framer Motion | Animations |
-| Lucide React | Icons |
-| GitHub REST API | Live repo data |
+## Deployment
+
+The repository is configured for direct deployment on **Vercel**:
+- `vercel.json` applies HTTP security headers (CSP, HSTS, X-Frame-Options, Permissions-Policy).
+- Serverless API routes under `/api/*` run in isolated Node.js functions.
+- Static assets are generated into `/dist`.
+
+For detailed security findings and mitigations, refer to [SECURITY_AUDIT.md](./SECURITY_AUDIT.md).

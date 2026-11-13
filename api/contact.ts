@@ -1,4 +1,5 @@
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
+import { checkRateLimit } from './_rateLimit.js'
 
 export const config = {
   runtime: 'nodejs',
@@ -95,6 +96,14 @@ export default async function handler(req: any, res: any) {
   try {
     const { name, email, subject, message, inquiryType = 'general', preferredTime, honeypot } =
       (req.body || {}) as ContactRequestBody
+
+    const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').toString().split(',')[0].trim()
+    const rateCheck = checkRateLimit(`contact:${clientIp}`, 5, 15 * 60 * 1000)
+    if (!rateCheck.allowed) {
+      return res.status(429).json({
+        error: `Too many submissions. Please wait ${rateCheck.retryAfterSec || 60} seconds before sending another message.`,
+      })
+    }
 
     // Anti-spam honeypot
     if (honeypot) {

@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef, type FormEvent } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { MessageSquare, Send, CheckCircle2, AlertCircle, Loader2, Database, Sparkles } from 'lucide-react'
+import { useState, useEffect, type FormEvent } from 'react'
+import { MessageSquare, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
 
 export interface GuestbookEntry {
   _id?: string
@@ -22,20 +21,6 @@ function timeAgo(dateString: string): string {
   }
 }
 
-const avatarGradients = [
-  'from-indigo-500 to-cyan-500',
-  'from-violet-500 to-purple-500',
-  'from-emerald-500 to-teal-500',
-  'from-amber-500 to-orange-500',
-  'from-rose-500 to-pink-500',
-]
-
-function getAvatarGradient(name: string) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) hash += name.charCodeAt(i)
-  return avatarGradients[Math.abs(hash) % avatarGradients.length]
-}
-
 export default function Guestbook() {
   const [entries, setEntries] = useState<GuestbookEntry[]>([])
   const [loading, setLoading] = useState(true)
@@ -46,10 +31,6 @@ export default function Guestbook() {
   const [message, setMessage] = useState('')
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
-
-  // Fetch guestbook messages on mount
   useEffect(() => {
     fetch('/api/guestbook')
       .then(res => res.json())
@@ -58,9 +39,7 @@ export default function Guestbook() {
           setEntries(data)
         }
       })
-      .catch(err => {
-        console.error('Failed to load guestbook entries:', err)
-      })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
@@ -78,244 +57,191 @@ export default function Guestbook() {
         body: JSON.stringify({
           name: name.trim(),
           role: role.trim() || 'Visitor',
-          email: email.trim(),
+          email: email.trim() || undefined,
           message: message.trim(),
         }),
       })
 
-      const result = await res.json()
-
-      if (res.ok && result.entry) {
-        setEntries(prev => [result.entry, ...prev])
-        setName('')
-        setRole('')
-        setEmail('')
-        setMessage('')
-        setStatusMsg({
-          type: 'success',
-          text: email.trim()
-            ? 'Thank you! Your note is live and a confirmation receipt was sent to your email.'
-            : 'Thank you! Your note has been saved live.',
-        })
-        setTimeout(() => setStatusMsg(null), 5000)
-      } else {
-        throw new Error(result.error || 'Failed to submit message.')
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to submit entry.')
       }
+
+      const newEntry: GuestbookEntry = {
+        name: name.trim(),
+        role: role.trim() || 'Visitor',
+        message: message.trim(),
+        createdAt: new Date().toISOString(),
+      }
+      setEntries(prev => [newEntry, ...prev])
+      setName('')
+      setRole('')
+      setEmail('')
+      setMessage('')
+      setStatusMsg({ type: 'success', text: 'Message posted to the public ledger.' })
     } catch (err: any) {
-      console.error(err)
-      setStatusMsg({ type: 'error', text: err.message || 'Something went wrong. Please try again.' })
+      setStatusMsg({ type: 'error', text: err.message || 'Error submitting message.' })
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <section id="guestbook" className="section-spacing relative bg-[#090a0f] border-t border-white/[0.04]" ref={ref} aria-label="Visitor Guestbook">
+    <section id="guestbook" className="section-spacing relative bg-[#090a0f] hairline-bottom" aria-label="Visitor Guestbook">
       <div className="section-wrapper">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-mono uppercase tracking-widest text-indigo-400">
-                05 / Community Feedback
-              </span>
-              <span className="h-px w-6 bg-white/[0.1]" />
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/20">
-                <Database size={10} /> Live MongoDB Atlas
-              </span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
-              Visitor Guestbook
-            </h2>
-            <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-xl">
-              Leave a note, feedback, or a quick greeting. Submissions persist live in MongoDB Atlas.
-            </p>
+        <div className="max-w-2xl mb-14">
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-slate-400 mb-2">
+            <span className="text-blue-500 font-bold">05</span>
+            <span className="text-white/20">/</span>
+            <span>Public Ledger</span>
           </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+            Visitor remarks &amp; notes.
+          </h2>
+          <p className="text-slate-400 text-sm sm:text-base mt-2">
+            Leave an entry in the persistent visitor log. All entries are preserved in MongoDB.
+          </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          {/* Form Column (5 cols) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-5"
-          >
-            <div className="surface-card p-6 sm:p-7 border border-white/[0.08] relative overflow-hidden">
-              <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-white/[0.06]">
-                <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400">
-                  <Sparkles size={16} />
-                </div>
-                <div>
-                  <h3 className="font-display font-semibold text-white text-base">Leave a Signature</h3>
-                  <p className="text-xs text-slate-500 font-mono">// public_log.post()</p>
-                </div>
+        <div className="grid lg:grid-cols-12 gap-10 items-start">
+          {/* Submission Form (5 cols) */}
+          <div className="lg:col-span-5 editorial-card p-6 sm:p-7 space-y-5">
+            <div className="flex items-center gap-2 pb-3 border-b border-white/10 font-mono text-xs">
+              <MessageSquare size={14} className="text-blue-400" />
+              <span className="uppercase tracking-wider text-white">Post to Ledger</span>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs">
+              <div>
+                <label className="block text-slate-400 uppercase tracking-wider mb-1.5 text-[11px]">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Your Name / Handle"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  className="input-field text-xs"
+                />
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="gb-name" className="block text-xs font-mono text-slate-400 mb-1.5">
-                    Your Name <span className="text-indigo-400">*</span>
-                  </label>
-                  <input
-                    id="gb-name"
-                    type="text"
-                    required
-                    maxLength={50}
-                    placeholder="e.g. Priya Sharma"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    className="input-field"
-                  />
-                </div>
+              <div>
+                <label className="block text-slate-400 uppercase tracking-wider mb-1.5 text-[11px]">
+                  Role / Affiliation
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Software Engineer / Student"
+                  value={role}
+                  onChange={e => setRole(e.target.value)}
+                  className="input-field text-xs"
+                />
+              </div>
 
-                <div>
-                  <label htmlFor="gb-role" className="block text-xs font-mono text-slate-400 mb-1.5">
-                    Role / Company / Location <span className="text-slate-600">(Optional)</span>
-                  </label>
-                  <input
-                    id="gb-role"
-                    type="text"
-                    maxLength={50}
-                    placeholder="e.g. Recruiter @ TechCorp or Bangalore"
-                    value={role}
-                    onChange={e => setRole(e.target.value)}
-                    className="input-field"
-                  />
-                </div>
+              <div>
+                <label className="block text-slate-400 uppercase tracking-wider mb-1.5 text-[11px]">
+                  Email (Optional · Kept Private)
+                </label>
+                <input
+                  type="email"
+                  placeholder="you@domain.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="input-field text-xs"
+                />
+              </div>
 
-                <div>
-                  <label htmlFor="gb-email" className="block text-xs font-mono text-slate-400 mb-1.5">
-                    Email Address <span className="text-slate-600">(Optional - for thank you receipt)</span>
-                  </label>
-                  <input
-                    id="gb-email"
-                    type="email"
-                    placeholder="e.g. priya@example.com"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    className="input-field"
-                  />
-                </div>
+              <div>
+                <label className="block text-slate-400 uppercase tracking-wider mb-1.5 text-[11px]">
+                  Message *
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  maxLength={250}
+                  placeholder="Write a brief note or feedback..."
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
+                  className="input-field text-xs resize-none"
+                />
+                <span className="text-[10px] text-slate-500 block text-right mt-1">
+                  {message.length} / 250 characters
+                </span>
+              </div>
 
-                <div>
-                  <label htmlFor="gb-message" className="block text-xs font-mono text-slate-400 mb-1.5">
-                    Message <span className="text-indigo-400">*</span>
-                  </label>
-                  <textarea
-                    id="gb-message"
-                    required
-                    maxLength={250}
-                    rows={3}
-                    placeholder="Loved the traffic simulator! Great engineering portfolio..."
-                    value={message}
-                    onChange={e => setMessage(e.target.value)}
-                    className="input-field resize-none"
-                  />
-                  <div className="text-right text-[10px] text-slate-500 mt-1 font-mono">
-                    {message.length}/250
-                  </div>
-                </div>
-
-                {statusMsg && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`p-3 rounded-xl flex items-center gap-2 text-xs ${
-                      statusMsg.type === 'success'
-                        ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
-                        : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'
-                    }`}
-                  >
-                    {statusMsg.type === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
-                    {statusMsg.text}
-                  </motion.div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50"
+              {statusMsg && (
+                <div
+                  className={`flex items-center gap-2 p-2.5 rounded text-xs ${
+                    statusMsg.type === 'success'
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                  }`}
                 >
-                  {submitting ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Saving to MongoDB...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={14} />
-                      Post Message
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-          </motion.div>
+                  {statusMsg.type === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                  <span>{statusMsg.text}</span>
+                </div>
+              )}
 
-          {/* Entries Feed Column (7 cols) */}
-          <div className="lg:col-span-7 space-y-3">
-            <div className="flex items-center justify-between px-1 mb-2 text-xs font-mono text-slate-400">
-              <span>Recent Signatures ({entries.length})</span>
-              <span className="text-slate-500">Live Feed</span>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-mono uppercase tracking-wider text-xs flex items-center justify-center gap-1.5 transition-all"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin" />
+                    <span>Transmitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={13} />
+                    <span>Commit Entry</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Ledger Records (7 cols) */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10 font-mono text-xs">
+              <span className="uppercase tracking-wider text-slate-400">Ledger History</span>
+              <span className="text-slate-500">{entries.length} entries</span>
             </div>
 
             {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="surface-card p-4 border border-white/[0.04] animate-pulse flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-white/[0.05]" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-3 w-1/3 bg-white/[0.05] rounded" />
-                      <div className="h-2.5 w-full bg-white/[0.03] rounded" />
-                    </div>
-                  </div>
-                ))}
+              <div className="editorial-card p-8 text-center text-slate-500 font-mono text-xs">
+                Loading ledger entries...
               </div>
             ) : entries.length === 0 ? (
-              <div className="surface-card p-8 border border-white/[0.06] text-center text-slate-400">
-                <MessageSquare size={24} className="mx-auto mb-2 text-slate-500" />
-                <p className="text-sm">Be the first to leave a message in the guestbook!</p>
+              <div className="editorial-card p-8 text-center text-slate-500 font-mono text-xs">
+                No entries recorded yet. Be the first to leave a message.
               </div>
             ) : (
-              <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1 scrollbar-thin">
+              <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
                 {entries.map((entry, idx) => (
-                  <motion.div
+                  <div
                     key={entry._id || idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: idx * 0.04 }}
-                    className="surface-card surface-card-hover p-4 border border-white/[0.06] flex items-start gap-3.5"
+                    className="editorial-card p-4 space-y-2"
                   >
-                    <div
-                      className={`w-9 h-9 rounded-xl bg-gradient-to-br ${getAvatarGradient(
-                        entry.name
-                      )} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm`}
-                    >
-                      {entry.name.slice(0, 2).toUpperCase()}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-semibold text-white text-sm truncate">
-                            {entry.name}
-                          </span>
-                          {entry.role && (
-                            <span className="text-[10px] font-mono text-indigo-300 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.06] truncate max-w-[180px]">
-                              {entry.role}
-                            </span>
-                          )}
+                    <div className="flex items-center justify-between gap-3 text-xs font-mono">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded bg-[#151824] border border-white/10 flex items-center justify-center text-[10px] font-bold text-blue-400">
+                          {entry.name.slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="text-[10px] font-mono text-slate-500 flex-shrink-0">
-                          {timeAgo(entry.createdAt)}
-                        </span>
+                        <span className="font-semibold text-white">{entry.name}</span>
+                        {entry.role && (
+                          <span className="text-slate-500 text-[11px]">· {entry.role}</span>
+                        )}
                       </div>
-                      <p className="text-slate-300 text-xs leading-relaxed break-words">
-                        "{entry.message}"
-                      </p>
+                      <span className="text-[10px] text-slate-500">{timeAgo(entry.createdAt)}</span>
                     </div>
-                  </motion.div>
+                    <p className="text-xs text-slate-300 font-sans leading-relaxed pl-8">
+                      {entry.message}
+                    </p>
+                  </div>
                 ))}
               </div>
             )}
