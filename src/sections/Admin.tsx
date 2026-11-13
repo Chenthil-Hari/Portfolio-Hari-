@@ -273,6 +273,27 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
     }
   }
 
+  // Guestbook: permanent delete from DB
+  const handleDeleteGuestbookEntry = async (id: string) => {
+    if (!id) return
+    try {
+      const res = await fetch('/api/guestbook', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password,
+        },
+        body: JSON.stringify({ id, password }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to delete entry.')
+      setGuestbookEntries(prev => prev.filter(e => (e._id || e.id) !== id))
+      showToast('success', 'Guestbook entry permanently deleted from MongoDB Atlas.')
+    } catch (err: any) {
+      showToast('error', err.message || 'Failed to delete signature.')
+    }
+  }
+
   // Inbox: send reply
   const handleSendReply = async (msg: any) => {
     if (!replyText.trim()) return
@@ -280,14 +301,26 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
     try {
       const res = await fetch('/api/admin-reply', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password, messageId: msg._id, to: msg.email, replyText: replyText.trim(), originalSubject: msg.subject || 'Your message to Hari' }),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password,
+        },
+        body: JSON.stringify({
+          password,
+          messageId: msg._id,
+          to: msg.email,
+          name: msg.name,
+          subject: msg.subject ? `Re: ${msg.subject.replace(/^Re:\s*/i, '')}` : 'Re: Your Inquiry to Chenthil Hari',
+          originalSubject: msg.subject || 'Your message to Chenthil Hari',
+          message: replyText.trim(),
+          replyText: replyText.trim(),
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Reply failed')
       setMessages(prev => prev.map(m => m._id === msg._id ? { ...m, replied: true, read: true } : m))
       setReplyText('')
-      showToast('success', `Reply sent to ${msg.email}`)
+      showToast('success', `Reply sent to ${msg.email} from noreply@haritech.me!`)
     } catch (err: any) {
       showToast('error', err.message || 'Failed to send reply.')
     } finally {
@@ -1365,12 +1398,9 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                       </div>
 
                       <button
-                        onClick={() => {
-                          setGuestbookEntries(prev => prev.filter((_, i) => i !== idx))
-                          showToast('info', 'Entry hidden from local view.')
-                        }}
+                        onClick={() => handleDeleteGuestbookEntry(entry._id || entry.id)}
                         className="p-1.5 rounded-lg bg-white/[0.04] text-slate-500 hover:text-rose-400 transition-colors"
-                        title="Dismiss"
+                        title="Delete permanently from database"
                       >
                         <Trash2 size={13} />
                       </button>
@@ -1610,7 +1640,34 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                       {/* Message header row */}
                       <button
                         onClick={() => {
-                          setExpandedMessage(expandedMessage === msg._id ? null : msg._id)
+                          const isOpening = expandedMessage !== msg._id
+                          setExpandedMessage(isOpening ? msg._id : null)
+                          if (isOpening) {
+                            const templates = [
+                              {
+                                id: 'opportunity',
+                                match: msg.inquiryType === 'opportunity',
+                                text: `Hi ${msg.name || 'there'},\n\nThank you for getting in touch regarding this opportunity! I am very interested in learning more about the role and how my technical background in full-stack engineering, AI/ML, and cybersecurity aligns with your team's goals.\n\nCould you please share more details about the technical scope, or a good time for a brief introductory conversation this week?\n\nBest regards,\nChenthil Hari\nB.Tech CSE, Amrita Vishwa Vidyapeetham\nhttps://haritech.me`,
+                              },
+                              {
+                                id: 'meeting',
+                                match: msg.inquiryType === 'meeting',
+                                text: `Hi ${msg.name || 'there'},\n\nThank you for suggesting a time to connect. I look forward to speaking with you!\n\nI have confirmed the time slot and will be available as discussed. Please feel free to send over a meeting link (Google Meet / Zoom), or let me know if another platform works best.\n\nBest regards,\nChenthil Hari\nSoftware Developer · https://haritech.me`,
+                              },
+                              {
+                                id: 'collaboration',
+                                match: msg.inquiryType === 'collaboration',
+                                text: `Hi ${msg.name || 'there'},\n\nThanks for reaching out about collaborating on a project! I'm always eager to work on interesting software challenges.\n\nCould you share a brief overview of the project architecture, timeline, and repository links? Looking forward to building something together.\n\nBest regards,\nChenthil Hari\nhttps://haritech.me`,
+                              },
+                              {
+                                id: 'general',
+                                match: true,
+                                text: `Hi ${msg.name || 'there'},\n\nThank you for reaching out through my website (haritech.me). I appreciate your message regarding "${msg.subject || 'your inquiry'}".\n\nI would be glad to discuss this further. Let me know if you would like to schedule a brief call or continue our conversation over email.\n\nBest regards,\nChenthil Hari\nSoftware Developer · https://haritech.me`,
+                              },
+                            ]
+                            const selected = templates.find(t => t.match)?.text || templates[3].text
+                            setReplyText(selected)
+                          }
                           if (!msg.read) handleMarkRead(msg._id)
                         }}
                         className="w-full flex items-center justify-between p-4 text-left"
@@ -1666,32 +1723,94 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                                 {msg.inquiryType && <span>Type: {msg.inquiryType}</span>}
                               </div>
 
-                              {/* Quick Reply */}
+                              {/* Quick Reply Form */}
                               {msg.email && (
-                                <div className="pt-3 border-t border-white/[0.06]">
-                                  <span className="text-[10px] font-mono text-slate-500 uppercase mb-2 block">Quick Reply</span>
+                                <div className="pt-3 border-t border-white/[0.06] space-y-2.5">
+                                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
+                                    <div className="flex items-center gap-1.5 text-slate-400">
+                                      <span>From:</span>
+                                      <span className="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                                        noreply@haritech.me
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-slate-400">
+                                      <span>To:</span>
+                                      <span className="text-blue-400 font-medium">{msg.email}</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Canned Template Selector */}
+                                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                                    <span className="text-[10px] font-mono text-slate-500 uppercase mr-1">Templates:</span>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setReplyText(
+                                          `Hi ${msg.name || 'there'},\n\nThank you for reaching out through my website (haritech.me). I appreciate your message regarding "${msg.subject || 'your inquiry'}".\n\nI would be glad to discuss this further. Let me know if you would like to schedule a brief call or continue our conversation over email.\n\nBest regards,\nChenthil Hari\nSoftware Developer · https://haritech.me`
+                                        )
+                                      }
+                                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] hover:bg-blue-600/20 text-slate-300 hover:text-blue-300 border border-white/[0.08] transition-colors"
+                                    >
+                                      General Thanks
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setReplyText(
+                                          `Hi ${msg.name || 'there'},\n\nThank you for getting in touch regarding this opportunity! I am very interested in learning more about the role and how my technical background in full-stack engineering, AI/ML, and cybersecurity aligns with your team's goals.\n\nCould you please share more details about the technical scope, or a good time for a brief introductory conversation this week?\n\nBest regards,\nChenthil Hari\nB.Tech CSE, Amrita Vishwa Vidyapeetham\nhttps://haritech.me`
+                                        )
+                                      }
+                                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] hover:bg-blue-600/20 text-slate-300 hover:text-blue-300 border border-white/[0.08] transition-colors"
+                                    >
+                                      Internship / Job
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setReplyText(
+                                          `Hi ${msg.name || 'there'},\n\nThank you for suggesting a time to connect. I look forward to speaking with you!\n\nI have confirmed the time slot and will be available as discussed. Please feel free to send over a meeting link (Google Meet / Zoom), or let me know if another platform works best.\n\nBest regards,\nChenthil Hari\nSoftware Developer · https://haritech.me`
+                                        )
+                                      }
+                                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] hover:bg-blue-600/20 text-slate-300 hover:text-blue-300 border border-white/[0.08] transition-colors"
+                                    >
+                                      15m Call Confirm
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setReplyText(
+                                          `Hi ${msg.name || 'there'},\n\nThanks for reaching out about collaborating on a project! I'm always eager to work on interesting software challenges.\n\nCould you share a brief overview of the project architecture, timeline, and repository links? Looking forward to building something together.\n\nBest regards,\nChenthil Hari\nhttps://haritech.me`
+                                        )
+                                      }
+                                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.04] hover:bg-blue-600/20 text-slate-300 hover:text-blue-300 border border-white/[0.08] transition-colors"
+                                    >
+                                      Project Collab
+                                    </button>
+                                  </div>
+
                                   <textarea
                                     value={expandedMessage === msg._id ? replyText : ''}
                                     onChange={e => setReplyText(e.target.value)}
                                     placeholder={`Reply to ${msg.name || msg.email}...`}
-                                    rows={3}
-                                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/40 resize-none"
+                                    rows={7}
+                                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/50 resize-y font-mono leading-relaxed"
                                   />
-                                  <div className="flex items-center justify-between mt-2">
+
+                                  <div className="flex items-center justify-between pt-1">
                                     <button
                                       onClick={() => handleDeleteMessage(msg._id)}
                                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
                                     >
                                       <Trash2 size={12} />
-                                      Delete
+                                      Delete Message
                                     </button>
                                     <button
                                       onClick={() => handleSendReply(msg)}
                                       disabled={sendingReply || !replyText.trim()}
-                                      className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all disabled:opacity-50"
+                                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all disabled:opacity-50"
                                     >
                                       {sendingReply ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                                      {sendingReply ? 'Sending...' : 'Send Reply'}
+                                      {sendingReply ? 'Dispatching Reply...' : 'Dispatch Reply (from noreply@haritech.me)'}
                                     </button>
                                   </div>
                                 </div>

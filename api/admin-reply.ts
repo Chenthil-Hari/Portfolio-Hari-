@@ -1,5 +1,4 @@
 import { connectToDatabase } from './_db.js'
-import { ObjectId } from 'mongodb'
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
 
 export const config = {
@@ -13,7 +12,7 @@ export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-admin-password'
   )
 
   if (req.method === 'OPTIONS') {
@@ -24,20 +23,36 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' })
   }
 
-  const { password, to, name, subject, message, messageId } = req.body || {}
+  const {
+    password,
+    to,
+    name,
+    subject,
+    originalSubject,
+    message,
+    replyText,
+    messageId,
+  } = req.body || {}
+
+  const adminPass = req.headers['x-admin-password'] || password
   const expectedPassword = process.env.ADMIN_PASSWORD || 'admin123'
 
-  if (password !== expectedPassword) {
+  if (adminPass !== expectedPassword) {
     return res.status(401).json({ error: 'Unauthorized: Invalid admin credentials.' })
   }
 
   const cleanTo = (to || '').trim().toLowerCase()
   const cleanName = (name || '').trim() || 'Colleague'
-  const cleanSubject = (subject || '').trim() || 'Response from Chenthil Hari'
-  const cleanMessage = (message || '').trim()
+  const rawSubject = (subject || originalSubject || '').trim()
+  const cleanSubject = rawSubject.startsWith('Re:') ? rawSubject : `Re: ${rawSubject || 'Your Inquiry to Chenthil Hari'}`
+  const cleanMessage = (message || replyText || '').trim()
 
-  if (!cleanTo || !cleanMessage) {
-    return res.status(400).json({ error: 'Recipient and message content are required.' })
+  if (!cleanTo) {
+    return res.status(400).json({ error: 'Recipient email address (to) is required.' })
+  }
+
+  if (!cleanMessage) {
+    return res.status(400).json({ error: 'Reply message text is required.' })
   }
 
   try {
@@ -61,25 +76,33 @@ ${escapeHtml(cleanMessage)}
       contentHtml: replyHtml,
     })
 
+    // Explicitly send from noreply email with personal reply_to
     const sendResult = await sendEmail({
       to: cleanTo,
       subject: cleanSubject,
       html: wrapped,
       text: `Hello ${cleanName},\n\n${cleanMessage}\n\nBest regards,\nChenthil Hari\nhttps://haritech.me`,
       reply_to: RESEND_CONFIG.ownerEmail,
+      fromName: 'Chenthil Hari',
     })
 
     // Update message status in MongoDB
     if (messageId && process.env.MONGODB_URI) {
       try {
         const { db } = await connectToDatabase()
+        const { ObjectId } = await import('mongodb')
+        let filter: any = { _id: messageId }
+        if (ObjectId.isValid(messageId)) {
+          filter = { $or: [{ _id: new ObjectId(messageId) }, { _id: messageId }] }
+        }
         await db.collection('messages').updateOne(
-          { _id: new ObjectId(messageId) },
+          filter,
           {
             $set: {
               replied: true,
               repliedAt: new Date().toISOString(),
               replySubject: cleanSubject,
+              lastReplyText: cleanMessage,
             },
           }
         )
@@ -90,11 +113,11 @@ ${escapeHtml(cleanMessage)}
 
     return res.status(200).json({
       success: true,
-      message: `Reply sent successfully to ${cleanTo}!`,
+      message: `Reply sent successfully to ${cleanTo} from ${RESEND_CONFIG.senderAddress}!`,
       emailId: sendResult?.id,
     })
   } catch (error: any) {
     console.error('Error sending admin reply:', error)
-    return res.status(500).json({ error: error.message || 'Failed to send reply email.' })
+    return res.status(500).json({ error: error.message || 'Failed to send reply email via Resend.' })
   }
 }

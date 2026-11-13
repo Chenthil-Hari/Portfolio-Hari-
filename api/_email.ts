@@ -23,8 +23,8 @@ export const RESEND_CONFIG = {
   get apiKey(): string {
     return process.env.RESEND_API_KEY || ''
   },
-  senderName: 'Haritech',
-  senderAddress: 'noreply@haritech.me',
+  senderName: process.env.SENDER_NAME || 'Chenthil Hari',
+  senderAddress: process.env.SENDER_EMAIL || 'noreply@haritech.me',
   ownerEmail: process.env.OWNER_EMAIL || 'chenthilhari@gmail.com',
   domain: 'haritech.me',
 }

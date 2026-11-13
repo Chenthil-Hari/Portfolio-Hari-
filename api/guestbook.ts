@@ -2,39 +2,27 @@ import { connectToDatabase } from './_db.js'
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
 import { checkRateLimit } from './_rateLimit.js'
 
-const defaultGuestbookEntries = [
-  {
-    _id: 'default-1',
-    name: 'Sarah M.',
-    role: 'Full-Stack Developer',
-    message: 'Love the smart traffic simulator and clean design. Very impressive portfolio!',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
-  },
-  {
-    _id: 'default-2',
-    name: 'Karthik R.',
-    role: 'CSE Batchmate',
-    message: 'Awesome work on the quantum simulation and embedded systems projects!',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(),
-  },
-]
+export const config = {
+  runtime: 'nodejs',
+}
 
 export default async function handler(req: any, res: any) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,DELETE')
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-admin-password'
   )
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end()
-    return
+    return res.status(200).end()
   }
 
+  // ─────────────────────────────────────────────────────────────
   // GET: Fetch recent guestbook messages
+  // ─────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     try {
       const { db } = await connectToDatabase()
@@ -42,21 +30,60 @@ export default async function handler(req: any, res: any) {
       const entries = await collection
         .find({})
         .sort({ createdAt: -1 })
-        .limit(30)
+        .limit(50)
         .toArray()
 
-      if (!entries || entries.length === 0) {
-        return res.status(200).json(defaultGuestbookEntries)
-      }
-
-      return res.status(200).json(entries)
+      return res.status(200).json(entries || [])
     } catch (err: any) {
       console.error('Error fetching guestbook from DB:', err)
-      return res.status(200).json(defaultGuestbookEntries)
+      return res.status(200).json([])
     }
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // DELETE: Admin Moderation (Delete signature permanently from DB)
+  // ─────────────────────────────────────────────────────────────
+  if (req.method === 'DELETE') {
+    try {
+      const adminPass = req.headers['x-admin-password'] || req.body?.password || req.query?.password
+      const expectedPassword = process.env.ADMIN_PASSWORD || 'admin123'
+
+      if (adminPass !== expectedPassword) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid admin credentials.' })
+      }
+
+      const { id } = req.body || req.query || {}
+      if (!id) {
+        return res.status(400).json({ error: 'Guestbook entry ID is required.' })
+      }
+
+      const { db } = await connectToDatabase()
+      const collection = db.collection('guestbook')
+
+      let deleteQuery: any = { _id: id }
+      try {
+        const { ObjectId } = await import('mongodb')
+        if (ObjectId.isValid(id)) {
+          deleteQuery = { $or: [{ _id: new ObjectId(id) }, { _id: id }] }
+        }
+      } catch {}
+
+      const result = await collection.deleteOne(deleteQuery)
+
+      return res.status(200).json({
+        success: true,
+        message: 'Guestbook entry permanently deleted from database.',
+        deletedCount: result.deletedCount,
+      })
+    } catch (err: any) {
+      console.error('Error deleting guestbook entry:', err)
+      return res.status(500).json({ error: err.message || 'Database deletion failed.' })
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
   // POST: Add new guestbook message
+  // ─────────────────────────────────────────────────────────────
   if (req.method === 'POST') {
     try {
       const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').toString().split(',')[0].trim()
@@ -101,10 +128,7 @@ export default async function handler(req: any, res: any) {
         console.error('Database write error for guestbook:', dbErr)
       }
 
-      // ─────────────────────────────────────────────────────────
       // Send Email Notifications
-      // ─────────────────────────────────────────────────────────
-      // 1. If visitor provided email, send Thank You note
       if (cleanEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
         const thankYouHtml = `
           <p style="margin: 0 0 16px 0; font-size: 15px; color: #ffffff;">
@@ -139,7 +163,7 @@ export default async function handler(req: any, res: any) {
         }).catch(err => console.warn('Could not send guestbook thank you email:', err))
       }
 
-      // 2. Alert Hari that a guestbook signature was posted
+      // Alert Hari that a guestbook signature was posted
       const ownerAlert = `
         <div style="font-family: sans-serif; color: white;">
           <h3 style="color: #38bdf8; margin: 0 0 8px 0;">🎉 New Guestbook Signature</h3>
@@ -159,14 +183,19 @@ export default async function handler(req: any, res: any) {
         reply_to: cleanEmail || undefined,
       }).catch(err => console.warn('Could not alert owner of guestbook entry:', err))
 
-      return res.status(201).json({
+      return res.status(200).json({
         success: true,
-        entry: { ...newEntry, _id: insertedId },
+        message: 'Entry signed successfully!',
+        entry: {
+          _id: insertedId,
+          ...newEntry,
+        },
       })
-    } catch (err: any) {
-      return res.status(500).json({ error: err.message || 'Server error' })
+    } catch (error: any) {
+      console.error('Guestbook handler error:', error)
+      return res.status(500).json({ error: error.message || 'Internal server error.' })
     }
   }
 
-  return res.status(405).json({ error: 'Method Not Allowed' })
+  return res.status(405).json({ error: 'Method not allowed.' })
 }
