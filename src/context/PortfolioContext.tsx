@@ -55,7 +55,7 @@ export function PortfolioProvider({
   onRefresh?: () => Promise<void>
 }) {
   const mergedData: PortfolioContextType = {
-    personalInfo: value?.personalInfo || staticData.personalInfo,
+    personalInfo: { ...staticData.personalInfo, ...(value?.personalInfo || {}) },
     skillsData: value?.skillsData || value?.skills || staticData.skillsData,
     projectsData: value?.projectsData || value?.projects || staticData.projectsData,
     journeyData: value?.journeyData || staticData.journeyData,
@@ -64,8 +64,8 @@ export function PortfolioProvider({
     experiences: value?.experiences || staticData.experiences,
     education: value?.education || staticData.education,
     achievements: value?.achievements || staticData.achievements,
-    seo: value?.seo || defaultPortfolioValue.seo,
-    theme: value?.theme || defaultPortfolioValue.theme,
+    seo: { ...defaultPortfolioValue.seo, ...(value?.seo || {}) },
+    theme: { ...defaultPortfolioValue.theme, ...(value?.theme || {}) },
     setPortfolioData: onUpdate,
     refreshData: onRefresh,
   }

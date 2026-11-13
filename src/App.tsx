@@ -14,7 +14,13 @@ import { PortfolioProvider } from '@/context/PortfolioContext'
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(false)
-  const [portfolioData, setPortfolioData] = useState<any>(null)
+  const [portfolioData, setPortfolioData] = useState<any>(() => {
+    try {
+      const cached = localStorage.getItem('haritech_portfolio_data')
+      if (cached) return JSON.parse(cached)
+    } catch {}
+    return null
+  })
   const [isResumeOpen, setIsResumeOpen] = useState(false)
 
   // Detect route on load and on popstate
@@ -29,10 +35,19 @@ export default function App() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('/api/get')
+      const res = await fetch(`/api/get?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+        },
+      })
       if (res.ok) {
         const data = await res.json()
         setPortfolioData(data)
+        try {
+          localStorage.setItem('haritech_portfolio_data', JSON.stringify(data))
+        } catch {}
       }
     } catch (err) {
       // Fallback silently to local static data
@@ -44,16 +59,24 @@ export default function App() {
     fetchData()
   }, [])
 
+  const handleUpdateData = (newData: any) => {
+    setPortfolioData(newData)
+    try {
+      localStorage.setItem('haritech_portfolio_data', JSON.stringify(newData))
+    } catch {}
+  }
+
   // Admin route handler
   if (isAdminRoute) {
     return (
-      <PortfolioProvider value={portfolioData} onUpdate={setPortfolioData} onRefresh={fetchData}>
+      <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
         <Admin
           initialData={portfolioData}
-          onUpdateData={(newData: any) => setPortfolioData(newData)}
+          onUpdateData={handleUpdateData}
           onClose={() => {
             window.history.pushState({}, '', '/')
             setIsAdminRoute(false)
+            fetchData()
           }}
         />
       </PortfolioProvider>
@@ -61,7 +84,7 @@ export default function App() {
   }
 
   return (
-    <PortfolioProvider value={portfolioData} onUpdate={setPortfolioData} onRefresh={fetchData}>
+    <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
       <div className="min-h-screen bg-[#08090d] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-white">
         {/* Navigation */}
         <Navbar onOpenResume={() => setIsResumeOpen(true)} />
