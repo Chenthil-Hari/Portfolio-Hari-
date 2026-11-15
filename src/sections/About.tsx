@@ -84,6 +84,14 @@ export default function About() {
                 <img
                   src={personalInfo.avatar || '/avatar.jpg'}
                   alt="Chenthil Hari"
+                  onError={(e) => {
+                    const target = e.currentTarget
+                    if (!target.src.endsWith('/avatar.jpg')) {
+                      target.src = '/avatar.jpg'
+                    } else if (!target.src.endsWith('/avatar.png')) {
+                      target.src = '/avatar.png'
+                    }
+                  }}
                   className="w-16 h-16 rounded object-cover border border-white/20 bg-[#151824]"
                   loading="lazy"
                   width="64"

@@ -22,7 +22,7 @@ const baselineDefaults = {
     githubUsername: 'Chenthil-Hari',
     linkedin: 'https://linkedin.com/in/chenthil-hari',
     resumeUrl: '/resume.pdf',
-    avatar: 'https://i.ibb.co/dwNCfvsX/Hari-Photo-jpg.jpg',
+    avatar: '/avatar.jpg',
     location: 'Tamil Nadu, India',
     availability: 'Open to Software & Embedded Roles',
     stats: [
