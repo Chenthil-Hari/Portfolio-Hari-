@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { Compass, BookOpen, ShieldCheck, BrainCircuit } from 'lucide-react'
 import { usePortfolio } from '@/context/PortfolioContext'
 
 export default function About() {
   const { personalInfo } = usePortfolio()
+  const [imgFailed, setImgFailed] = useState(false)
+  const [imgSrc, setImgSrc] = useState(personalInfo.avatar || '/avatar.jpg')
 
   return (
     <section id="about" className="section-spacing relative bg-[#090a0f] hairline-bottom" aria-label="About Chenthil Hari">
@@ -81,22 +84,29 @@ export default function About() {
             <div className="editorial-card p-6 relative">
               {/* Profile Image with Swiss Hairline Border */}
               <div className="flex items-center gap-4 pb-5 border-b border-white/10">
-                <img
-                  src={personalInfo.avatar || '/avatar.jpg'}
-                  alt="Chenthil Hari"
-                  onError={(e) => {
-                    const target = e.currentTarget
-                    if (!target.src.endsWith('/avatar.jpg')) {
-                      target.src = '/avatar.jpg'
-                    } else if (!target.src.endsWith('/avatar.png')) {
-                      target.src = '/avatar.png'
-                    }
-                  }}
-                  className="w-16 h-16 rounded object-cover border border-white/20 bg-[#151824]"
-                  loading="lazy"
-                  width="64"
-                  height="64"
-                />
+                {!imgFailed ? (
+                  <img
+                    src={imgSrc}
+                    alt="Chenthil Hari"
+                    onError={() => {
+                      if (!imgSrc.endsWith('/avatar.jpg')) {
+                        setImgSrc('/avatar.jpg')
+                      } else if (!imgSrc.endsWith('/avatar.png')) {
+                        setImgSrc('/avatar.png')
+                      } else {
+                        setImgFailed(true)
+                      }
+                    }}
+                    className="w-16 h-16 rounded object-cover border border-white/20 bg-[#151824]"
+                    loading="lazy"
+                    width="64"
+                    height="64"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded border border-white/20 bg-gradient-to-br from-blue-900/40 via-slate-900 to-[#10121a] flex items-center justify-center font-mono font-bold text-lg text-blue-400 select-none shadow-inner">
+                    CH
+                  </div>
+                )}
                 <div>
                   <h3 className="font-semibold text-white text-base">{personalInfo.fullName}</h3>
                   <p className="text-xs font-mono text-slate-400 mt-0.5">B.Tech Computer Science</p>

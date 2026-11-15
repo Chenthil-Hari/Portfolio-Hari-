@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import {
   Mail,
   Github,
@@ -10,6 +10,8 @@ import {
   AlertCircle,
   Loader2,
   Calendar,
+  ShieldCheck,
+  RotateCw,
 } from 'lucide-react'
 import { usePortfolio } from '@/context/PortfolioContext'
 
@@ -28,10 +30,35 @@ export default function Contact() {
   const [preferredTime, setPreferredTime] = useState('')
   const [honeypot, setHoneypot] = useState('')
 
+  // Built-in Math Challenge CAPTCHA (Option 1)
+  const [captcha, setCaptcha] = useState<{ question: string; token: string } | null>(null)
+  const [captchaAnswer, setCaptchaAnswer] = useState('')
+  const [loadingCaptcha, setLoadingCaptcha] = useState(false)
+
   // Submission status
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [statusMessage, setStatusMessage] = useState('')
+
+  const fetchCaptcha = async () => {
+    setLoadingCaptcha(true)
+    try {
+      const res = await fetch(`/api/captcha?t=${Date.now()}`)
+      if (res.ok) {
+        const data = await res.json()
+        setCaptcha(data)
+        setCaptchaAnswer('')
+      }
+    } catch {
+      // Keep existing challenge if refresh fails
+    } finally {
+      setLoadingCaptcha(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCaptcha()
+  }, [])
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(personalInfo.email)
@@ -42,6 +69,12 @@ export default function Contact() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!message.trim() || !name.trim() || !email.trim()) return
+
+    if (!captchaAnswer.trim()) {
+      setSubmitStatus('error')
+      setStatusMessage('Please solve the security challenge before submitting.')
+      return
+    }
 
     setIsSubmitting(true)
     setSubmitStatus('idle')
@@ -61,12 +94,16 @@ export default function Contact() {
           inquiryType,
           preferredTime: preferredTime.trim(),
           honeypot,
+          captchaAnswer: captchaAnswer.trim(),
+          captchaToken: captcha?.token || '',
         }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
+        // Refresh challenge on error
+        fetchCaptcha()
         throw new Error(data.error || 'Failed to dispatch message.')
       }
 
@@ -78,6 +115,8 @@ export default function Contact() {
       setSubject('')
       setMessage('')
       setPreferredTime('')
+      setCaptchaAnswer('')
+      fetchCaptcha()
     } catch (err: any) {
       setSubmitStatus('error')
       setStatusMessage(err.message || 'Transmission failed. Please reach out directly via email.')
@@ -321,6 +360,43 @@ export default function Contact() {
                     onChange={e => setMessage(e.target.value)}
                     className="input-field text-xs resize-none"
                   />
+                </div>
+
+                {/* Mathematical Verification Challenge (Option 1) */}
+                <div className="p-3 rounded bg-[#10121a] border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-slate-400 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                      <ShieldCheck size={13} className="text-emerald-400" />
+                      <span>Security Verification *</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={fetchCaptcha}
+                      disabled={loadingCaptcha}
+                      title="Generate new arithmetic challenge"
+                      className="text-slate-400 hover:text-white flex items-center gap-1 text-[10px] uppercase font-mono transition-colors disabled:opacity-50"
+                    >
+                      <RotateCw size={11} className={loadingCaptcha ? 'animate-spin' : ''} />
+                      <span>Refresh</span>
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="px-3 py-1.5 rounded bg-black/40 border border-white/10 text-white font-mono text-xs tracking-wider font-semibold select-none">
+                      {captcha ? `${captcha.question} =` : 'Loading...'}
+                    </div>
+                    <input
+                      type="number"
+                      required
+                      placeholder="?"
+                      value={captchaAnswer}
+                      onChange={e => setCaptchaAnswer(e.target.value)}
+                      className="input-field text-xs w-24 text-center font-mono font-semibold"
+                      autoComplete="off"
+                    />
+                    <span className="text-[11px] text-slate-500 hidden sm:inline">
+                      Compute sum to verify transmission
+                    </span>
+                  </div>
                 </div>
 
                 {submitStatus === 'error' && (

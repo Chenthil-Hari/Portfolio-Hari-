@@ -1,5 +1,6 @@
 import { sendEmail, renderEmailWrapper, escapeHtml, RESEND_CONFIG } from './_email.js'
 import { checkRateLimit } from './_rateLimit.js'
+import { verifyCaptcha } from './_captcha.js'
 
 export const config = {
   runtime: 'nodejs',
@@ -13,6 +14,8 @@ interface ContactRequestBody {
   inquiryType?: 'general' | 'opportunity' | 'meeting' | 'collaboration'
   preferredTime?: string
   honeypot?: string
+  captchaAnswer?: string | number
+  captchaToken?: string
 }
 
 function generateIcsCalendar({
@@ -94,8 +97,17 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { name, email, subject, message, inquiryType = 'general', preferredTime, honeypot } =
-      (req.body || {}) as ContactRequestBody
+    const {
+      name,
+      email,
+      subject,
+      message,
+      inquiryType = 'general',
+      preferredTime,
+      honeypot,
+      captchaAnswer,
+      captchaToken,
+    } = (req.body || {}) as ContactRequestBody
 
     const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').toString().split(',')[0].trim()
     const rateCheck = checkRateLimit(`contact:${clientIp}`, 5, 15 * 60 * 1000)
@@ -108,6 +120,12 @@ export default async function handler(req: any, res: any) {
     // Anti-spam honeypot
     if (honeypot) {
       return res.status(200).json({ success: true, message: 'Message received.' })
+    }
+
+    // Cryptographic Math Challenge CAPTCHA (Option 1)
+    const captchaCheck = verifyCaptcha(captchaAnswer ?? '', captchaToken ?? '')
+    if (!captchaCheck.valid) {
+      return res.status(400).json({ error: captchaCheck.error })
     }
 
     const cleanName = (name || '').trim()
