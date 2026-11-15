@@ -3,7 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Lottie } from 'lottie-react'
 import emailPhishingAnim from '@/assets/email-phishing.json'
 import docDownloadAnim from '@/assets/document-download.json'
-import { X, ExternalLink, Mail, Send, CheckCircle2, Loader2, Check } from 'lucide-react'
+import {
+  X,
+  ExternalLink,
+  Mail,
+  Send,
+  Loader2,
+  Check,
+  Download,
+  ShieldCheck,
+  FileText,
+  Sparkles,
+} from 'lucide-react'
 
 interface ResumeModalProps {
   isOpen: boolean
@@ -22,7 +33,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
 
   const handleDownloadClick = () => {
     setDownloaded(true)
-    setTimeout(() => setDownloaded(false), 3000)
+    setTimeout(() => setDownloaded(false), 3500)
   }
 
   const handleSendResume = async (e: FormEvent) => {
@@ -73,38 +84,37 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[2000]"
+            className="fixed inset-0 bg-black/85 backdrop-blur-md z-[2000]"
             aria-hidden="true"
           />
 
           {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.98, y: 15 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: 15 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-3 sm:inset-6 md:inset-8 lg:inset-y-10 lg:inset-x-24 z-[2001] flex flex-col bg-[#10121a] border border-white/15 rounded-lg overflow-hidden shadow-2xl"
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-3 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl max-h-[92vh] z-[2001] flex flex-col bg-[#10121a] border border-white/15 rounded-xl overflow-hidden shadow-2xl"
             role="dialog"
             aria-modal="true"
-            aria-label="Resume Document Viewer"
+            aria-label="Curriculum Vitae Download Hub"
           >
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-4 border-b border-white/10 bg-[#090a0f] gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-white text-base">Curriculum Vitae</h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-wider">
-                    PDF Document
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">// Chenthil_Hari_Resume.pdf</p>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#090a0f]">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <h3 className="font-semibold text-white text-sm sm:text-base font-sans">
+                  Curriculum Vitae Document Hub
+                </h3>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-wider">
+                  Verified PDF
+                </span>
               </div>
 
-              <div className="flex items-center flex-wrap gap-2.5 font-mono text-xs">
-                {/* Email Me Button Toggle */}
+              <div className="flex items-center gap-2 font-mono text-xs">
                 <button
                   onClick={() => setShowEmailInput(prev => !prev)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all border uppercase tracking-wider ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-all border uppercase tracking-wider text-[11px] ${
                     showEmailInput
                       ? 'bg-blue-600/20 text-blue-300 border-blue-500/40'
                       : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border-white/10'
@@ -114,33 +124,6 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   <Mail size={13} className="text-blue-400" />
                   <span className="hidden sm:inline">Email to Inbox</span>
                 </button>
-
-                <a
-                  href={resumeUrl}
-                  download="Chenthil_Hari_Resume.pdf"
-                  onClick={handleDownloadClick}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider transition-all shadow-sm group"
-                  aria-label="Download Resume PDF"
-                >
-                  <div className="w-4 h-4 flex-shrink-0">
-                    {downloaded ? (
-                      <Check size={14} className="text-emerald-300" />
-                    ) : (
-                      <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />
-                    )}
-                  </div>
-                  <span>{downloaded ? 'Downloaded' : 'Download'}</span>
-                </a>
-
-                <a
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
-                  aria-label="Open PDF in new tab"
-                >
-                  <ExternalLink size={16} />
-                </a>
 
                 <button
                   onClick={onClose}
@@ -159,24 +142,24 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="bg-blue-950/20 border-b border-blue-500/20 px-6 py-3 overflow-hidden font-mono text-xs"
+                  className="bg-blue-950/30 border-b border-blue-500/20 px-6 py-3.5 overflow-hidden font-mono text-xs"
                 >
                   {sendSuccess ? (
                     <div className="flex items-center gap-2.5 text-emerald-400 py-1">
-                      <div className="w-6 h-6 flex-shrink-0">
+                      <div className="w-7 h-7 flex-shrink-0">
                         <Lottie src={emailPhishingAnim} loop={true} className="w-full h-full" />
                       </div>
-                      <span>Resume dispatched to your email address.</span>
+                      <span className="font-medium">Curriculum Vitae dispatched to your inbox.</span>
                     </div>
                   ) : (
                     <form onSubmit={handleSendResume} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                      <span className="text-slate-300">Dispatch Copy:</span>
+                      <span className="text-slate-300 flex-shrink-0">Dispatch Copy:</span>
                       <input
                         type="text"
                         placeholder="Your Name (Optional)"
                         value={name}
                         onChange={e => setName(e.target.value)}
-                        className="px-3 py-1 rounded bg-black/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 sm:w-44 text-xs"
+                        className="px-3 py-1.5 rounded bg-black/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 sm:w-44 text-xs"
                         disabled={isSending}
                       />
                       <input
@@ -185,22 +168,22 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                         placeholder="recruiter@company.com"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        className="px-3 py-1 rounded bg-black/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 flex-1 text-xs"
+                        className="px-3 py-1.5 rounded bg-black/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 flex-1 text-xs"
                         disabled={isSending}
                       />
                       <button
                         type="submit"
                         disabled={isSending}
-                        className="px-4 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider flex items-center justify-center gap-1.5 flex-shrink-0"
+                        className="px-4 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider flex items-center justify-center gap-1.5 flex-shrink-0 transition-colors"
                       >
                         {isSending ? (
                           <>
-                            <Loader2 size={12} className="animate-spin" />
+                            <Loader2 size={13} className="animate-spin" />
                             <span>Sending...</span>
                           </>
                         ) : (
                           <>
-                            <Send size={12} />
+                            <Send size={13} />
                             <span>Send</span>
                           </>
                         )}
@@ -214,13 +197,99 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
               )}
             </AnimatePresence>
 
-            {/* Embedded PDF Viewer */}
-            <div className="flex-1 bg-[#090a0f] relative overflow-hidden">
-              <iframe
-                src={`${resumeUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                title="Chenthil Hari Curriculum Vitae"
-                className="w-full h-full border-0"
-              />
+            {/* Modal Body: Large Document Download Centerpiece */}
+            <div className="p-6 sm:p-10 text-center overflow-y-auto space-y-6">
+              {/* BIG Animated Document Download Icon */}
+              <div className="relative inline-block mx-auto">
+                <div className="w-36 h-36 sm:w-44 sm:h-44 mx-auto flex items-center justify-center p-4 rounded-2xl bg-[#090a0f] border border-white/15 shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent to-transparent pointer-events-none" />
+                  <Lottie
+                    src={docDownloadAnim}
+                    loop={true}
+                    autoplay={true}
+                    className="w-full h-full"
+                  />
+                </div>
+                <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-slate-300 font-mono text-[11px]">
+                  <FileText size={12} className="text-blue-400" />
+                  <span>Chenthil_Hari_Resume.pdf</span>
+                  <span className="text-slate-500">·</span>
+                  <span className="text-emerald-400 font-semibold">120.5 KB</span>
+                </div>
+              </div>
+
+              {/* Candidate Bio & Degree */}
+              <div className="space-y-1.5">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight font-sans">
+                  B S Chenthil Hari
+                </h2>
+                <p className="text-xs sm:text-sm font-mono text-slate-400">
+                  B.Tech Computer Science and Engineering · Amrita Vishwa Vidyapeetham
+                </p>
+                <p className="text-xs font-mono text-emerald-400">
+                  Class of 2024–2028 · Tamil Nadu, India
+                </p>
+              </div>
+
+              {/* Primary Download & View Actions */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto pt-2">
+                <a
+                  href={resumeUrl}
+                  download="Chenthil_Hari_Resume.pdf"
+                  onClick={handleDownloadClick}
+                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+                  aria-label="Download Resume PDF"
+                >
+                  {downloaded ? (
+                    <>
+                      <Check size={16} className="text-emerald-300" />
+                      <span>Downloaded Successfully</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download size={16} />
+                      <span>Download Resume (PDF)</span>
+                    </>
+                  )}
+                </a>
+
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-mono text-xs uppercase tracking-wider transition-all"
+                  aria-label="Open PDF in new tab"
+                >
+                  <ExternalLink size={15} className="text-slate-300" />
+                  <span>Open in Tab</span>
+                </a>
+              </div>
+
+              {/* Verified Academic Profile Details */}
+              <div className="pt-6 border-t border-white/10 text-left">
+                <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+                  <ShieldCheck size={13} className="text-blue-400" />
+                  <span>Verified Credentials Highlight</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-xs">
+                  <div className="p-3 rounded bg-black/40 border border-white/[0.08]">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Degree</span>
+                    <span className="text-white font-semibold text-xs mt-0.5 block">B.Tech CSE</span>
+                  </div>
+                  <div className="p-3 rounded bg-black/40 border border-white/[0.08]">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">University</span>
+                    <span className="text-emerald-400 font-semibold text-xs mt-0.5 block">Amrita</span>
+                  </div>
+                  <div className="p-3 rounded bg-black/40 border border-white/[0.08]">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Academic Score</span>
+                    <span className="text-white font-semibold text-xs mt-0.5 block">CGPA 6.58 / 10</span>
+                  </div>
+                  <div className="p-3 rounded bg-black/40 border border-white/[0.08]">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Schooling</span>
+                    <span className="text-blue-400 font-semibold text-xs mt-0.5 block">CBSE XII (77%)</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </>
