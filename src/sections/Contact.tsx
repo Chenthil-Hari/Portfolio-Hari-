@@ -363,7 +363,7 @@ export default function Contact() {
                 </div>
 
                 {/* Mathematical Verification Challenge (Option 1) */}
-                <div className="p-3 rounded bg-[#10121a] border border-white/10 space-y-2">
+                <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <label className="text-slate-400 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                       <ShieldCheck size={13} className="text-emerald-400" />
@@ -374,26 +374,37 @@ export default function Contact() {
                       onClick={fetchCaptcha}
                       disabled={loadingCaptcha}
                       title="Generate new arithmetic challenge"
-                      className="text-slate-400 hover:text-white flex items-center gap-1 text-[10px] uppercase font-mono transition-colors disabled:opacity-50"
+                      className="text-slate-400 hover:text-white flex items-center gap-1.5 text-[10px] uppercase font-mono transition-colors disabled:opacity-50 group"
                     >
-                      <RotateCw size={11} className={loadingCaptcha ? 'animate-spin' : ''} />
+                      <RotateCw size={11} className={`transition-transform duration-500 ${loadingCaptcha ? 'animate-spin' : 'group-hover:rotate-180'}`} />
                       <span>Refresh</span>
                     </button>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="px-3 py-1.5 rounded bg-black/40 border border-white/10 text-white font-mono text-xs tracking-wider font-semibold select-none">
-                      {captcha ? `${captcha.question} =` : 'Loading...'}
+
+                  {/* Straight-line unified challenge & input bar */}
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                    <div className="inline-flex items-center gap-2.5 px-3 py-2 rounded bg-black/50 border border-white/15 shadow-inner flex-shrink-0">
+                      <span className="font-mono text-xs uppercase tracking-wider text-slate-400 select-none">
+                        Challenge:
+                      </span>
+                      <span className="font-mono text-sm font-bold text-white tracking-widest whitespace-nowrap select-none">
+                        {captcha ? `${captcha.question} =` : '... ='}
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        required
+                        placeholder="?"
+                        value={captchaAnswer}
+                        onChange={e => setCaptchaAnswer(e.target.value.replace(/[^0-9]/g, ''))}
+                        className="w-16 px-2 py-1 rounded bg-white/[0.08] border border-white/20 focus:border-blue-500 focus:bg-white/[0.14] text-center font-mono text-sm font-bold text-white placeholder-slate-500 outline-none transition-all"
+                        autoComplete="off"
+                        maxLength={4}
+                      />
                     </div>
-                    <input
-                      type="number"
-                      required
-                      placeholder="?"
-                      value={captchaAnswer}
-                      onChange={e => setCaptchaAnswer(e.target.value)}
-                      className="input-field text-xs w-24 text-center font-mono font-semibold"
-                      autoComplete="off"
-                    />
-                    <span className="text-[11px] text-slate-500 hidden sm:inline">
+
+                    <span className="text-[11px] text-slate-400 font-mono leading-tight">
                       Compute sum to verify transmission
                     </span>
                   </div>
