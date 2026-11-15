@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lottie } from 'lottie-react'
 import emailPhishingAnim from '@/assets/email-phishing.json'
-import { X, Download, ExternalLink, Mail, Send, CheckCircle2, Loader2 } from 'lucide-react'
+import docDownloadAnim from '@/assets/document-download.json'
+import { X, ExternalLink, Mail, Send, CheckCircle2, Loader2, Check } from 'lucide-react'
 
 interface ResumeModalProps {
   isOpen: boolean
@@ -17,6 +18,12 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
   const [isSending, setIsSending] = useState(false)
   const [sendSuccess, setSendSuccess] = useState(false)
   const [sendError, setSendError] = useState('')
+  const [downloaded, setDownloaded] = useState(false)
+
+  const handleDownloadClick = () => {
+    setDownloaded(true)
+    setTimeout(() => setDownloaded(false), 3000)
+  }
 
   const handleSendResume = async (e: FormEvent) => {
     e.preventDefault()
@@ -111,11 +118,18 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                 <a
                   href={resumeUrl}
                   download="Chenthil_Hari_Resume.pdf"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider transition-all"
+                  onClick={handleDownloadClick}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider transition-all shadow-sm group"
                   aria-label="Download Resume PDF"
                 >
-                  <Download size={13} />
-                  <span>Download</span>
+                  <div className="w-4 h-4 flex-shrink-0">
+                    {downloaded ? (
+                      <Check size={14} className="text-emerald-300" />
+                    ) : (
+                      <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />
+                    )}
+                  </div>
+                  <span>{downloaded ? 'Downloaded' : 'Download'}</span>
                 </a>
 
                 <a

@@ -1,4 +1,6 @@
-import { ArrowUpRight, Github, Linkedin, Mail, FileText, Terminal } from 'lucide-react'
+import { ArrowUpRight, Github, Linkedin, Mail, Terminal } from 'lucide-react'
+import { Lottie } from 'lottie-react'
+import docDownloadAnim from '@/assets/document-download.json'
 import { usePortfolio } from '@/context/PortfolioContext'
 
 interface HeroProps {
@@ -65,9 +67,11 @@ export default function Hero({ onOpenResume }: HeroProps) {
 
               <button
                 onClick={onOpenResume}
-                className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#10121a] hover:bg-[#151824] border border-white/10 text-slate-200 font-mono text-xs uppercase tracking-wider transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#10121a] hover:bg-[#151824] border border-white/10 text-slate-200 font-mono text-xs uppercase tracking-wider transition-all group"
               >
-                <FileText size={14} className="text-blue-400" />
+                <div className="w-4 h-4 flex-shrink-0">
+                  <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />
+                </div>
                 <span>Resume (PDF)</span>
               </button>
 

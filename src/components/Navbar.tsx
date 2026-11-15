@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, FileText, ArrowUpRight } from 'lucide-react'
+import { Lottie } from 'lottie-react'
+import docDownloadAnim from '@/assets/document-download.json'
+import { Menu, X, ArrowUpRight } from 'lucide-react'
 import { usePortfolio } from '@/context/PortfolioContext'
 
 interface NavbarProps {
@@ -87,9 +89,11 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
           <div className="hidden md:flex items-center gap-2.5">
             <button
               onClick={onOpenResume}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] text-xs font-mono text-slate-300 hover:text-white transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] text-xs font-mono text-slate-300 hover:text-white transition-all group"
             >
-              <FileText size={13} className="text-blue-400" />
+              <div className="w-3.5 h-3.5 flex-shrink-0">
+                <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />
+              </div>
               <span>Resume</span>
             </button>
             <a
@@ -142,7 +146,9 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
                   }}
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded border border-white/15 bg-white/[0.03] text-xs text-white"
                 >
-                  <FileText size={14} className="text-blue-400" />
+                  <div className="w-4 h-4 flex-shrink-0">
+                    <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />
+                  </div>
                   View Resume
                 </button>
                 <a
