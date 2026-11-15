@@ -1,4 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react'
+import { Lottie } from 'lottie-react'
+import emailPhishingAnim from '@/assets/email-phishing.json'
 import {
   Mail,
   Github,
@@ -231,19 +233,24 @@ export default function Contact() {
             </div>
 
             {submitStatus === 'success' ? (
-              <div className="py-10 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
-                  <CheckCircle2 size={24} />
+              <div className="py-6 text-center space-y-4">
+                <div className="w-28 h-28 mx-auto flex items-center justify-center">
+                  <Lottie
+                    src={emailPhishingAnim}
+                    loop={true}
+                    autoplay={true}
+                    className="w-full h-full"
+                  />
                 </div>
                 <h3 className="text-xl font-bold text-white font-sans">
                   Transmission Dispatched
                 </h3>
-                <p className="text-slate-400 text-xs sm:text-sm font-mono max-w-md mx-auto">
+                <p className="text-slate-400 text-xs sm:text-sm font-mono max-w-md mx-auto leading-relaxed">
                   {statusMessage}
                 </p>
                 <button
                   onClick={() => setSubmitStatus('idle')}
-                  className="mt-4 px-4 py-2 rounded bg-white/[0.05] hover:bg-white/10 text-white font-mono text-xs uppercase tracking-wider border border-white/10"
+                  className="mt-4 px-5 py-2.5 rounded bg-white/[0.05] hover:bg-white/10 text-white font-mono text-xs uppercase tracking-wider border border-white/10 transition-colors"
                 >
                   Transmit Another Message
                 </button>

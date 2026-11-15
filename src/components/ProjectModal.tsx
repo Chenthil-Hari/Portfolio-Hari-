@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Lottie } from 'lottie-react'
+import emailPhishingAnim from '@/assets/email-phishing.json'
 import {
   X,
   Github,
@@ -150,8 +152,10 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                   className="bg-blue-950/20 border-b border-blue-500/20 px-6 py-3 overflow-hidden font-mono text-xs"
                 >
                   {sendSuccess ? (
-                    <div className="flex items-center gap-2 text-emerald-400 py-1">
-                      <CheckCircle2 size={15} />
+                    <div className="flex items-center gap-2.5 text-emerald-400 py-1">
+                      <div className="w-6 h-6 flex-shrink-0">
+                        <Lottie src={emailPhishingAnim} loop={true} className="w-full h-full" />
+                      </div>
                       <span>Specification dispatched. Please check your inbox.</span>
                     </div>
                   ) : (

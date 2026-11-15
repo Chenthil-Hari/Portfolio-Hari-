@@ -17,6 +17,7 @@ export default defineConfig({
           react: ['react', 'react-dom'],
           motion: ['framer-motion'],
           icons: ['lucide-react'],
+          lottie: ['lottie-react'],
         },
       },
     },
