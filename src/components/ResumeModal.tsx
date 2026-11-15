@@ -140,21 +140,21 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   <span className="hidden sm:inline">Email to Inbox</span>
                 </button>
 
-                {/* Standalone Clean Download Icon (No Blue Background, Perfectly Blended) */}
+                {/* Standalone Prominent Download Icon (Large & Highly Visible) */}
                 <a
                   href={resumeUrl}
                   download="Chenthil_Hari_Resume.pdf"
                   onClick={handleDownloadClick}
                   title="Download Resume (PDF)"
-                  className="p-1 rounded-lg hover:bg-white/[0.08] transition-all flex items-center justify-center hover:scale-110 active:scale-95"
+                  className="w-12 h-12 rounded-lg border border-white/10 hover:border-blue-400/50 bg-white/[0.04] hover:bg-white/[0.08] transition-all flex items-center justify-center hover:scale-105 active:scale-95 group overflow-hidden"
                   aria-label="Download Resume PDF"
                 >
                   {downloaded ? (
-                    <div className="w-10 h-10 flex items-center justify-center text-emerald-400">
-                      <Check size={24} />
+                    <div className="flex items-center justify-center text-emerald-400">
+                      <Check size={26} />
                     </div>
                   ) : (
-                    <div className="w-10 h-10 flex items-center justify-center">
+                    <div className="w-14 h-14 flex items-center justify-center scale-150 transform-gpu">
                       <Lottie
                         src={docDownloadAnim}
                         loop={true}
