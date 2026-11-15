@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Lottie } from 'lottie-react'
 import emailPhishingAnim from '@/assets/email-phishing.json'
 import docDownloadAnim from '@/assets/document-download.json'
-import { X, ExternalLink, Mail, Send, CheckCircle2, Loader2, Check } from 'lucide-react'
+import { X, ExternalLink, Mail, Send, Loader2, Check } from 'lucide-react'
 
 interface ResumeModalProps {
   isOpen: boolean
@@ -19,6 +19,18 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
   const [sendSuccess, setSendSuccess] = useState(false)
   const [sendError, setSendError] = useState('')
   const [downloaded, setDownloaded] = useState(false)
+
+  // Use Google Docs Viewer in production (bypasses Brave & Chromium iframe PDF-blocking)
+  const isProd = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
+  const [useGoogleViewer, setUseGoogleViewer] = useState(isProd)
+
+  const resolvedPdfUrl = typeof window !== 'undefined'
+    ? (resumeUrl.startsWith('http') ? resumeUrl : `${window.location.origin}${resumeUrl}`)
+    : resumeUrl
+
+  const iframeSrc = useGoogleViewer && isProd
+    ? `https://docs.google.com/viewer?url=${encodeURIComponent(resolvedPdfUrl)}&embedded=true`
+    : `${resumeUrl}#toolbar=1&navpanes=0&scrollbar=1`
 
   const handleDownloadClick = () => {
     setDownloaded(true)
@@ -97,12 +109,25 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                     PDF Document
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">// Chenthil_Hari_Resume.pdf</p>
+                <div className="flex items-center gap-2 text-xs text-slate-400 font-mono mt-0.5">
+                  <span>// Chenthil_Hari_Resume.pdf</span>
+                  {isProd && (
+                    <button
+                      type="button"
+                      onClick={() => setUseGoogleViewer(prev => !prev)}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 underline underline-offset-2 transition-colors"
+                      title="Switch PDF rendering engine"
+                    >
+                      {useGoogleViewer ? 'Switch to Native' : 'Switch to Cloud'}
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center flex-wrap gap-2.5 font-mono text-xs">
                 {/* Email Me Button Toggle */}
                 <button
+                  type="button"
                   onClick={() => setShowEmailInput(prev => !prev)}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded transition-all border uppercase tracking-wider ${
                     showEmailInput
@@ -115,27 +140,27 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   <span className="hidden sm:inline">Email to Inbox</span>
                 </button>
 
-                {/* Prominent Download Button with Bigger Lottie Icon */}
+                {/* Standalone Download Icon Button (No Text, Just the Bigger Animated Icon) */}
                 <a
                   href={resumeUrl}
                   download="Chenthil_Hari_Resume.pdf"
                   onClick={handleDownloadClick}
-                  className="flex items-center gap-2.5 px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold uppercase tracking-wider transition-all shadow-md group"
+                  title="Download Resume PDF"
+                  className="w-9 h-9 rounded bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-all shadow-md group relative hover:scale-105 active:scale-95"
                   aria-label="Download Resume PDF"
                 >
-                  <div className="w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                    {downloaded ? (
-                      <Check size={18} className="text-emerald-300" />
-                    ) : (
+                  {downloaded ? (
+                    <Check size={18} className="text-emerald-300" />
+                  ) : (
+                    <div className="w-6 h-6 flex items-center justify-center">
                       <Lottie
                         src={docDownloadAnim}
                         loop={true}
                         autoplay={true}
                         className="w-full h-full"
                       />
-                    )}
-                  </div>
-                  <span>{downloaded ? 'Downloaded' : 'Download'}</span>
+                    </div>
+                  )}
                 </a>
 
                 <a
@@ -144,14 +169,17 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   rel="noopener noreferrer"
                   className="p-2 rounded text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
                   aria-label="Open PDF in new tab"
+                  title="Open in New Tab"
                 >
                   <ExternalLink size={16} />
                 </a>
 
                 <button
+                  type="button"
                   onClick={onClose}
                   className="p-2 rounded text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
                   aria-label="Close modal"
+                  title="Close"
                 >
                   <X size={18} />
                 </button>
@@ -220,20 +248,14 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
               )}
             </AnimatePresence>
 
-            {/* Embedded Live PDF Viewer (Native Browser Object with Iframe Fallback) */}
-            <div className="flex-1 bg-[#1a1d28] relative overflow-hidden flex flex-col">
-              <object
-                data={`${resumeUrl}#toolbar=1&navpanes=0&scrollbar=1`}
-                type="application/pdf"
-                className="w-full h-full border-0 flex-1"
+            {/* Embedded Live PDF Viewer */}
+            <div className="flex-1 bg-[#20222a] relative overflow-hidden flex flex-col">
+              <iframe
+                key={iframeSrc}
+                src={iframeSrc}
                 title="Chenthil Hari Curriculum Vitae"
-              >
-                <iframe
-                  src={`${resumeUrl}#toolbar=1&navpanes=0&scrollbar=1`}
-                  title="Chenthil Hari Curriculum Vitae"
-                  className="w-full h-full border-0 flex-1"
-                />
-              </object>
+                className="w-full h-full border-0 flex-1 bg-white"
+              />
             </div>
           </motion.div>
         </>
