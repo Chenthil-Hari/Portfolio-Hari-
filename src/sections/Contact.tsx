@@ -151,25 +151,26 @@ export default function Contact() {
 
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           {/* Left Column: Direct Directives & Channels (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="editorial-card p-6 space-y-5">
+          <div className="lg:col-span-5 space-y-6 min-w-0 max-w-full">
+            <div className="editorial-card p-4 sm:p-6 space-y-5 min-w-0 max-w-full">
               <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block pb-3 border-b border-white/10">
                 Direct Channels
               </span>
 
               {/* Email Copy Card */}
-              <div className="p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
+              <div className="p-3 sm:p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-between gap-2 sm:gap-3 min-w-0 max-w-full">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                   <div className="w-8 h-8 rounded bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400 flex-shrink-0">
                     <Mail size={15} />
                   </div>
-                  <div>
-                    <span className="text-[11px] font-mono text-slate-400 block uppercase tracking-wider">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 block uppercase tracking-wider truncate">
                       Primary Inquiries
                     </span>
                     <a
                       href={`mailto:${personalInfo.email}`}
-                      className="text-xs font-mono text-white hover:text-blue-400 transition-colors"
+                      className="text-[11px] sm:text-xs font-mono text-white hover:text-blue-400 transition-colors truncate block break-all"
+                      title={personalInfo.email}
                     >
                       {personalInfo.email}
                     </a>
@@ -178,7 +179,7 @@ export default function Contact() {
 
                 <button
                   onClick={handleCopyEmail}
-                  className="p-2 rounded border border-white/10 hover:border-white/20 text-slate-300 hover:text-white transition-all text-xs font-mono"
+                  className="p-2 rounded border border-white/10 hover:border-white/20 text-slate-300 hover:text-white transition-all text-xs font-mono flex-shrink-0"
                   title="Copy email to clipboard"
                   aria-label="Copy email address"
                 >
@@ -187,51 +188,51 @@ export default function Contact() {
               </div>
 
               {/* Profiles */}
-              <div className="space-y-2.5 font-mono text-xs">
+              <div className="space-y-2.5 font-mono text-xs min-w-0">
                 <a
                   href={personalInfo.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-between transition-colors text-slate-300 hover:text-white"
+                  className="p-2.5 sm:p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-between gap-2 min-w-0 max-w-full transition-colors text-slate-300 hover:text-white"
                 >
-                  <span className="flex items-center gap-2">
-                    <Github size={14} />
-                    <span>github.com/{personalInfo.githubUsername}</span>
+                  <span className="flex items-center gap-2 min-w-0 flex-1">
+                    <Github size={14} className="flex-shrink-0" />
+                    <span className="truncate text-[11px] sm:text-xs">github.com/{personalInfo.githubUsername}</span>
                   </span>
-                  <span className="text-[10px] text-slate-500 uppercase">External &rarr;</span>
+                  <span className="text-[10px] text-slate-500 uppercase flex-shrink-0 whitespace-nowrap">External &rarr;</span>
                 </a>
 
                 <a
                   href={personalInfo.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-between transition-colors text-slate-300 hover:text-white"
+                  className="p-2.5 sm:p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-between gap-2 min-w-0 max-w-full transition-colors text-slate-300 hover:text-white"
                 >
-                  <span className="flex items-center gap-2">
-                    <Linkedin size={14} />
-                    <span>linkedin.com/in/{personalInfo.githubUsername.toLowerCase()}</span>
+                  <span className="flex items-center gap-2 min-w-0 flex-1">
+                    <Linkedin size={14} className="flex-shrink-0" />
+                    <span className="truncate text-[11px] sm:text-xs">linkedin.com/in/{personalInfo.githubUsername.toLowerCase()}</span>
                   </span>
-                  <span className="text-[10px] text-slate-500 uppercase">External &rarr;</span>
+                  <span className="text-[10px] text-slate-500 uppercase flex-shrink-0 whitespace-nowrap">External &rarr;</span>
                 </a>
               </div>
 
               {/* Response SLA Note */}
-              <div className="pt-4 border-t border-white/[0.06] font-mono text-xs text-slate-400 space-y-1">
-                <div className="flex justify-between">
+              <div className="pt-4 border-t border-[var(--border)] font-mono text-xs text-slate-400 space-y-2 min-w-0">
+                <div className="flex flex-wrap items-center justify-between gap-1">
                   <span>Response Horizon:</span>
-                  <span className="text-white">&le; 24 Hours</span>
+                  <span className="text-white font-medium">&le; 24 Hours</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-1">
                   <span>Geographic Base:</span>
-                  <span className="text-white">Tamil Nadu, India</span>
+                  <span className="text-white font-medium">Tamil Nadu, India</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right Column: Transmission Form (7 cols) */}
-          <div className="lg:col-span-7 editorial-card p-6 sm:p-8">
-            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 font-mono text-xs">
+          <div className="lg:col-span-7 editorial-card p-4 sm:p-6 sm:p-8 min-w-0 max-w-full">
+            <div className="flex flex-wrap items-center justify-between pb-4 border-b border-white/10 mb-6 font-mono text-xs gap-2">
               <span className="uppercase tracking-wider text-slate-300">Transmission Payload</span>
               <span className="text-slate-500">Resend &amp; MongoDB Atlas Encrypted</span>
             </div>
@@ -290,13 +291,13 @@ export default function Contact() {
                           key={type.id}
                           type="button"
                           onClick={() => setInquiryType(type.id as InquiryType)}
-                          className={`py-2.5 px-2 rounded-lg border text-center uppercase tracking-wider text-[11px] font-mono transition-all flex items-center justify-center gap-2 group ${
+                          className={`py-2.5 px-1.5 sm:px-2 rounded-lg border text-center uppercase tracking-wider text-[11px] font-mono transition-all flex items-center justify-center gap-1.5 sm:gap-2 min-w-0 group ${
                             isSelected
                               ? 'bg-blue-600 border-blue-500 text-white font-semibold shadow-md shadow-blue-600/25 scale-[1.02]'
                               : 'bg-[var(--surface-raised)] border-[var(--border)] text-slate-400 hover:text-white hover:border-slate-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
                           }`}
                         >
-                          <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 flex items-center justify-center overflow-hidden">
                             <Lottie
                               src={type.anim}
                               loop={true}
@@ -304,7 +305,7 @@ export default function Contact() {
                               className="w-full h-full"
                             />
                           </div>
-                          <span>{type.label}</span>
+                          <span className="truncate">{type.label}</span>
                         </button>
                       )
                     })}
@@ -404,12 +405,12 @@ export default function Contact() {
                   </div>
 
                   {/* Straight-line unified challenge & input bar */}
-                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                    <div className="inline-flex items-center gap-2.5 px-3 py-2 rounded bg-black/50 border border-white/15 shadow-inner flex-shrink-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded bg-black/50 border border-[var(--border)] shadow-inner max-w-full">
                       <span className="font-mono text-xs uppercase tracking-wider text-slate-400 select-none">
                         Challenge:
                       </span>
-                      <span className="font-mono text-sm font-bold text-white tracking-widest whitespace-nowrap select-none">
+                      <span className="font-mono text-xs sm:text-sm font-bold text-white tracking-widest whitespace-nowrap select-none">
                         {captcha ? `${captcha.question} =` : '... ='}
                       </span>
                       <input
@@ -420,7 +421,7 @@ export default function Contact() {
                         placeholder="?"
                         value={captchaAnswer}
                         onChange={e => setCaptchaAnswer(e.target.value.replace(/[^0-9]/g, ''))}
-                        className="w-16 px-2 py-1 rounded bg-white/[0.08] border border-white/20 focus:border-blue-500 focus:bg-white/[0.14] text-center font-mono text-sm font-bold text-white placeholder-slate-500 outline-none transition-all"
+                        className="w-14 sm:w-16 px-2 py-1 rounded bg-white/[0.08] border border-white/20 focus:border-blue-500 focus:bg-white/[0.14] text-center font-mono text-xs sm:text-sm font-bold text-white placeholder-slate-500 outline-none transition-all"
                         autoComplete="off"
                         maxLength={4}
                       />

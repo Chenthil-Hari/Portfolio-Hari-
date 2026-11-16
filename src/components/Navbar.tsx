@@ -60,40 +60,42 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
             <div className="w-8 h-8 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center font-mono font-bold text-xs tracking-wider transition-colors group-hover:border-blue-500/50">
               <span className="text-white dark:text-white group-hover:text-blue-500 transition-colors">CH</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-mono text-xs font-semibold tracking-wider uppercase text-white group-hover:text-blue-500 transition-colors">
+            <div className="flex flex-col min-w-0">
+              <span className="font-mono text-xs font-semibold tracking-wider uppercase text-white group-hover:text-blue-500 transition-colors truncate">
                 {personalInfo.fullName}
               </span>
-              <span className="flex items-center gap-1.5 text-[10px] font-mono text-slate-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                Available for software & embedded roles
+              <span className="flex items-center gap-1.5 text-[10px] font-mono text-slate-400 min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                <span className="hidden xl:inline truncate">Available for software & embedded roles</span>
+                <span className="hidden sm:inline xl:hidden text-[10px] truncate">Available for roles</span>
+                <span className="sm:hidden text-[10px] truncate">Open to roles</span>
               </span>
             </div>
           </a>
 
-          {/* Desktop Nav Items */}
+          {/* Desktop Nav Items (visible on lg+) */}
           <nav
-            className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--surface)]/90 border border-[var(--border)] shadow-sm"
+            className="hidden lg:flex items-center gap-0.5 xl:gap-1 px-2 xl:px-3 py-1.5 rounded-full bg-[var(--surface)]/90 border border-[var(--border)] shadow-sm flex-shrink-0"
             aria-label="Primary Navigation"
           >
             {navItems.map(item => (
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
-                className="px-3.5 py-1 rounded text-xs font-mono uppercase tracking-wider text-slate-400 hover:text-white transition-colors"
+                className="px-2.5 xl:px-3.5 py-1 rounded text-[11px] xl:text-xs font-mono uppercase tracking-wider text-slate-400 hover:text-white transition-colors"
               >
                 {item.label}
               </button>
             ))}
           </nav>
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* Desktop Actions (visible on lg+) */}
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2 flex-shrink-0">
             {/* Theme Toggle Button */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-raised)] text-slate-700 dark:text-slate-300 transition-all flex items-center justify-center group shadow-sm"
+              className="p-1.5 xl:p-2 rounded border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-raised)] text-slate-700 dark:text-slate-300 transition-all flex items-center justify-center group shadow-sm flex-shrink-0"
               aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
               title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             >
@@ -106,7 +108,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
 
             <button
               onClick={onOpenResume}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-raised)] text-xs font-mono text-slate-300 hover:text-white transition-all group shadow-sm"
+              className="flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-raised)] text-[11px] xl:text-xs font-mono text-slate-300 hover:text-white transition-all group shadow-sm flex-shrink-0"
             >
               <div className="w-3.5 h-3.5 flex-shrink-0">
                 <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />
@@ -116,19 +118,19 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
 
             <a
               href="#contact"
-              className="flex items-center gap-1 px-3.5 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-mono uppercase tracking-wider transition-all shadow-sm"
+              className="flex items-center gap-1 px-3 xl:px-3.5 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-[11px] xl:text-xs font-mono uppercase tracking-wider transition-all shadow-sm flex-shrink-0"
             >
               <span>Contact</span>
               <ArrowUpRight size={13} />
             </a>
           </div>
 
-          {/* Mobile Actions: Theme Toggle + Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Mobile & Tablet Actions: Theme Toggle + Menu Button (visible below lg) */}
+          <div className="flex lg:hidden items-center gap-2">
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded border border-[var(--border)] bg-[var(--surface)] text-slate-700 dark:text-slate-300 transition-all flex items-center justify-center"
+              className="p-2 rounded border border-[var(--border)] bg-[var(--surface)] text-slate-700 dark:text-slate-300 transition-all flex items-center justify-center shadow-sm"
               aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             >
               {theme === 'dark' ? (
@@ -140,7 +142,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded border border-[var(--border)] bg-[var(--surface)] text-slate-300 hover:text-white"
+              className="p-2 rounded border border-[var(--border)] bg-[var(--surface)] text-slate-300 hover:text-white shadow-sm"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -157,7 +159,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-x-0 top-[60px] z-40 bg-[var(--canvas)] border-b border-[var(--border)] p-6 md:hidden shadow-2xl"
+            className="fixed inset-x-0 top-[60px] z-40 bg-[var(--canvas)] border-b border-[var(--border)] p-6 lg:hidden shadow-2xl"
           >
             <nav className="flex flex-col gap-3 font-mono text-sm">
               {navItems.map(item => (

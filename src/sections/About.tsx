@@ -80,10 +80,10 @@ export default function About() {
           </div>
 
           {/* Academic Profile Card (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="editorial-card p-6 relative">
+          <div className="lg:col-span-5 space-y-6 min-w-0 max-w-full">
+            <div className="editorial-card p-4 sm:p-6 relative min-w-0 max-w-full">
               {/* Profile Image with Swiss Hairline Border */}
-              <div className="flex items-center gap-4 pb-5 border-b border-[var(--border)]">
+              <div className="flex items-center gap-3 sm:gap-4 pb-5 border-b border-[var(--border)] min-w-0">
                 {!imgFailed ? (
                   <img
                     src={imgSrc}
@@ -97,20 +97,20 @@ export default function About() {
                         setImgFailed(true)
                       }
                     }}
-                    className="w-16 h-16 rounded object-cover border border-[var(--border)] bg-[var(--surface-raised)]"
+                    className="w-14 h-14 sm:w-16 sm:h-16 rounded object-cover border border-[var(--border)] bg-[var(--surface-raised)] flex-shrink-0"
                     loading="lazy"
                     width="64"
                     height="64"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded border border-[var(--border)] bg-gradient-to-br from-blue-500/20 via-[var(--surface-raised)] to-[var(--canvas)] flex items-center justify-center font-mono font-bold text-lg text-blue-500 dark:text-blue-400 select-none shadow-inner">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded border border-[var(--border)] bg-gradient-to-br from-blue-500/20 via-[var(--surface-raised)] to-[var(--canvas)] flex items-center justify-center font-mono font-bold text-base sm:text-lg text-blue-500 dark:text-blue-400 select-none shadow-inner flex-shrink-0">
                     CH
                   </div>
                 )}
-                <div>
-                  <h3 className="font-semibold text-white text-base">{personalInfo.fullName}</h3>
-                  <p className="text-xs font-mono text-slate-400 mt-0.5">B.Tech Computer Science</p>
-                  <p className="text-xs font-mono text-emerald-400 mt-0.5">Amrita Vishwa Vidyapeetham</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-white text-base truncate">{personalInfo.fullName}</h3>
+                  <p className="text-xs font-mono text-slate-400 mt-0.5 truncate">B.Tech Computer Science</p>
+                  <p className="text-xs font-mono text-emerald-400 mt-0.5 truncate">Amrita Vishwa Vidyapeetham</p>
                 </div>
               </div>
 
@@ -118,33 +118,33 @@ export default function About() {
               <div className="pt-4 space-y-4 text-xs font-mono">
                 <div>
                   <span className="text-slate-400 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
-                    <BookOpen size={13} className="text-blue-400" />
-                    Core Coursework &amp; Fundamentals
+                    <BookOpen size={13} className="text-blue-400 flex-shrink-0" />
+                    <span>Core Coursework &amp; Fundamentals</span>
                   </span>
-                  <p className="text-slate-300 leading-relaxed font-sans text-xs">
+                  <p className="text-slate-300 leading-relaxed font-sans text-xs break-words">
                     Data Structures &amp; Algorithms, Operating Systems, Database Management Systems, Computer Networks, Theory of Computation, Computer Organization, Digital Logic.
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-white/[0.04] space-y-2">
-                  <span className="text-slate-400 uppercase tracking-wider block">
+                <div className="pt-3 border-t border-[var(--border)] space-y-2.5">
+                  <span className="text-slate-400 uppercase tracking-wider block text-[11px]">
                     Academic Standing &amp; Schooling
                   </span>
-                  <div className="flex justify-between items-center text-slate-300">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2 text-slate-300">
                     <span>B.Tech CSE (Amrita):</span>
                     <span className="text-white font-medium">CGPA: 6.58 / 10 · Class of 2028</span>
                   </div>
-                  <div className="flex justify-between items-center text-slate-300">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2 text-slate-300">
                     <span>Class XII (CBSE):</span>
                     <span className="text-white font-medium">77% (2024)</span>
                   </div>
-                  <div className="flex justify-between items-center text-slate-300">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2 text-slate-300">
                     <span>Class X (CBSE):</span>
                     <span className="text-white font-medium">87.4% (2022)</span>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-white/[0.04] flex justify-between items-center text-slate-400">
+                <div className="pt-3 border-t border-[var(--border)] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 sm:gap-2 text-slate-400">
                   <span>Location</span>
                   <span className="text-white font-medium">Tamil Nadu, India</span>
                 </div>

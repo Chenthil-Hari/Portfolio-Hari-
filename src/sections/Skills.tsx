@@ -58,34 +58,34 @@ export default function Skills() {
         </div>
 
         {/* Disciplines Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
           {filteredCategories.map(cat => {
             const Icon = categoryIcons[cat.category] || Terminal
 
             return (
               <div
                 key={cat.category}
-                className="editorial-card p-6 sm:p-7 flex flex-col justify-between"
+                className="editorial-card p-4 sm:p-6 sm:p-7 flex flex-col justify-between min-w-0 max-w-full"
               >
                 <div>
                   {/* Category Header */}
-                  <div className="flex items-start justify-between pb-4 border-b border-white/[0.06] mb-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400">
+                  <div className="flex items-start justify-between pb-4 border-b border-[var(--border)] mb-5">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-9 h-9 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400 flex-shrink-0">
                         <Icon size={18} />
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-white text-base font-sans">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-white text-base font-sans truncate">
                           {cat.category}
                         </h3>
-                        <span className="text-[11px] font-mono text-slate-400">
+                        <span className="text-[11px] font-mono text-slate-400 truncate block">
                           {cat.code || '01'} · Technical Domain
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-400 mb-5 font-sans leading-relaxed">
+                  <p className="text-xs text-slate-400 mb-5 font-sans leading-relaxed break-words">
                     {cat.description}
                   </p>
 
@@ -94,13 +94,13 @@ export default function Skills() {
                     {cat.skills.map(skill => (
                       <div
                         key={skill.name}
-                        className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/15 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
+                        className="p-2.5 sm:p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/15 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1.5 min-w-0"
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500/80" />
-                          <span className="font-semibold text-white">{skill.name}</span>
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500/80 flex-shrink-0" />
+                          <span className="font-semibold text-white truncate">{skill.name}</span>
                         </div>
-                        <span className="text-[11px] text-slate-400 font-sans">
+                        <span className="text-[11px] text-slate-400 font-sans break-words sm:text-right">
                           {skill.context}
                         </span>
                       </div>

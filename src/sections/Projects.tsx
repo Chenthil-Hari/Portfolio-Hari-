@@ -58,19 +58,19 @@ export default function Projects() {
           {filteredProjects.map((project, idx) => (
             <article
               key={project.id}
-              className="editorial-card p-6 sm:p-8 relative group transition-all"
+              className="editorial-card p-4 sm:p-6 sm:p-8 relative group transition-all min-w-0 max-w-full"
             >
               {/* Top Meta Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-white/10 mb-6 font-mono text-xs">
-                <div className="flex items-center gap-3">
-                  <span className="text-blue-400 font-semibold uppercase tracking-wider">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 pb-4 sm:pb-5 border-b border-[var(--border)] mb-5 sm:mb-6 font-mono text-xs">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 min-w-0">
+                  <span className="text-blue-500 dark:text-blue-400 font-semibold uppercase tracking-wider text-[11px] sm:text-xs">
                     {`[0${idx + 1}]`} {project.category}
                   </span>
-                  <span className="text-slate-500">·</span>
-                  <span className="text-slate-400">{project.tagline}</span>
+                  <span className="text-slate-500 hidden sm:inline">·</span>
+                  <span className="text-slate-400 text-[11px] sm:text-xs truncate max-w-[200px] sm:max-w-none">{project.tagline}</span>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-shrink-0">
                   {project.githubUrl && (
                     <a
                       href={project.githubUrl}
@@ -87,21 +87,21 @@ export default function Projects() {
               </div>
 
               {/* Title & Summary */}
-              <div className="mb-6">
+              <div className="mb-5 sm:mb-6 min-w-0">
                 <h3
                   onClick={() => setSelectedProject(project)}
-                  className="text-2xl sm:text-3xl font-bold text-white hover:text-blue-400 cursor-pointer transition-colors inline-flex items-center gap-2"
+                  className="text-xl sm:text-2xl md:text-3xl font-bold text-white hover:text-blue-400 cursor-pointer transition-colors inline-flex items-center gap-2 break-words"
                 >
                   <span>{project.title}</span>
-                  <ArrowUpRight size={20} className="text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <ArrowUpRight size={18} className="text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all flex-shrink-0" />
                 </h3>
-                <p className="text-slate-300 text-sm sm:text-base leading-relaxed mt-2 max-w-4xl font-sans">
+                <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed mt-2 max-w-4xl font-sans break-words">
                   {project.description}
                 </p>
               </div>
 
               {/* 4-Part Engineering Breakdown: Problem / Approach / Friction / Learned */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] mb-6 font-sans text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] mb-6 font-sans text-xs min-w-0">
                 {/* The Problem */}
                 <div className="space-y-1.5 border-b md:border-b-0 md:border-r border-white/[0.06] pb-3 md:pb-0 md:pr-4">
                   <span className="font-mono uppercase tracking-wider text-[11px] text-red-400 font-semibold block">

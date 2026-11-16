@@ -88,35 +88,35 @@ export default function Journey() {
             return (
               <div
                 key={item.id}
-                className="editorial-card p-6 sm:p-7 relative transition-all"
+                className="editorial-card p-4 sm:p-6 sm:p-7 relative transition-all min-w-0 max-w-full"
               >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4 pb-4 border-b border-white/[0.06]">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 sm:gap-4 mb-4 pb-4 border-b border-[var(--border)] min-w-0">
+                  <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5">
                       <Icon size={18} />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-white text-lg font-sans">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-white text-base sm:text-lg font-sans break-words">
                         {item.title}
                       </h3>
-                      <p className="text-xs font-mono text-slate-400 mt-0.5">
+                      <p className="text-xs font-mono text-slate-400 mt-0.5 break-words">
                         {item.institution} · {item.subtitle}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 self-start md:self-auto font-mono text-xs">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 self-start md:self-auto font-mono text-xs flex-shrink-0">
                     <span className="flex items-center gap-1.5 text-slate-400">
                       <Calendar size={13} />
                       {item.period}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded bg-white/[0.04] text-slate-300 border border-white/10 uppercase tracking-wider text-[11px]">
+                    <span className="px-2 py-0.5 rounded bg-[var(--surface-raised)] text-slate-300 border border-[var(--border)] uppercase tracking-wider text-[10px] sm:text-[11px]">
                       {item.badge}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-slate-300 text-sm leading-relaxed mb-4 font-sans max-w-4xl">
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4 font-sans max-w-4xl break-words">
                   {item.description}
                 </p>
 

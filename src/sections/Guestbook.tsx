@@ -104,9 +104,9 @@ export default function Guestbook() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-10 items-start">
+        <div className="grid lg:grid-cols-12 gap-8 sm:gap-10 items-start">
           {/* Submission Form (5 cols) */}
-          <div className="lg:col-span-5 editorial-card p-6 sm:p-7 space-y-5">
+          <div className="lg:col-span-5 editorial-card p-4 sm:p-6 sm:p-7 space-y-5 min-w-0 max-w-full">
             <div className="flex items-center gap-2 pb-3 border-b border-white/10 font-mono text-xs">
               <MessageSquare size={14} className="text-blue-400" />
               <span className="uppercase tracking-wider text-white">Post to Ledger</span>
@@ -224,21 +224,21 @@ export default function Guestbook() {
                 {entries.map((entry, idx) => (
                   <div
                     key={entry._id || idx}
-                    className="editorial-card p-4 space-y-2"
+                    className="editorial-card p-3 sm:p-4 space-y-2 min-w-0 max-w-full"
                   >
-                    <div className="flex items-center justify-between gap-3 text-xs font-mono">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[10px] font-bold text-blue-500 dark:text-blue-400">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono min-w-0">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div className="w-6 h-6 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[10px] font-bold text-blue-500 dark:text-blue-400 flex-shrink-0">
                           {entry.name.slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="font-semibold text-white">{entry.name}</span>
+                        <span className="font-semibold text-white truncate max-w-[120px] sm:max-w-none">{entry.name}</span>
                         {entry.role && (
-                          <span className="text-slate-500 text-[11px]">· {entry.role}</span>
+                          <span className="text-slate-500 text-[11px] truncate max-w-[100px] sm:max-w-none">· {entry.role}</span>
                         )}
                       </div>
-                      <span className="text-[10px] text-slate-500">{timeAgo(entry.createdAt)}</span>
+                      <span className="text-[10px] text-slate-500 flex-shrink-0">{timeAgo(entry.createdAt)}</span>
                     </div>
-                    <p className="text-xs text-slate-300 font-sans leading-relaxed pl-8">
+                    <p className="text-xs text-slate-300 font-sans leading-relaxed pl-0 sm:pl-8 break-words">
                       {entry.message}
                     </p>
                   </div>

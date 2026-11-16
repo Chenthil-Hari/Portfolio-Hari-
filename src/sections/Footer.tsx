@@ -110,16 +110,16 @@ export default function Footer({ onOpenResume, onOpenEasterEgg }: FooterProps) {
         </div>
 
         {/* Colophon Sub-footer */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 text-[11px]">
-          <div>
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 text-[11px] min-w-0">
+          <div className="text-center sm:text-left min-w-0 break-words">
             <span>&copy; {currentYear} Chenthil Hari. Built with React, TypeScript &amp; Swiss layout discipline.</span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-6 text-center sm:text-right min-w-0">
             <span>Server Location: Tamil Nadu, IN (UTC+05:30)</span>
             <button
               onClick={scrollToTop}
-              className="flex items-center gap-1 hover:text-white transition-colors uppercase tracking-wider"
+              className="flex items-center gap-1 hover:text-white transition-colors uppercase tracking-wider flex-shrink-0"
               aria-label="Scroll to top of page"
             >
               <span>Back to Top</span>
