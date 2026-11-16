@@ -1,6 +1,10 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { Lottie } from 'lottie-react'
 import emailPhishingAnim from '@/assets/email-phishing.json'
+import clockAnim from '@/assets/clock.json'
+import collabAnim from '@/assets/collab.json'
+import handshakeAnim from '@/assets/handshake.json'
+import messageAnim from '@/assets/message.json'
 import {
   Mail,
   Github,
@@ -273,26 +277,37 @@ export default function Contact() {
                   <label className="block text-slate-400 uppercase tracking-wider mb-2 text-[11px]">
                     Transmission Category *
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {[
-                      { id: 'general', label: 'General' },
-                      { id: 'opportunity', label: 'Opportunity' },
-                      { id: 'meeting', label: '15m Chat' },
-                      { id: 'collaboration', label: 'Collab' },
-                    ].map(type => (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => setInquiryType(type.id as InquiryType)}
-                        className={`p-2 rounded border text-center uppercase tracking-wider text-[11px] transition-colors ${
-                          inquiryType === type.id
-                            ? 'bg-blue-600 border-blue-500 text-white font-semibold'
-                            : 'bg-[#090a0f] border-white/10 text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        {type.label}
-                      </button>
-                    ))}
+                      { id: 'general', label: 'General', anim: messageAnim },
+                      { id: 'opportunity', label: 'Opportunity', anim: handshakeAnim },
+                      { id: 'meeting', label: '15m Chat', anim: clockAnim },
+                      { id: 'collaboration', label: 'Collab', anim: collabAnim },
+                    ].map(type => {
+                      const isSelected = inquiryType === type.id
+                      return (
+                        <button
+                          key={type.id}
+                          type="button"
+                          onClick={() => setInquiryType(type.id as InquiryType)}
+                          className={`py-2.5 px-2 rounded-lg border text-center uppercase tracking-wider text-[11px] font-mono transition-all flex items-center justify-center gap-2 group ${
+                            isSelected
+                              ? 'bg-blue-600 border-blue-500 text-white font-semibold shadow-md shadow-blue-600/25 scale-[1.02]'
+                              : 'bg-[#10121a] border-white/10 text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.03]'
+                          }`}
+                        >
+                          <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                            <Lottie
+                              src={type.anim}
+                              loop={true}
+                              autoplay={true}
+                              className="w-full h-full"
+                            />
+                          </div>
+                          <span>{type.label}</span>
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
 
