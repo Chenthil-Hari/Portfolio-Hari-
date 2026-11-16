@@ -8,7 +8,7 @@ export default function About() {
   const [imgSrc, setImgSrc] = useState(personalInfo.avatar || '/avatar.jpg')
 
   return (
-    <section id="about" className="section-spacing relative bg-[#090a0f] hairline-bottom" aria-label="About Chenthil Hari">
+    <section id="about" className="section-spacing relative bg-[#030305] hairline-bottom" aria-label="About Chenthil Hari">
       <div className="section-wrapper">
         {/* Section Header */}
         <div className="max-w-3xl mb-14">
@@ -46,8 +46,8 @@ export default function About() {
             </p>
 
             {/* Three Real Engineering Principles */}
-            <div className="pt-6 grid sm:grid-cols-3 gap-4 border-t border-white/[0.08]">
-              <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-1.5">
+            <div className="pt-6 grid sm:grid-cols-3 gap-4 border-t border-white/[0.05]">
+              <div className="p-3.5 rounded bg-[#090a0d] border border-white/[0.06] space-y-1.5">
                 <div className="text-blue-400 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                   <BrainCircuit size={14} />
                   <span>Applied AI/ML</span>
@@ -57,7 +57,7 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-1.5">
+              <div className="p-3.5 rounded bg-[#090a0d] border border-white/[0.06] space-y-1.5">
                 <div className="text-blue-400 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck size={14} />
                   <span>Security Literacy</span>
@@ -67,7 +67,7 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="p-3.5 rounded bg-[#10121a] border border-white/10 space-y-1.5">
+              <div className="p-3.5 rounded bg-[#090a0d] border border-white/[0.06] space-y-1.5">
                 <div className="text-blue-400 font-mono text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
                   <Compass size={14} />
                   <span>Full-Stack Web</span>
@@ -83,7 +83,7 @@ export default function About() {
           <div className="lg:col-span-5 space-y-6">
             <div className="editorial-card p-6 relative">
               {/* Profile Image with Swiss Hairline Border */}
-              <div className="flex items-center gap-4 pb-5 border-b border-white/10">
+              <div className="flex items-center gap-4 pb-5 border-b border-white/[0.06]">
                 {!imgFailed ? (
                   <img
                     src={imgSrc}
@@ -97,13 +97,13 @@ export default function About() {
                         setImgFailed(true)
                       }
                     }}
-                    className="w-16 h-16 rounded object-cover border border-white/20 bg-[#151824]"
+                    className="w-16 h-16 rounded object-cover border border-white/[0.08] bg-[#0f1015]"
                     loading="lazy"
                     width="64"
                     height="64"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded border border-white/20 bg-gradient-to-br from-blue-900/40 via-slate-900 to-[#10121a] flex items-center justify-center font-mono font-bold text-lg text-blue-400 select-none shadow-inner">
+                  <div className="w-16 h-16 rounded border border-white/[0.08] bg-gradient-to-br from-blue-950/40 via-[#090a0d] to-[#030305] flex items-center justify-center font-mono font-bold text-lg text-blue-400 select-none shadow-inner">
                     CH
                   </div>
                 )}

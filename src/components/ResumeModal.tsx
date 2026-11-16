@@ -95,13 +95,13 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 15 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-3 sm:inset-6 md:inset-8 lg:inset-y-10 lg:inset-x-24 z-[2001] flex flex-col bg-[#10121a] border border-white/15 rounded-lg overflow-hidden shadow-2xl"
+            className="fixed inset-3 sm:inset-6 md:inset-8 lg:inset-y-10 lg:inset-x-24 z-[2001] flex flex-col bg-[#090a0d] border border-white/[0.08] rounded-lg overflow-hidden shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-label="Resume Document Viewer"
           >
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-3.5 border-b border-white/10 bg-[#090a0f] gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-3.5 border-b border-white/[0.06] bg-[#030305] gap-3">
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-white text-base">Curriculum Vitae</h3>
@@ -132,7 +132,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   className={`flex items-center gap-1.5 px-3 py-2 rounded transition-all border uppercase tracking-wider ${
                     showEmailInput
                       ? 'bg-blue-600/20 text-blue-300 border-blue-500/40'
-                      : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border-white/10'
+                      : 'bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 border-white/[0.08]'
                   }`}
                   aria-label="Email Resume"
                 >
@@ -140,21 +140,21 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
                   <span className="hidden sm:inline">Email to Inbox</span>
                 </button>
 
-                {/* Standalone Prominent Download Icon (Large & Highly Visible) */}
+                {/* Standalone Prominent Download Icon (Large & Highly Visible, Seamless No-Blue-Bg) */}
                 <a
                   href={resumeUrl}
                   download="Chenthil_Hari_Resume.pdf"
                   onClick={handleDownloadClick}
                   title="Download Resume (PDF)"
-                  className="w-12 h-12 rounded-lg border border-white/10 hover:border-blue-400/50 bg-white/[0.04] hover:bg-white/[0.08] transition-all flex items-center justify-center hover:scale-105 active:scale-95 group overflow-hidden"
+                  className="w-11 h-11 rounded-lg hover:bg-white/[0.06] transition-all flex items-center justify-center hover:scale-110 active:scale-95 group overflow-visible"
                   aria-label="Download Resume PDF"
                 >
                   {downloaded ? (
                     <div className="flex items-center justify-center text-emerald-400">
-                      <Check size={26} />
+                      <Check size={24} />
                     </div>
                   ) : (
-                    <div className="w-14 h-14 flex items-center justify-center scale-150 transform-gpu">
+                    <div className="w-10 h-10 flex items-center justify-center scale-150 transform-gpu">
                       <Lottie
                         src={docDownloadAnim}
                         loop={true}
@@ -251,7 +251,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
             </AnimatePresence>
 
             {/* Embedded Live PDF Viewer */}
-            <div className="flex-1 bg-[#20222a] relative overflow-hidden flex flex-col">
+            <div className="flex-1 bg-[#0a0b0e] relative overflow-hidden flex flex-col">
               <iframe
                 key={iframeSrc}
                 src={iframeSrc}

@@ -118,7 +118,7 @@ export default function App() {
   // Standard Portfolio View
   return (
     <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
-      <div className="min-h-screen bg-[#090a0f] text-slate-100 flex flex-col font-sans selection:bg-blue-600/30 selection:text-white">
+      <div className="min-h-screen bg-[#030305] text-[#e4e6eb] flex flex-col font-sans selection:bg-blue-600/30 selection:text-white">
         {/* Architectural Header */}
         <Navbar onOpenResume={() => setIsResumeOpen(true)} />
 

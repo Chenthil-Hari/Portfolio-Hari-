@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────
-   Swiss Engineering / Minimalist Editorial Design System
-   Restrained palette: Neutral Canvas + Bone White + Precision Cobalt
+   Swiss Engineering / Minimalist Low-Light Theme (OLED Midnight)
+   Restrained palette: Obsidian Void + Soft Bone + Calibrated Cobalt
 ───────────────────────────────────────────────────────────── */
 :root {
-  --canvas: #090a0f;
-  --surface: #10121a;
-  --surface-raised: #151824;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --text-primary: #f4f4f5;
-  --text-muted: #94a3b8;
-  --text-faint: #64748b;
-  --accent: #2563eb;
-  --accent-hover: #3b82f6;
-  --accent-muted: rgba(37, 99, 235, 0.12);
+  --canvas: #030305;
+  --surface: #090a0d;
+  --surface-raised: #0f1015;
+  --border: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.10);
+  --text-primary: #e4e6eb;
+  --text-muted: #8b92a0;
+  --text-faint: #4e5360;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-muted: rgba(59, 130, 246, 0.08);
   --status-active: #10b981;
 }
 

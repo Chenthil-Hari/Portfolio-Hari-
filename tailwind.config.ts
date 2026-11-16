@@ -37,18 +37,18 @@ const config: Config = {
       },
       colors: {
         canvas: {
-          DEFAULT: '#090a0f',
-          surface: '#10121a',
-          raised: '#151824',
+          DEFAULT: '#030305',
+          surface: '#090a0d',
+          raised: '#0f1015',
         },
         border: {
-          subtle: 'rgba(255, 255, 255, 0.08)',
-          strong: 'rgba(255, 255, 255, 0.16)',
+          subtle: 'rgba(255, 255, 255, 0.05)',
+          strong: 'rgba(255, 255, 255, 0.10)',
         },
         accent: {
-          DEFAULT: '#2563eb',
-          hover: '#3b82f6',
-          muted: 'rgba(37, 99, 235, 0.12)',
+          DEFAULT: '#3b82f6',
+          hover: '#60a5fa',
+          muted: 'rgba(59, 130, 246, 0.08)',
         },
       },
     },

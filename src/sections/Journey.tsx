@@ -12,7 +12,7 @@ export default function Journey() {
       : (journeyData || []).filter(item => item.type === activeTab)
 
   return (
-    <section id="journey" className="section-spacing relative bg-[#090a0f] hairline-bottom" aria-label="Chronology and Timeline">
+    <section id="journey" className="section-spacing relative bg-[#030305] hairline-bottom" aria-label="Chronology and Timeline">
       <div className="section-wrapper">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
@@ -31,7 +31,7 @@ export default function Journey() {
           </div>
 
           {/* Filter Bar */}
-          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[#10121a] border border-white/10 self-start md:self-auto font-mono text-xs">
+          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[#090a0d] border border-white/[0.06] self-start md:self-auto font-mono text-xs">
             <button
               onClick={() => setActiveTab('all')}
               className={`px-3 py-1.5 rounded transition-colors uppercase tracking-wider ${
@@ -92,7 +92,7 @@ export default function Journey() {
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4 pb-4 border-b border-white/[0.06]">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded bg-[#151824] border border-white/10 flex items-center justify-center text-blue-400 flex-shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded bg-[#0f1015] border border-white/[0.06] flex items-center justify-center text-blue-400 flex-shrink-0 mt-0.5">
                       <Icon size={18} />
                     </div>
                     <div>

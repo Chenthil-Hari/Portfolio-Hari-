@@ -17,7 +17,7 @@ export default function Projects() {
       : (projectsData || []).filter(p => p.category === filter)
 
   return (
-    <section id="projects" className="section-spacing relative bg-[#090a0f] hairline-bottom" aria-label="Selected Projects">
+    <section id="projects" className="section-spacing relative bg-[#030305] hairline-bottom" aria-label="Selected Projects">
       <div className="section-wrapper">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
@@ -36,7 +36,7 @@ export default function Projects() {
           </div>
 
           {/* Filter Bar */}
-          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[#10121a] border border-white/10 self-start md:self-auto font-mono text-xs">
+          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[#090a0d] border border-white/[0.06] self-start md:self-auto font-mono text-xs">
             {categories.map(cat => (
               <button
                 key={cat}
@@ -101,7 +101,7 @@ export default function Projects() {
               </div>
 
               {/* 4-Part Engineering Breakdown: Problem / Approach / Friction / Learned */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded bg-[#090a0f] border border-white/[0.06] mb-6 font-sans text-xs">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded bg-[#030305] border border-white/[0.04] mb-6 font-sans text-xs">
                 {/* The Problem */}
                 <div className="space-y-1.5 border-b md:border-b-0 md:border-r border-white/[0.06] pb-3 md:pb-0 md:pr-4">
                   <span className="font-mono uppercase tracking-wider text-[11px] text-red-400 font-semibold block">

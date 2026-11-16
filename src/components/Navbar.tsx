@@ -44,7 +44,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           scrolled
-            ? 'bg-[#090a0f]/90 backdrop-blur-md border-b border-white/[0.08] py-3.5'
+            ? 'bg-[#030305]/95 backdrop-blur-md border-b border-white/[0.05] py-3.5'
             : 'bg-transparent py-5'
         }`}
       >
@@ -55,7 +55,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
             className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
             aria-label="Chenthil Hari — Home"
           >
-            <div className="w-8 h-8 rounded bg-[#10121a] border border-white/15 flex items-center justify-center font-mono font-bold text-white text-xs tracking-wider transition-colors group-hover:border-blue-500/50">
+            <div className="w-8 h-8 rounded bg-[#090a0d] border border-white/[0.08] flex items-center justify-center font-mono font-bold text-white text-xs tracking-wider transition-colors group-hover:border-blue-500/50">
               <span className="text-white">CH</span>
             </div>
             <div className="flex flex-col">
@@ -71,7 +71,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
 
           {/* Desktop Nav Items */}
           <nav
-            className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#10121a]/80 border border-white/[0.08]"
+            className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#090a0d]/90 border border-white/[0.06]"
             aria-label="Primary Navigation"
           >
             {navItems.map(item => (
@@ -109,7 +109,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
           <div className="flex md:hidden items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded border border-white/10 bg-[#10121a] text-slate-300 hover:text-white"
+              className="p-2 rounded border border-white/[0.08] bg-[#090a0d] text-slate-300 hover:text-white"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -126,7 +126,7 @@ export default function Navbar({ onOpenResume }: NavbarProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-x-0 top-[60px] z-40 bg-[#090a0f] border-b border-white/10 p-6 md:hidden shadow-2xl"
+            className="fixed inset-x-0 top-[60px] z-40 bg-[#030305] border-b border-white/[0.08] p-6 md:hidden shadow-2xl"
           >
             <nav className="flex flex-col gap-3 font-mono text-sm">
               {navItems.map(item => (
