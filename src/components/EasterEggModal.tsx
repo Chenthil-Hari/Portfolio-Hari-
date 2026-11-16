@@ -36,7 +36,7 @@ export default function EasterEggModal({ isOpen, onClose }: EasterEggModalProps)
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 10 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[540px] z-[3001] bg-[#090a0d] border border-white/[0.08] rounded-lg p-6 font-mono text-xs shadow-2xl space-y-4"
+            className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[540px] z-[3001] bg-[var(--surface)] border border-[var(--border)] rounded-lg p-6 font-mono text-xs shadow-2xl space-y-4"
             role="dialog"
             aria-modal="true"
             aria-label="System Diagnostics"
@@ -80,7 +80,7 @@ export default function EasterEggModal({ isOpen, onClose }: EasterEggModalProps)
               </div>
             </div>
 
-            <div className="p-3 rounded bg-[#030305] border border-white/[0.04] text-slate-400 text-[11px] leading-relaxed">
+            <div className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-slate-400 text-[11px] leading-relaxed">
               <span className="text-blue-400 block mb-1 font-semibold uppercase tracking-wider text-[10px]">
                 Engineering Axiom
               </span>

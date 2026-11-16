@@ -13,6 +13,7 @@ import ResumeModal from '@/components/ResumeModal'
 import EasterEggModal from '@/components/EasterEggModal'
 import NotFound from '@/components/NotFound'
 import { PortfolioProvider } from '@/context/PortfolioContext'
+import { ThemeProvider } from '@/context/ThemeContext'
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
@@ -89,68 +90,74 @@ export default function App() {
   // Admin Route Handler
   if (currentPath === '/admin') {
     return (
-      <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
-        <Admin
-          initialData={portfolioData}
-          onUpdateData={handleUpdateData}
-          onClose={() => {
-            window.history.pushState({}, '', '/')
-            setCurrentPath('/')
-            fetchData()
-          }}
-        />
-      </PortfolioProvider>
+      <ThemeProvider>
+        <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
+          <Admin
+            initialData={portfolioData}
+            onUpdateData={handleUpdateData}
+            onClose={() => {
+              window.history.pushState({}, '', '/')
+              setCurrentPath('/')
+              fetchData()
+            }}
+          />
+        </PortfolioProvider>
+      </ThemeProvider>
     )
   }
 
   // 404 Route Handler for any unexpected path
   if (currentPath !== '/' && currentPath !== '') {
     return (
-      <NotFound
-        onGoHome={() => {
-          window.history.pushState({}, '', '/')
-          setCurrentPath('/')
-        }}
-      />
+      <ThemeProvider>
+        <NotFound
+          onGoHome={() => {
+            window.history.pushState({}, '', '/')
+            setCurrentPath('/')
+          }}
+        />
+      </ThemeProvider>
     )
   }
 
   // Standard Portfolio View
   return (
-    <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
-      <div className="min-h-screen bg-[#030305] text-[#e4e6eb] flex flex-col font-sans selection:bg-blue-600/30 selection:text-white">
-        {/* Architectural Header */}
-        <Navbar onOpenResume={() => setIsResumeOpen(true)} />
+    <ThemeProvider>
+      <PortfolioProvider value={portfolioData} onUpdate={handleUpdateData} onRefresh={fetchData}>
+        <div className="min-h-screen bg-[var(--canvas)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-blue-600/30 selection:text-white transition-colors duration-200">
+          {/* Architectural Header */}
+          <Navbar onOpenResume={() => setIsResumeOpen(true)} />
 
-        {/* Core Editorial Sections */}
-        <main className="flex-1">
-          <Hero onOpenResume={() => setIsResumeOpen(true)} />
-          <About />
-          <Skills />
-          <Projects />
-          <Journey />
-          <Guestbook />
-          <Contact />
-        </main>
+          {/* Core Editorial Sections */}
+          <main className="flex-1">
+            <Hero onOpenResume={() => setIsResumeOpen(true)} />
+            <About />
+            <Skills />
+            <Projects />
+            <Journey />
+            <Guestbook />
+            <Contact />
+          </main>
 
-        {/* Colophon & Diagnostics Footer */}
-        <Footer
-          onOpenResume={() => setIsResumeOpen(true)}
-          onOpenEasterEgg={() => setIsEasterEggOpen(true)}
-        />
+          {/* Colophon & Diagnostics Footer */}
+          <Footer
+            onOpenResume={() => setIsResumeOpen(true)}
+            onOpenEasterEgg={() => setIsEasterEggOpen(true)}
+          />
 
-        {/* Modals */}
-        <ResumeModal
-          isOpen={isResumeOpen}
-          onClose={() => setIsResumeOpen(false)}
-          resumeUrl="/resume.pdf"
-        />
+          {/* Modals */}
+          <ResumeModal
+            isOpen={isResumeOpen}
+            onClose={() => setIsResumeOpen(false)}
+            resumeUrl="/resume.pdf"
+          />
 
-        <EasterEggModal
-          isOpen={isEasterEggOpen}
-          onClose={() => setIsEasterEggOpen(false)}
-        />
-      </div>
-    </PortfolioProvider>
+          <EasterEggModal
+            isOpen={isEasterEggOpen}
+            onClose={() => setIsEasterEggOpen(false)}
+          />
+        </div>
+      </PortfolioProvider>
+    </ThemeProvider>
   )
 }

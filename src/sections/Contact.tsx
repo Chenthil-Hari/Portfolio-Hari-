@@ -132,7 +132,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="section-spacing relative bg-[#030305]" aria-label="Direct Contact">
+    <section id="contact" className="section-spacing relative bg-[var(--canvas)]" aria-label="Direct Contact">
       <div className="section-wrapper">
         {/* Section Header */}
         <div className="max-w-2xl mb-14">
@@ -158,9 +158,9 @@ export default function Contact() {
               </span>
 
               {/* Email Copy Card */}
-              <div className="p-4 rounded bg-[#030305] border border-white/[0.06] flex items-center justify-between gap-3">
+              <div className="p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded bg-[#0f1015] border border-white/[0.08] flex items-center justify-center text-blue-400 flex-shrink-0">
+                  <div className="w-8 h-8 rounded bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400 flex-shrink-0">
                     <Mail size={15} />
                   </div>
                   <div>
@@ -192,7 +192,7 @@ export default function Contact() {
                   href={personalInfo.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded bg-[#030305] border border-white/[0.06] hover:border-white/20 flex items-center justify-between transition-colors text-slate-300 hover:text-white"
+                  className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-between transition-colors text-slate-300 hover:text-white"
                 >
                   <span className="flex items-center gap-2">
                     <Github size={14} />
@@ -205,7 +205,7 @@ export default function Contact() {
                   href={personalInfo.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded bg-[#030305] border border-white/[0.06] hover:border-white/20 flex items-center justify-between transition-colors text-slate-300 hover:text-white"
+                  className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-between transition-colors text-slate-300 hover:text-white"
                 >
                   <span className="flex items-center gap-2">
                     <Linkedin size={14} />
@@ -293,7 +293,7 @@ export default function Contact() {
                           className={`py-2.5 px-2 rounded-lg border text-center uppercase tracking-wider text-[11px] font-mono transition-all flex items-center justify-center gap-2 group ${
                             isSelected
                               ? 'bg-blue-600 border-blue-500 text-white font-semibold shadow-md shadow-blue-600/25 scale-[1.02]'
-                              : 'bg-[#090a0d] border-white/[0.06] text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.03]'
+                              : 'bg-[var(--surface-raised)] border-[var(--border)] text-slate-400 hover:text-white hover:border-slate-300 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
                           }`}
                         >
                           <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center overflow-hidden">
@@ -385,7 +385,7 @@ export default function Contact() {
                 </div>
 
                 {/* Mathematical Verification Challenge (Option 1) */}
-                <div className="p-3.5 rounded bg-[#090a0d] border border-white/[0.06] space-y-2.5">
+                <div className="p-3.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] space-y-2.5">
                   <div className="flex items-center justify-between">
                     <label className="text-slate-400 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                       <ShieldCheck size={13} className="text-emerald-400" />

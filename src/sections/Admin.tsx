@@ -467,7 +467,7 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
   // ─────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020203] text-[#e4e6eb] px-6 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)] text-[var(--text-primary)] px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-subtle opacity-30 pointer-events-none" />
         <div className="w-full max-w-md surface-card p-8 border border-white/[0.08] relative z-10 shadow-2xl">
           <button
@@ -526,9 +526,9 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
   //  Authenticated Admin Dashboard
   // ─────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#020203] text-[#e4e6eb] flex flex-col font-sans">
+    <div className="min-h-screen bg-[var(--canvas)] text-[var(--text-primary)] flex flex-col font-sans">
       {/* Global Top Bar */}
-      <header className="sticky top-0 z-40 bg-[#090a0d]/90 backdrop-blur-md border-b border-white/[0.08] px-6 py-3.5">
+      <header className="sticky top-0 z-40 bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--border)] px-6 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -602,7 +602,7 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
         {/* Sidebar Navigation */}
         <aside
           className={`${
-            mobileNavOpen ? 'block fixed inset-y-14 left-0 w-64 bg-[#090a0d] z-30 shadow-2xl' : 'hidden'
+            mobileNavOpen ? 'block fixed inset-y-14 left-0 w-64 bg-[var(--surface)] z-30 shadow-2xl' : 'hidden'
           } md:block md:w-60 border-r border-white/[0.08] p-4 flex-shrink-0 space-y-6`}
         >
           <div>
@@ -1222,7 +1222,7 @@ export default function Admin({ initialData, onClose, onUpdateData }: AdminProps
                         <select
                           value={proj.category}
                           onChange={e => handleUpdateProject(idx, 'category', e.target.value)}
-                          className="input-field text-xs bg-[#0d0e13]"
+                          className="input-field text-xs bg-[var(--surface-raised)]"
                         >
                           <option value="Cybersecurity">Cybersecurity</option>
                           <option value="AI / Machine Learning">AI / Machine Learning</option>

@@ -15,14 +15,14 @@ export default function Footer({ onOpenResume, onOpenEasterEgg }: FooterProps) {
   }
 
   return (
-    <footer className="relative bg-[#020203] hairline-top pt-16 pb-12 font-mono text-xs" aria-label="Site Colophon">
+    <footer className="relative bg-[var(--canvas)] hairline-top pt-16 pb-12 font-mono text-xs" aria-label="Site Colophon">
       <div className="section-wrapper">
         <div className="grid md:grid-cols-12 gap-10 pb-12 hairline-bottom">
           {/* Identity & Scope (5 cols) */}
           <div className="md:col-span-5 space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded bg-[#090a0d] border border-white/[0.08] flex items-center justify-center font-bold text-white text-xs">
-                CH
+              <div className="w-7 h-7 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center font-bold text-xs">
+                <span className="text-white dark:text-white">CH</span>
               </div>
               <span className="font-semibold text-white tracking-wider uppercase text-sm">
                 {personalInfo.fullName}
@@ -35,7 +35,7 @@ export default function Footer({ onOpenResume, onOpenEasterEgg }: FooterProps) {
             <div className="pt-2">
               <button
                 onClick={onOpenEasterEgg}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#090a0d] hover:bg-[#0f1015] border border-white/[0.06] text-slate-400 hover:text-white transition-colors text-[11px]"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--surface-raised)] hover:bg-[var(--surface)] border border-[var(--border)] text-slate-400 hover:text-white transition-colors text-[11px] shadow-sm"
                 title="System diagnostics & telemetry"
               >
                 <Terminal size={12} className="text-blue-400" />

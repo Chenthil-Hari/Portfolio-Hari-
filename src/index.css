@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────
-   Swiss Engineering / Minimalist Low-Light Theme (OLED Midnight)
-   Restrained palette: Obsidian Void + Soft Bone + Calibrated Cobalt
+   Swiss Engineering Theme System
+   - Dark Mode: Obsidian Void + Soft Bone + Calibrated Cobalt
+   - Light Mode: Clean Architectural Slate-50 + Crisp White + Vibrant Cobalt
 ───────────────────────────────────────────────────────────── */
-:root {
+:root, html.dark {
   --canvas: #030305;
   --surface: #090a0d;
   --surface-raised: #0f1015;
@@ -19,6 +20,37 @@
   --accent-hover: #60a5fa;
   --accent-muted: rgba(59, 130, 246, 0.08);
   --status-active: #10b981;
+  --grid-line: rgba(255, 255, 255, 0.02);
+  --input-bg: rgba(255, 255, 255, 0.02);
+  --input-border: rgba(255, 255, 255, 0.08);
+  --card-bg: #090a0d;
+  --spec-tag-bg: rgba(255, 255, 255, 0.03);
+  --spec-tag-text: #cbd5e1;
+  --modal-overlay: rgba(0, 0, 0, 0.85);
+  color-scheme: dark;
+}
+
+html.light {
+  --canvas: #f8fafc;
+  --surface: #ffffff;
+  --surface-raised: #f1f5f9;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --text-primary: #0f172a;
+  --text-muted: #475569;
+  --text-faint: #94a3b8;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-muted: rgba(37, 99, 235, 0.08);
+  --status-active: #059669;
+  --grid-line: rgba(0, 0, 0, 0.04);
+  --input-bg: #ffffff;
+  --input-border: rgba(0, 0, 0, 0.12);
+  --card-bg: #ffffff;
+  --spec-tag-bg: rgba(0, 0, 0, 0.04);
+  --spec-tag-text: #334155;
+  --modal-overlay: rgba(15, 23, 42, 0.6);
+  color-scheme: light;
 }
 
 * {
@@ -29,7 +61,6 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
   overflow-x: hidden;
-  color-scheme: dark;
   background-color: var(--canvas);
 }
 
@@ -41,6 +72,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.65;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 ::selection {
@@ -62,11 +94,11 @@ body {
   background: var(--canvas);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--border-strong);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.24);
+  background: var(--text-faint);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -116,7 +148,11 @@ body {
 .editorial-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+html.light .editorial-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .editorial-card:hover {
@@ -126,19 +162,19 @@ body {
 /* Subtle architectural grid guide */
 .architectural-grid {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
 /* Form input elements */
 .input-field {
   width: 100%;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 0.875rem;
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
@@ -146,7 +182,7 @@ body {
 .input-field:focus {
   outline: none;
   border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface);
 }
 
 .input-field::placeholder {
@@ -160,11 +196,67 @@ body {
   gap: 0.35rem;
   padding: 0.2rem 0.55rem;
   border-radius: 0.25rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--spec-tag-bg);
   border: 1px solid var(--border);
   font-size: 0.75rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  color: #cbd5e1;
+  color: var(--spec-tag-text);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Light Theme Cascade Adaptations
+───────────────────────────────────────────────────────────── */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
+  color: var(--text-primary);
+}
+
+html.light .text-white:not(.keep-white):not([class*="bg-blue"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-indigo"]) {
+  color: #0f172a;
+}
+
+html.light .text-slate-200,
+html.light .text-slate-300 {
+  color: #334155;
+}
+
+html.light .text-slate-400 {
+  color: #64748b;
+}
+
+html.light .text-slate-500 {
+  color: #64748b;
+}
+
+html.light .border-white\/\[0\.04\],
+html.light .border-white\/\[0\.05\],
+html.light .border-white\/\[0\.06\],
+html.light .border-white\/\[0\.08\],
+html.light .border-white\/10,
+html.light .border-white\/15 {
+  border-color: var(--border);
+}
+
+html.light .divide-white\/\[0\.04\],
+html.light .divide-white\/\[0\.06\],
+html.light .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border);
+}
+
+html.light .bg-white\/\[0\.02\],
+html.light .bg-white\/\[0\.03\],
+html.light .bg-white\/\[0\.04\] {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+html.light .hover\:bg-white\/\[0\.06\]:hover,
+html.light .hover\:bg-white\/\[0\.08\]:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Respect user's motion preferences */

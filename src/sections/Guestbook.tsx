@@ -87,7 +87,7 @@ export default function Guestbook() {
   }
 
   return (
-    <section id="guestbook" className="section-spacing relative bg-[#030305] hairline-bottom" aria-label="Visitor Guestbook">
+    <section id="guestbook" className="section-spacing relative bg-[var(--canvas)] hairline-bottom" aria-label="Visitor Guestbook">
       <div className="section-wrapper">
         {/* Section Header */}
         <div className="max-w-2xl mb-14">
@@ -228,7 +228,7 @@ export default function Guestbook() {
                   >
                     <div className="flex items-center justify-between gap-3 text-xs font-mono">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-[#0f1015] border border-white/[0.08] flex items-center justify-center text-[10px] font-bold text-blue-400">
+                        <div className="w-6 h-6 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[10px] font-bold text-blue-500 dark:text-blue-400">
                           {entry.name.slice(0, 2).toUpperCase()}
                         </div>
                         <span className="font-semibold text-white">{entry.name}</span>

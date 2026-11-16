@@ -21,7 +21,7 @@ export default function Skills() {
       : skillsData.filter(c => c.category === activeCategory)
 
   return (
-    <section id="skills" className="section-spacing relative bg-[#030305] hairline-bottom" aria-label="Technical Disciplines">
+    <section id="skills" className="section-spacing relative bg-[var(--canvas)] hairline-bottom" aria-label="Technical Disciplines">
       <div className="section-wrapper">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
@@ -40,7 +40,7 @@ export default function Skills() {
           </div>
 
           {/* Filter Bar */}
-          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[#090a0d] border border-white/[0.06] self-start md:self-auto font-mono text-xs">
+          <div className="flex flex-wrap gap-1.5 p-1 rounded bg-[var(--surface)] border border-[var(--border)] self-start md:self-auto font-mono text-xs shadow-sm">
             {categories.map(cat => (
               <button
                 key={cat}
@@ -71,7 +71,7 @@ export default function Skills() {
                   {/* Category Header */}
                   <div className="flex items-start justify-between pb-4 border-b border-white/[0.06] mb-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded bg-[#0f1015] border border-white/[0.06] flex items-center justify-center text-blue-400">
+                      <div className="w-9 h-9 rounded bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-blue-500 dark:text-blue-400">
                         <Icon size={18} />
                       </div>
                       <div>
@@ -94,7 +94,7 @@ export default function Skills() {
                     {cat.skills.map(skill => (
                       <div
                         key={skill.name}
-                        className="p-3 rounded bg-[#030305] border border-white/[0.05] hover:border-white/15 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
+                        className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] hover:border-slate-300 dark:hover:border-white/15 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
                       >
                         <div className="flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-blue-500/80" />

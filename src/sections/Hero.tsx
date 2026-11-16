@@ -45,7 +45,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
             </p>
 
             {/* Live human status note */}
-            <div className="flex items-start gap-3 p-3.5 rounded bg-[#090a0d] border border-white/[0.06] text-xs font-mono max-w-xl">
+            <div className="flex items-start gap-3 p-3.5 rounded bg-[var(--surface)] border border-[var(--border)] text-xs font-mono max-w-xl">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 mt-1 flex-shrink-0" />
               <div className="text-slate-300 space-y-0.5">
                 <span className="text-slate-400 uppercase tracking-wider text-[11px] block">Current Focus</span>
@@ -59,7 +59,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
                 href="#projects"
-                className="px-5 py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm"
               >
                 <span>View Projects</span>
                 <ArrowUpRight size={14} />
@@ -67,7 +67,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
 
               <button
                 onClick={onOpenResume}
-                className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#090a0d] hover:bg-[#0f1015] border border-white/[0.08] text-slate-200 font-mono text-xs uppercase tracking-wider transition-all group"
+                className="flex items-center gap-2 px-4 py-2.5 rounded bg-[var(--surface)] hover:bg-[var(--surface-raised)] border border-[var(--border)] text-slate-200 font-mono text-xs uppercase tracking-wider transition-all group shadow-sm"
               >
                 <div className="w-4 h-4 flex-shrink-0">
                   <Lottie src={docDownloadAnim} loop={true} className="w-full h-full" />

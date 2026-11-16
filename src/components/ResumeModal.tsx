@@ -95,13 +95,13 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 15 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-3 sm:inset-6 md:inset-8 lg:inset-y-10 lg:inset-x-24 z-[2001] flex flex-col bg-[#090a0d] border border-white/[0.08] rounded-lg overflow-hidden shadow-2xl"
+            className="fixed inset-3 sm:inset-6 md:inset-8 lg:inset-y-10 lg:inset-x-24 z-[2001] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-lg overflow-hidden shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-label="Resume Document Viewer"
           >
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-3.5 border-b border-white/[0.06] bg-[#030305] gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-3.5 border-b border-[var(--border)] bg-[var(--surface-raised)] gap-3">
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-white text-base">Curriculum Vitae</h3>
@@ -251,7 +251,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl }: ResumeModalP
             </AnimatePresence>
 
             {/* Embedded Live PDF Viewer */}
-            <div className="flex-1 bg-[#0a0b0e] relative overflow-hidden flex flex-col">
+            <div className="flex-1 bg-[var(--canvas)] relative overflow-hidden flex flex-col">
               <iframe
                 key={iframeSrc}
                 src={iframeSrc}

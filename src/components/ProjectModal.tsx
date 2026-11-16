@@ -91,13 +91,13 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 15 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-3 sm:inset-6 md:inset-10 lg:inset-y-12 lg:inset-x-28 z-[1001] flex flex-col bg-[#090a0d] border border-white/[0.08] rounded-lg overflow-hidden shadow-2xl"
+            className="fixed inset-3 sm:inset-6 md:inset-10 lg:inset-y-12 lg:inset-x-28 z-[1001] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-lg overflow-hidden shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-label={project.title}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-[#030305]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--surface-raised)]">
               <div className="flex items-center gap-3">
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-wider">
                   {project.category}
@@ -226,32 +226,32 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
 
               {/* 4-Part Structured Breakdown */}
               <div className="grid md:grid-cols-2 gap-5">
-                <div className="p-4 rounded bg-[#030305] border border-white/[0.05] space-y-2">
-                  <div className="flex items-center gap-2 text-rose-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                <div className="p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center gap-2 text-rose-500 font-mono text-xs uppercase tracking-wider font-semibold">
                     <AlertCircle size={15} />
                     <span>The Engineering Problem</span>
                   </div>
                   <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{project.problem}</p>
                 </div>
 
-                <div className="p-4 rounded bg-[#030305] border border-white/[0.05] space-y-2">
-                  <div className="flex items-center gap-2 text-blue-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                <div className="p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center gap-2 text-blue-500 font-mono text-xs uppercase tracking-wider font-semibold">
                     <Lightbulb size={15} />
                     <span>The Technical Approach</span>
                   </div>
                   <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{project.approach || project.solution}</p>
                 </div>
 
-                <div className="p-4 rounded bg-[#030305] border border-white/[0.05] space-y-2">
-                  <div className="flex items-center gap-2 text-amber-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                <div className="p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase tracking-wider font-semibold">
                     <Wrench size={15} />
                     <span>What Went Wrong / Friction</span>
                   </div>
                   <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{project.friction || project.challenges}</p>
                 </div>
 
-                <div className="p-4 rounded bg-[#030305] border border-white/[0.05] space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                <div className="p-4 rounded bg-[var(--surface-raised)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center gap-2 text-emerald-500 font-mono text-xs uppercase tracking-wider font-semibold">
                     <BookOpen size={15} />
                     <span>Engineering Lesson Learned</span>
                   </div>
@@ -269,9 +269,9 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                     {project.keyFeatures.map((feat, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-2.5 p-3 rounded bg-[#030305] border border-white/[0.04] text-slate-300"
+                        className="flex items-start gap-2.5 p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-slate-300"
                       >
-                        <CheckCircle2 size={15} className="text-blue-400 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 size={15} className="text-blue-500 flex-shrink-0 mt-0.5" />
                         <span className="font-sans">{feat}</span>
                       </div>
                     ))}
@@ -281,13 +281,13 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
 
               {/* Metric Highlights if present */}
               {project.metrics && project.metrics.length > 0 && (
-                <div className="pt-4 border-t border-white/10">
+                <div className="pt-4 border-t border-[var(--border)]">
                   <span className="text-xs font-mono text-slate-400 uppercase tracking-widest block mb-3">
                     Project Telemetry &amp; Metrics
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono text-xs">
                     {project.metrics.map(m => (
-                      <div key={m.label} className="p-3 rounded bg-[#030305] border border-white/[0.04]">
+                      <div key={m.label} className="p-3 rounded bg-[var(--surface-raised)] border border-[var(--border)]">
                         <span className="text-[10px] text-slate-500 uppercase block">{m.label}</span>
                         <span className="text-white font-semibold mt-0.5 block">{m.value}</span>
                       </div>
@@ -298,7 +298,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-6 py-3.5 border-t border-white/[0.06] bg-[#030305] font-mono text-xs">
+            <div className="flex items-center justify-between px-6 py-3.5 border-t border-[var(--border)] bg-[var(--surface-raised)] font-mono text-xs">
               <span className="text-slate-500">
                 Specification Author: Chenthil Hari
               </span>
